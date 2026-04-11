@@ -32,9 +32,9 @@
           {
             "group": "Workstations & Services",
             "pages": [
-              "spawn-workstation",
-              "spawn-microservice",
-              "spawn-inference"
+              "workstation_&_services/spawn-workstation",
+              "workstation_&_services/spawn-microservice",
+              "workstation_&_services/spawn-inference"
             ]
           },
           {
