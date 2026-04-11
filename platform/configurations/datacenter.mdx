@@ -1,6 +1,6 @@
 ---
 title: "Data Centers"
-description: "View and manage the data centers available to your organisation on the Ai-MicroCloud platform."
+description: "View and manage the primary and secondary data centers available to your organisation on the Ai-MicroCloud platform."
 ---
 
 ## Overview
@@ -13,19 +13,39 @@ The **Data Centers** page is accessible via **Platform → Configurations → Da
 
 ---
 
-## Primary Clusters
+## Primary Cluster
 
-The Data Centers page lists all **Primary clusters** available to your organisation. Each cluster card displays the following information at a glance:
+Every Ai-MicroCloud deployment has exactly **one Primary cluster**. This is the central hub where the core Ai-MicroCloud platform runs — hosting the control plane, the management dashboard, workloads, and all platform services. All other resources, users, and secondary data centres are managed and orchestrated from this primary cluster.
+
+The primary cluster is always listed at the top of the Data Centers page under the **Primary clusters** section. Each primary cluster card displays the following information at a glance:
 
 - **Name** — the identifier of the cluster (for example, Phison-Prod)
 - **Status** — whether the cluster is currently Running or not
 - **Location** — the physical region of the cluster (for example, Redmond, US)
 - **Category** — the cluster category, such as non-edge
-- **Cluster type** — Primary or Edge
+- **Cluster type** — Primary
 - **DNS Prefix** — the DNS prefix used for services deployed in this cluster
 - **Bandwidth** — the network bandwidth available (for example, 1 gbps)
 
-Each cluster card also has a **Nodes** button that takes you directly to the node list for that cluster.
+---
+
+## Secondary Data Centers
+
+In addition to the primary cluster, your organisation can connect one or more **Secondary data centers** to the Ai-MicroCloud platform. Secondary data centers extend the reach of your primary cluster — allowing you to run workloads closer to your users, meet data residency requirements, or leverage additional compute capacity from different infrastructure providers.
+
+Secondary data centers are joined to the primary cluster and are fully managed from the same Ai-MicroCloud dashboard. Once connected, they appear in the Data Centers list alongside the primary cluster and can be selected when spawning workstations, microservices, or inference services.
+
+Secondary data centers can be hosted on any of the following:
+
+- **AWS** — Amazon Web Services cloud infrastructure, ideal for organisations already running workloads on AWS or needing access to AWS regions worldwide.
+- **Azure** — Microsoft Azure cloud infrastructure, suitable for organisations with existing Azure footprints or those requiring Azure-specific compliance and regional coverage.
+- **On-Premise** — Your organisation's own physical hardware, deployed in your own data centre facility. This is ideal for organisations with strict data sovereignty requirements, air-gapped environments, or those who want full control over their infrastructure.
+
+Regardless of where a secondary data center is hosted, it is centrally managed from the primary Ai-MicroCloud cluster. Users interact with all data centers — primary and secondary — through the same unified interface.
+
+<Note>
+  Contact your platform administrator to connect a new secondary data center to your Ai-MicroCloud deployment. Once joined, it will appear automatically in the Data Centers list and become available for workload deployment.
+</Note>
 
 ---
 
@@ -115,7 +135,7 @@ The **Node Monitoring** panel shows real-time metrics for the selected node, inc
 It also includes a **Usage History** section with time-series charts for CPU, Memory, and Network RX metrics. You can filter the history by time range — **5 minutes**, **1 hour**, or **24 hours**.
 
 <Frame>
-  <img src="/images/datacenter/datacenter-node-monitoring.png" alt="Node Monitoring panel showing live CPU usage at 10.5%, memory N/A, Network RX 1.20 MB/s, Network TX 1.37 MB/s, and usage history charts" />
+  <img src="/images/datacenter/datacenter-node-monitoring.png" alt="Node Monitoring panel showing live CPU usage, memory, network RX and TX metrics with usage history charts" />
 </Frame>
 
 <Note>
