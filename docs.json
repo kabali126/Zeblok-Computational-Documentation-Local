@@ -4,7 +4,8 @@
   "name": "Zeblok Computational",
   "logo": {
     "light": "/images/logo-black.png",
-    "dark": "/images/logo-white.png"
+    "dark": "/images/logo-white.png",
+    "width": 200
   },
   "favicon": "https://icons.duckduckgo.com/ip3/computationaldocs.zeblok.com.ico",
   "colors": {
