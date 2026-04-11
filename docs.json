@@ -2,6 +2,10 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "luma",
   "name": "Zeblok Computational",
+  "logo": {
+    "light": "/images/logo-black.png",
+    "dark": "/images/logo-white.png"
+  },
   "favicon": "https://icons.duckduckgo.com/ip3/computationaldocs.zeblok.com.ico",
   "colors": {
     "primary": "#1A6EFF",
@@ -14,6 +18,9 @@
       "label": "Get Started",
       "href": "https://www.computational.zeblok.com"
     }
+  },
+  "footer": {
+    "socials": {}
   },
   "navigation": {
     "tabs": [
