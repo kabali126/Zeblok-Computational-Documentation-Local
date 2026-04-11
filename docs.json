@@ -23,10 +23,10 @@
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
-              "core-concepts",
-              "create-an-account",
-              "sign-in"
+              "getstarted/introduction",
+              "getstarted/core-concepts",
+              "getstarted/create-an-account",
+              "getstarted/sign-in"
             ]
           },
           {
