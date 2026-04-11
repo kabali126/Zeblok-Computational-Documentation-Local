@@ -1,0 +1,123 @@
+---
+title: "Data Centers"
+description: "View and manage the data centers available to your organisation on the Ai-MicroCloud platform."
+---
+
+## Overview
+
+The **Data Centers** page is accessible via **Platform → Configurations → Data Center** in the left sidebar. It gives you a complete view of all clusters provisioned for your organisation, along with their status, location, and underlying node infrastructure.
+
+<Frame>
+  <img src="/images/configurations/datacenter-page.png" alt="Data Centers page showing the primary cluster Phison-Prod with status Running in Redmond, US" />
+</Frame>
+
+---
+
+## Primary Clusters
+
+The Data Centers page lists all **Primary clusters** available to your organisation. Each cluster card displays the following information at a glance:
+
+- **Name** — the identifier of the cluster (for example, Phison-Prod)
+- **Status** — whether the cluster is currently Running or not
+- **Location** — the physical region of the cluster (for example, Redmond, US)
+- **Category** — the cluster category, such as non-edge
+- **Cluster type** — Primary or Edge
+- **DNS Prefix** — the DNS prefix used for services deployed in this cluster
+- **Bandwidth** — the network bandwidth available (for example, 1 gbps)
+
+Each cluster card also has a **Nodes** button that takes you directly to the node list for that cluster.
+
+---
+
+## Cluster Options
+
+Hovering over a cluster card reveals a context menu with three actions:
+
+- **Details** — opens a modal with the full configuration of the cluster
+- **Nodes** — navigates to the node list for the cluster
+- **Delete** — removes the cluster from your organisation
+
+<Frame>
+  <img src="/images/configurations/datacenter-options.png" alt="Cluster card context menu showing Details, Nodes, and Delete options" />
+</Frame>
+
+---
+
+## Cluster Details
+
+Clicking **Details** opens a modal showing the complete configuration of the selected cluster. The details panel includes:
+
+| Field | Description |
+|---|---|
+| **Category** | The cluster category — Non-Edge or Edge |
+| **Storage Classes** | The storage classes available on the cluster, such as Hub CSI and Edge CSI-E |
+| **Cluster Type** | Whether this is a Primary or Edge cluster |
+| **Visibility** | Whether the cluster is Public or Private |
+| **Location** | The full physical address of the data centre |
+| **DNS Prefix** | The DNS prefix used for all services deployed in this cluster |
+| **Bandwidth** | The network bandwidth of the cluster |
+| **Docker Registry URL** | The URL of the Docker registry configured for the cluster, if any |
+
+<Frame>
+  <img src="/images/configurations/datacenter-details.png" alt="Cluster details modal showing category, storage classes, cluster type, visibility, location, DNS prefix, bandwidth, and Docker registry URL for Phison-Prod" />
+</Frame>
+
+---
+
+## Nodes
+
+Clicking **Nodes** from the cluster card or the context menu navigates to the node list for that cluster. Nodes are divided into two sections:
+
+### Control Plane
+
+Control plane nodes manage the Kubernetes cluster itself. They handle scheduling, API requests, and cluster state. Each control plane node card displays:
+
+- **Node name** and **IP address**
+- **Status** — Running or otherwise
+- **Role** — labeled as `control-plane`
+- **CPU**, **RAM**, and **Pod** capacity
+- **Kubernetes version** and **architecture**
+- **Uptime** since last restart
+
+### Worker Nodes
+
+Worker nodes are where your actual workloads — workstations, microservices, and inference services — run. Each worker node card displays:
+
+- **Node name** and **IP address**
+- **Status** — Running or otherwise
+- **Role** — labeled as `worker`
+- **CPU**, **RAM**, and **GPU** capacity
+- **GPU model** — for example, NVIDIA RTX 6000 Ada Generation
+- **Kubernetes version** and **architecture**
+- **Uptime** since last restart
+
+<Frame>
+  <img src="/images/configurations/datacenter-nodes.png" alt="Node list showing 3 control plane nodes and 3 worker nodes with their CPU, RAM, GPU specs and status" />
+</Frame>
+
+---
+
+## Node Monitoring
+
+Each node has a **Monitor node** button (shown as a graph icon on the node card). Clicking it opens a live monitoring panel on the right side of the screen for that specific node.
+
+<Frame>
+  <img src="/images/configurations/datacenter-node-monitoring-click.png" alt="Monitor node button highlighted on a control plane node card" />
+</Frame>
+
+The **Node Monitoring** panel shows real-time metrics for the selected node, including:
+
+- **CPU Usage** — current CPU utilisation as a percentage of total cores
+- **Memory Usage** — current RAM utilisation
+- **Network RX** — incoming network traffic in MB/s
+- **Network TX** — outgoing network traffic in MB/s
+
+It also includes a **Usage History** section with time-series charts for CPU, Memory, and Network RX metrics. You can filter the history by time range — **5 minutes**, **1 hour**, or **24 hours**.
+
+<Frame>
+  <img src="/images/configurations/datacenter-node-monitoring.png" alt="Node Monitoring panel showing live CPU usage at 10.5%, memory N/A, Network RX 1.20 MB/s, Network TX 1.37 MB/s, and usage history charts" />
+</Frame>
+
+<Note>
+  Node monitoring data is live — the panel updates in real time as long as it remains open. The status indicator in the top-right of the panel shows **Live** when the connection is active.
+</Note>
