@@ -1,0 +1,244 @@
+---
+title: "Ai-Inference"
+description: "Learn how to configure and deploy a GPU-powered AI inference service on the Ai-MicroCloud platform in a few simple steps."
+---
+
+## Overview
+
+An **Ai-Inference** service lets you deploy large language models and AI models as live, queryable endpoints on the Ai-MicroCloud platform. Once running, you can interact with your model directly through a built-in chat interface or query it programmatically via its API endpoint.
+
+To get started, navigate to **Workspace → Inference** in the left sidebar. If you have not created any inference services yet, you will see an empty state page. Click the **Create Inference** button in the top-right corner to begin.
+
+<Frame>
+  <img src="/images/inference/no-inference.png" alt="Inference page showing no inference services created yet" />
+</Frame>
+
+---
+
+<Steps>
+
+  <Step title="Configure Model">
+
+    The **Configure Model** tab is the first step of the setup form. It defines which model you want to serve, which inference runtime image to use, and how the service should scale.
+
+    ### Model *(required)*
+
+    Use the **Model** dropdown to select the AI model you want to deploy as an inference endpoint. Available models include both standard and **AI-Daptive** variants:
+
+    - **Opt 125m** — Public
+    - **Gpt Neo 125m** — Public
+    - **RedHatAI/Meta-Llama-3.1-70B-Instruct-FP8** — Public, AI-Daptive
+    - **meta-llama/Llama-3.1-70B-Instruct** — Public, AI-Daptive
+
+    Models marked with **AI-Daptive** are optimised for high-performance AI inference workloads and may unlock additional runtime capabilities depending on the image tag selected.
+
+    <Frame>
+      <img src="/images/inference/select-model.png" alt="Model selection dropdown showing available inference models including AI-Daptive variants" />
+    </Frame>
+
+    ---
+
+    ### Image Tag *(required)*
+
+    After selecting a model, choose the **Image Tag** — the specific inference runtime image version that will serve your model. Available tags include:
+
+    - **vllm:v0.11.0** — standard vLLM runtime
+    - **vllm-openai:v0.8.0** — vLLM runtime with OpenAI-compatible API, marked **AI-Daptive**
+
+    Select the tag that matches your deployment requirements. The **AI-Daptive** tagged images provide an OpenAI-compatible API interface, making it easy to connect existing tools and clients.
+
+    <Frame>
+      <img src="/images/inference/image-tag.png" alt="Image tag dropdown showing vllm and vllm-openai tags including an AI-Daptive variant" />
+    </Frame>
+
+    ---
+
+    ### Data Center *(required)*
+
+    Select the **Data Center** where your inference service will be deployed. The dropdown lists all data centres available to your organisation. Each entry shows the data centre name, location, and whether it is the primary region.
+
+    <Frame>
+      <img src="/images/inference/datacenter-select.png" alt="Data Center dropdown showing the Phison-Prod data centre in Redmond, WA, US" />
+    </Frame>
+
+    ---
+
+    ### Plan *(required)*
+
+    Choose a **Plan** to define the compute resources allocated to your inference service. Each plan displays the number of GPUs, vCPUs, RAM, and local disk storage it provides. For inference workloads, GPU-enabled plans are strongly recommended.
+
+    | Plan Name | GPU | vCPU | RAM | Disk |
+    |---|---|---|---|---|
+    | Custom-Plan-cQvtb7u9 | 0 | 2 | 3 GB | 0 GB |
+    | Custom-Plan-_v1Yoesd | 0 | 1 | 4 GB | 0 GB |
+    | test plan | 0 | 1 | 1 GB | 10 GB |
+    | Custom-Plan-UdVCUEnq | 1 | 14 | 48 GB | 100 GB |
+    | Custom-Plan-1lr3aae9 | 2 | 16 | 32 GB | 0 GB |
+
+    If none of the existing plans meet your needs, click **+ New Dynamic Plan** to create a custom resource configuration.
+
+    <Frame>
+      <img src="/images/inference/plan-select.png" alt="Plan selection dropdown listing available compute plans with GPU, vCPU, RAM, and disk details" />
+    </Frame>
+
+    ---
+
+    ### Replicas & Scaling
+
+    Configure how your inference service scales under load using the following three fields:
+
+    - **Min Replicas** — the minimum number of instances that will always be running. Default is `1`.
+    - **Max Replicas** — the maximum number of instances the service can scale up to under high load. Default is `1`.
+    - **GPU Threshold (%)** — the GPU utilisation percentage at which the platform will trigger a scale-up. Default is `80`. When GPU usage exceeds this threshold, additional replicas are automatically spawned up to the Max Replicas limit.
+
+    <Frame>
+      <img src="/images/inference/other-configure-options.png" alt="Min Replicas, Max Replicas, and GPU Threshold fields for configuring inference autoscaling" />
+    </Frame>
+
+    Once you have filled in all required fields on the Configure Model tab, click **Next** to proceed to the Configure Environment tab.
+
+  </Step>
+
+  <Step title="Configure Environment">
+
+    The **Configure Environment** tab collects deployment-level settings such as the namespace, inference name, networking, runtime arguments, and optional storage configuration.
+
+    <Frame>
+      <img src="/images/inference/environment-tab.png" alt="Configure Environment tab showing namespace, inference name, protocol and ports, environment variables, arguments, command, volume path, and attach bucket fields" />
+    </Frame>
+
+    ### Namespace *(required)*
+
+    Select the **Namespace** in which your inference service will be deployed. Namespaces are used to organise and isolate workloads within your organisation. Use the dropdown to choose from the namespaces available to your account.
+
+    <Note>
+      You must be a member of a namespace to deploy into it. If the namespace you need is not listed, contact your OrgAdmin to be added. OrgAdmins can manage namespace membership from the IAM section.
+    </Note>
+
+    ---
+
+    ### Inference Name *(required)*
+
+    Enter a unique **Inference Name** to identify your inference service. The default value is `inference`. You can customise this to reflect the model or use case — for example, `llama-70b-prod` or `text-generation-api`.
+
+    ---
+
+    ### Protocol & Ports *(required)*
+
+    This section defines how your inference service exposes its endpoint. By default, a single entry is pre-configured:
+
+    - **Protocol:** HTTP
+    - **Port:** 8000
+    - **Label:** UI-default
+
+    Port `8000` is the standard port for vLLM inference servers. You can click **Add Port** to expose additional ports if needed.
+
+    ---
+
+    ### Environment Variables *(optional)*
+
+    Add key-value pairs that will be injected as environment variables into the inference container at startup. This is useful for passing in authentication tokens, feature flags, or model-specific configuration. Click **Add Env Variable** to add additional rows.
+
+    ---
+
+    ### Arguments *(optional)*
+
+    Pass runtime arguments to the inference server. These are commonly used to configure model loading behaviour. For example:
+
+    - `--model` → `meta-llama/Llama-3.1-70B-Instruct`
+    - `--gpu-memory-utilization` → `0.9`
+    - `--enforce-eager`
+    - `--tensor-parallel-size` → `2`
+
+    Click **Add Argument** to add additional argument rows.
+
+    ---
+
+    ### Command *(optional)*
+
+    Override the default command passed to the inference container. Enter each command on a separate line without single quotes. Leave this field blank to use the image's built-in entrypoint.
+
+    ---
+
+    ### Volume Path *(optional)*
+
+    Enter a container path where a persistent volume should be mounted (for example, `/home/jovyan`). This is useful for persisting model weights or other large files across restarts.
+
+    ---
+
+    ### Attach Bucket *(optional)*
+
+    Use this setting to attach an object storage bucket to your inference service. The default value is **No**.
+
+    <Frame>
+      <img src="/images/inference/attach-bucket-yes-selection.png" alt="Attach Bucket dropdown showing the Yes option being selected" />
+    </Frame>
+
+    Set it to **Yes** to mount a bucket directly into the inference container's filesystem. When enabled, two additional fields appear:
+
+    - **Bucket Name** — the name of the bucket to attach, auto-populated from your account's available buckets.
+    - **Bucket Mount Path** — the path inside the container where the bucket will be accessible, for example `/home/abhinav/d7240f30e840-abhinav`.
+
+    <Frame>
+      <img src="/images/inference/attach-bucket-after-selecting-yes.png" alt="Bucket Name and Bucket Mount Path fields shown after selecting Yes for Attach Bucket" />
+    </Frame>
+
+    Once all required fields are filled in, click **Create Inference** to deploy your inference service.
+
+  </Step>
+
+  <Step title="Accessing Your Inference Service">
+
+    After clicking **Create Inference**, the platform provisions your container and redirects you to the Inference list. Your new inference service will appear here with its current status. Once the status shows as **Running**, it is ready to use.
+
+    <Frame>
+      <img src="/images/inference/after-spawning-inference-ready.png" alt="Inference list showing the newly created inference service in a Running state" />
+    </Frame>
+
+    From the inference card, click **View Details** to open the full details panel. The panel shows the source model, data centre, plan, endpoints, runtime status, and configuration. Several actions are available from this panel:
+
+    ### Open Chat
+
+    Click the **Open Chat** button to launch the built-in chat interface for your inference service. This allows you to interact with your deployed model directly in the browser without any additional tooling.
+
+    <Frame>
+      <img src="/images/inference/click-open-chat-to-open-inference.png" alt="Chat interface for the inference service showing the model waiting to come online" />
+    </Frame>
+
+    <Note>
+      When the chat interface first opens, it may display a message indicating the model is still loading — "Waiting for model to come online…". This is normal for large models. The chat input will be enabled automatically once the model health check passes.
+    </Note>
+
+    ### View Details
+
+    The **Details** tab shows the full runtime and configuration information for your inference service, including status, public and cluster endpoints, data centre, plan, namespace, Kubernetes name, image tag, and scaling configuration such as min/max replicas and GPU threshold.
+
+    <Frame>
+      <img src="/images/inference/click-details-for-all-info.png" alt="Details panel showing full inference service configuration including endpoints, runtime status, placement, and configuration details" />
+    </Frame>
+
+    ### View Logs
+
+    Click the **Logs** tab to access the real-time container logs for your inference service. This is useful for monitoring model loading progress, debugging startup issues, or diagnosing runtime errors.
+
+    <Frame>
+      <img src="/images/inference/click-logs.png" alt="Logs tab showing real-time container output for the inference service" />
+    </Frame>
+
+    ### Monitor Resource Usage
+
+    Click the **Monitoring** tab to view live resource utilisation metrics for your inference service, including CPU usage, memory usage, GPU utilisation, CPU throttling, and disk I/O metrics such as read speed, write speed, read IOPS, and write IOPS. You can filter metrics by time range — 5 minutes, 30 minutes, 2 hours, 12 hours, or 24 hours.
+
+    <Frame>
+      <img src="/images/inference/click-monitoring.png" alt="Monitoring tab showing CPU, memory, GPU utilisation, and disk I/O metrics for the inference service" />
+    </Frame>
+
+  </Step>
+
+</Steps>
+
+---
+
+## Importing Inference Models
+
+In addition to spawning inference services directly, you can also import models from external sources into the Ai-MicroCloud platform via **Imports → AI Model Hub** in the left sidebar. Imported models become available in the Model dropdown when creating a new inference service.
