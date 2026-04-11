@@ -1,58 +1,235 @@
 ---
-title: "Spawn MicroService"
-description: "Deploy a containerized microservice on the platform."
+title: "Ai-MicroServices"
+description: "Learn how to configure and deploy a containerized microservice on the Ai-MicroCloud platform in a few simple steps."
 ---
 
 ## Overview
 
-After you log in to the Zeblok Computational platform, the dashboard presents a **Spawn MicroService** option. Follow the steps below to deploy a containerized microservice into the Ai-MicroCloud.
+An **Ai-MicroService** is a containerized service that you can deploy on demand from the Ai-MicroCloud platform. This guide walks you through every field on the **New Microservice** form so you can configure and launch your service with confidence.
+
+To get started, navigate to **Workspace → Microservices** in the left sidebar. If you have not spawned any microservices yet, you will see an empty state page. Click the **New Microservice** button in the top-right corner to begin.
+
+<Frame>
+  <img src="/images/microservices/no-microservices.png" alt="Microservices page showing no microservices spawned yet" />
+</Frame>
+
+---
 
 <Steps>
-  <Step title="Open the Spawn MicroService page">
-    From the dashboard, click **Spawn MicroService**. You are redirected to the microservice selection page.
+
+  <Step title="Configure">
+
+    The **Configure** tab is the first step of the setup form. It collects the core settings needed to define what your microservice runs and where it is hosted.
+
+    ### Microservice *(required)*
+
+    Use the **Microservice** dropdown to select the type of containerized service you want to deploy. Several public templates are available, including:
+
+    - **nginx**
+    - **test**
+    - **openclaw agent**
+    - **MongoDB**
+    - **PostgreSQL**
+    - **MySQL**
+    - **MLflow**
+    - **ChromaDB**
+    - **Nginx**
+
+    Click on the template that best matches your use case. Each option is labeled **Public**, indicating it is available to all users on the platform.
+
+    <Frame>
+      <img src="/images/microservices/microservice-select.png" alt="Microservice type selection dropdown showing available microservice templates" />
+    </Frame>
+
+    ---
+
+    ### Image Tag *(required)*
+
+    After selecting a microservice type, choose the **Image Tag** — the specific Docker image version that will be used to run your service. The tag marked **Latest** is the most recently published version and is recommended for most use cases.
+
+    <Frame>
+      <img src="/images/microservices/image-tag.png" alt="Image tag dropdown showing available tags including the Latest tag" />
+    </Frame>
+
+    ---
+
+    ### Data Center *(required)*
+
+    Select the **Data Center** where your microservice will be deployed. The dropdown lists all data centres available to your organisation. Each entry shows the data centre name, location, and whether it is the primary region.
+
+    <Frame>
+      <img src="/images/microservices/datacenter-select.png" alt="Data Center dropdown showing the Phison-Prod data centre in Redmond, WA, US" />
+    </Frame>
+
+    ---
+
+    ### Plan *(required)*
+
+    Choose a **Plan** to define the compute resources allocated to your microservice. Each plan displays the number of GPUs, vCPUs, RAM, and local disk storage it provides.
+
+    | Plan Name | GPU | vCPU | RAM | Disk |
+    |---|---|---|---|---|
+    | Custom-Plan-cQvtb7u9 | 0 | 2 | 3 GB | 0 GB |
+    | Custom-Plan-_v1Yoesd | 0 | 1 | 4 GB | 0 GB |
+    | test plan | 0 | 1 | 1 GB | 10 GB |
+    | Custom-Plan-UdVCUEnq | 1 | 14 | 48 GB | 100 GB |
+    | Custom-Plan-1lr3aae9 | 2 | 16 | 32 GB | 0 GB |
+
+    Select the plan that matches your expected workload. If none of the existing plans meet your needs, click **+ New Dynamic Plan** to create a custom resource configuration.
+
+    <Frame>
+      <img src="/images/microservices/plan-select.png" alt="Plan selection dropdown listing available compute plans with GPU, vCPU, RAM, and disk details" />
+    </Frame>
+
+    ---
+
+    ### Replicas
+
+    Set the number of **Replicas** — the number of instances of your microservice that will run simultaneously. The default is `1`. Increasing replicas improves availability and distributes load across multiple instances.
+
+    The following additional deployment options are also available on the Configure tab:
+
+    - **Stateful** — enable this toggle if your microservice requires persistent storage tied to each replica. Stateful services retain their data across restarts.
+    - **Spawn in different worker nodes** — distribute replicas across different physical worker nodes to improve fault tolerance.
+    - **Spawn in different availability zones** — distribute replicas across different availability zones for higher resilience against zone-level failures.
+
+    <Frame>
+      <img src="/images/microservices/other-configure-options.png" alt="Replicas field and deployment toggles including Stateful, Spawn in different worker nodes, and Spawn in different availability zones" />
+    </Frame>
+
+    Once you have filled in all required fields on the Configure tab, click **Next** to proceed to the Environment tab.
+
   </Step>
 
-  <Step title="Select a microservice">
-    Browse the list of available microservices that have already been onboarded to the Ai-MicroCloud and select the one you want to deploy.
-  </Step>
+  <Step title="Environment">
 
-  <Step title="Select a datacenter">
-    Choose the datacenter where you want your microservice to run. Both **Enterprise** and **Edge** datacenters are available depending on your organization's configuration.
-  </Step>
+    The **Environment** tab collects deployment-level settings such as the namespace, service name, networking, environment variables, commands, and optional storage configuration.
 
-  <Step title="Configure node placement and select a plan">
-    If you selected an **Edge** datacenter in the previous step, you have an additional option to choose your deployment target node:
+    <Frame>
+      <img src="/images/microservices/environment-tab.png" alt="Environment tab showing namespace, service name, protocol and ports, environment variables, arguments, command, volume path, and attach bucket fields" />
+    </Frame>
 
-    - **HUB** — the central Edge node
-    - **SATELLITE** — any of the available satellite nodes in the Edge cluster
+    ### Namespace *(required)*
 
-    After selecting your node (Edge only), pick a **Plan** that provides the CPU and memory resources your microservice requires. Plan selection applies to both Edge and Enterprise datacenter types.
-  </Step>
-
-  <Step title="Select a namespace">
-    Choose the namespace where you want to deploy your microservice from the dropdown.
+    Select the **Namespace** in which your microservice will be deployed. Namespaces are used to organise and isolate workloads within your organisation. Use the dropdown to choose from the namespaces available to your account.
 
     <Note>
-      You must be a member of a namespace to select it. Contact your OrgAdmin to be added to the appropriate namespace. If you are an OrgAdmin, navigate to the Namespaces section to add members directly.
+      You must be a member of a namespace to deploy into it. If the namespace you need is not listed, contact your OrgAdmin to be added. OrgAdmins can manage namespace membership from the IAM section.
     </Note>
+
+    ---
+
+    ### Service Name *(required)*
+
+    Enter a unique **Service Name** to identify your microservice. The default value is `microservice`. You can customise this to reflect the purpose of the service — for example, `postgres-db` or `ml-inference-api`.
+
+    ---
+
+    ### Protocol & Ports *(required)*
+
+    This section defines how your microservice exposes its services. By default, a single entry is pre-configured:
+
+    - **Protocol:** HTTP
+    - **Port:** 80
+    - **Label:** UI-default
+
+    Port `80` is the standard HTTP port. You can click **Add Port** to expose additional ports if your microservice runs other services on different ports.
+
+    ---
+
+    ### Environment Variables *(optional)*
+
+    Add key-value pairs that will be injected as environment variables into your microservice container at startup. This is useful for passing in configuration values, API keys, database connection strings, or runtime flags. Click **Add Env Variable** to add additional rows.
+
+    ---
+
+    ### Arguments *(optional)*
+
+    Pass command-line arguments to the microservice's entrypoint process. Enter each argument in the provided field (for example, `--workers=4`). Click **Add Argument** to add additional argument rows.
+
+    ---
+
+    ### Command *(optional)*
+
+    Override the default command passed to the microservice container. Enter each command on a separate line without single quotes. Leave this field blank to use the image's built-in `CMD` or `ENTRYPOINT`.
+
+    ---
+
+    ### Volume Path *(optional)*
+
+    Enter a container path where a persistent volume should be mounted (for example, `/home`). This is useful if you want a specific directory inside the container to be backed by durable storage.
+
+    ---
+
+    ### Attach Bucket *(optional)*
+
+    Use this setting to attach an object storage bucket to your microservice. The default value is **No**.
+
+    <Frame>
+      <img src="/images/microservices/attach-bucket-yes-selection.png" alt="Attach Bucket dropdown showing the Yes option being selected" />
+    </Frame>
+
+    Set it to **Yes** to mount a bucket directly into the microservice's filesystem. When enabled, two additional fields appear:
+
+    - **Bucket Name** — the name of the bucket to attach, auto-populated from your account's available buckets.
+    - **Mount Path** — the path inside the container where the bucket will be accessible, for example `/home/abhinav/d7240f30e840-abhinav`.
+
+    <Frame>
+      <img src="/images/microservices/attach-bucket-after_selecting-yes.png" alt="Bucket Name and Mount Path fields shown after selecting Yes for Attach Bucket" />
+    </Frame>
+
+    Once all required fields are filled in, click **Create** to deploy your microservice.
+
   </Step>
 
-  <Step title="Configure the microservice">
-    Customize the microservice runtime behavior using the configuration fields below. All fields are optional; leave any field blank if the default value is sufficient.
+  <Step title="Accessing Your Microservice">
 
-    | Field | Description |
-    |---|---|
-    | **Ports** | The list of ports to open on the microservice container. |
-    | **Environment Variables** | Key-value pairs passed to the container at startup. Use these to supply API keys, feature flags, or any runtime configuration your service reads from the environment. |
-    | **Arguments** | Additional arguments passed to the container's command entrypoint. These correspond to the `args` field in the container specification. |
-    | **Command** | Override the default command passed to the microservice container. Leave blank to use the image's built-in `CMD` or `ENTRYPOINT`. |
+    After clicking **Create**, the platform provisions your container and redirects you to the Microservices list. Your new microservice will appear here with its current status. Once the status shows as **Running**, it is ready to use.
+
+    <Frame>
+      <img src="/images/microservices/after-spawning-microservice-ready.png" alt="Microservices list showing the newly spawned microservice in a Running state" />
+    </Frame>
+
+    From the microservice card you can click **View Details** to open the full details panel, where several actions are available:
+
+    ### Open the Microservice
+
+    Click the **Open** button to launch your microservice's public endpoint directly in your browser. This takes you to the live URL where your service is accessible.
+
+    <Frame>
+      <img src="/images/microservices/click-open-to-open-microservice.png" alt="Clicking the Open button to access the microservice's live endpoint in the browser" />
+    </Frame>
+
+    ### View Details
+
+    The **Details** tab shows the full runtime and configuration information for your microservice, including status, endpoint URL, cluster URL, data centre, plan, namespace, image tag, requested resources, ports, and volume path.
+
+    <Frame>
+      <img src="/images/microservices/click-details-for-all-info.png" alt="Details panel showing full microservice configuration including status, endpoint, plan, namespace, and resource details" />
+    </Frame>
+
+    ### View Logs
+
+    Click the **Logs** tab to access the real-time container logs for your microservice. This is useful for debugging startup issues or monitoring running processes inside the container.
+
+    <Frame>
+      <img src="/images/microservices/click-logs.png" alt="Logs tab showing real-time container output for the microservice" />
+    </Frame>
+
+    ### Monitor Resource Usage
+
+    Click the **Monitoring** tab to view live resource utilisation metrics for your microservice, including CPU usage, memory usage, GPU utilisation, CPU throttling, and disk I/O metrics such as read speed, write speed, read IOPS, and write IOPS. You can filter metrics by time range — 5 minutes, 30 minutes, 2 hours, 12 hours, or 24 hours.
+
+    <Frame>
+      <img src="/images/microservices/click-monitoring.png" alt="Monitoring tab showing CPU, memory, GPU, and disk I/O metrics for the microservice" />
+    </Frame>
+
   </Step>
 
-  <Step title="Name your microservice and spawn">
-    Enter a name for your microservice, then click **Spawn**. After the microservice is successfully created, you are redirected to the Ai-WorkSpace where your spawned microservice appears and is ready to use.
-  </Step>
 </Steps>
+
+---
 
 ## Onboarding a Custom Microservice
 
-To build and onboard your own microservice image into the Ai-MicroCloud before spawning it, refer to the [ISV Onboarding](/isv-onboarding) guide.
+If none of the available microservice images meet your requirements, you can build and onboard your own custom microservice image into the Ai-MicroCloud before deploying it. Refer to the [ISV Onboarding](/isv-onboarding) guide for full instructions on packaging and registering a custom containerized service.
