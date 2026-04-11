@@ -34,39 +34,22 @@
             "pages": [
               "spawn-workstation",
               "spawn-microservice",
-              // "spawn-orchestration-add-on",
-              "spawn-inference",
-              // "isv-onboarding"
+              "spawn-inference"
             ]
           },
           {
-            "group": "Ai-API Engine",
+            "group": "Platform",
             "pages": [
-              // "ai-api-engine/introduction",
-              // "ai-api-engine/notebooks",
-              // "ai-api-engine/build-models",
-              // "ai-api-engine/cli",
-              // "ai-api-engine/deploy"
+              {
+                "group": "Configurations",
+                "pages": [
+                  "platform/configurations/datacenter",
+                  "platform/configurations/plans",
+                  "platform/configurations/namespaces"
+                ]
+              }
             ]
-          },
-          {
-            "group": "Data & Monitoring",
-            "pages": [
-              // "data/datalake",
-              // "data/datasets",
-              // "data/monitoring"
-            ]
-          },
-          {
-            "group": "Account & Access",
-            "pages": [
-              // "account/manage-account",
-              // "account/two-factor-auth",
-              // "account/iam",
-              // "account/iam-roles",
-              // "account/iam-usergroups"
-            ]
-          },
+          }
           {
             "group": "SDK & Integrations",
             "pages": [
