@@ -34,37 +34,37 @@
             "pages": [
               "spawn-workstation",
               "spawn-microservice",
-              "spawn-orchestration-add-on",
+              // "spawn-orchestration-add-on",
               "spawn-inference",
-              "isv-onboarding"
+              // "isv-onboarding"
             ]
           },
           {
             "group": "Ai-API Engine",
             "pages": [
-              "ai-api-engine/introduction",
-              "ai-api-engine/notebooks",
-              "ai-api-engine/build-models",
-              "ai-api-engine/cli",
-              "ai-api-engine/deploy"
+              // "ai-api-engine/introduction",
+              // "ai-api-engine/notebooks",
+              // "ai-api-engine/build-models",
+              // "ai-api-engine/cli",
+              // "ai-api-engine/deploy"
             ]
           },
           {
             "group": "Data & Monitoring",
             "pages": [
-              "data/datalake",
-              "data/datasets",
-              "data/monitoring"
+              // "data/datalake",
+              // "data/datasets",
+              // "data/monitoring"
             ]
           },
           {
             "group": "Account & Access",
             "pages": [
-              "account/manage-account",
-              "account/two-factor-auth",
-              "account/iam",
-              "account/iam-roles",
-              "account/iam-usergroups"
+              // "account/manage-account",
+              // "account/two-factor-auth",
+              // "account/iam",
+              // "account/iam-roles",
+              // "account/iam-usergroups"
             ]
           },
           {
