@@ -10,7 +10,7 @@ An **Ai-Inference** service lets you deploy large language models and AI models 
 To get started, navigate to **Workspace → Inference** in the left sidebar. If you have not created any inference services yet, you will see an empty state page. Click the **Create Inference** button in the top-right corner to begin.
 
 <Frame>
-  <img src="/images/inference/no-inference.png" alt="Inference page showing no inference services created yet" />
+  <img src="/images/inferences/no-inference.png" alt="Inference page showing no inference services created yet" />
 </Frame>
 
 ---
@@ -33,7 +33,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     Models marked with **AI-Daptive** are optimised for high-performance AI inference workloads and may unlock additional runtime capabilities depending on the image tag selected.
 
     <Frame>
-      <img src="/images/inference/select-model.png" alt="Model selection dropdown showing available inference models including AI-Daptive variants" />
+      <img src="/images/inferences/select-model.png" alt="Model selection dropdown showing available inference models including AI-Daptive variants" />
     </Frame>
 
     ---
@@ -48,7 +48,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     Select the tag that matches your deployment requirements. The **AI-Daptive** tagged images provide an OpenAI-compatible API interface, making it easy to connect existing tools and clients.
 
     <Frame>
-      <img src="/images/inference/image-tag.png" alt="Image tag dropdown showing vllm and vllm-openai tags including an AI-Daptive variant" />
+      <img src="/images/inferences/image-tag.png" alt="Image tag dropdown showing vllm and vllm-openai tags including an AI-Daptive variant" />
     </Frame>
 
     ---
@@ -58,7 +58,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     Select the **Data Center** where your inference service will be deployed. The dropdown lists all data centres available to your organisation. Each entry shows the data centre name, location, and whether it is the primary region.
 
     <Frame>
-      <img src="/images/inference/datacenter-select.png" alt="Data Center dropdown showing the Phison-Prod data centre in Redmond, WA, US" />
+      <img src="/images/inferences/datacenter-select.png" alt="Data Center dropdown showing the Phison-Prod data centre in Redmond, WA, US" />
     </Frame>
 
     ---
@@ -78,7 +78,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     If none of the existing plans meet your needs, click **+ New Dynamic Plan** to create a custom resource configuration.
 
     <Frame>
-      <img src="/images/inference/plan-select.png" alt="Plan selection dropdown listing available compute plans with GPU, vCPU, RAM, and disk details" />
+      <img src="/images/inferences/plan-select.png" alt="Plan selection dropdown listing available compute plans with GPU, vCPU, RAM, and disk details" />
     </Frame>
 
     ---
@@ -92,7 +92,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     - **GPU Threshold (%)** — the GPU utilisation percentage at which the platform will trigger a scale-up. Default is `80`. When GPU usage exceeds this threshold, additional replicas are automatically spawned up to the Max Replicas limit.
 
     <Frame>
-      <img src="/images/inference/other-configure-options.png" alt="Min Replicas, Max Replicas, and GPU Threshold fields for configuring inference autoscaling" />
+      <img src="/images/inferences/other-configure-options.png" alt="Min Replicas, Max Replicas, and GPU Threshold fields for configuring inference autoscaling" />
     </Frame>
 
     Once you have filled in all required fields on the Configure Model tab, click **Next** to proceed to the Configure Environment tab.
@@ -104,7 +104,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     The **Configure Environment** tab collects deployment-level settings such as the namespace, inference name, networking, runtime arguments, and optional storage configuration.
 
     <Frame>
-      <img src="/images/inference/environment-tab.png" alt="Configure Environment tab showing namespace, inference name, protocol and ports, environment variables, arguments, command, volume path, and attach bucket fields" />
+      <img src="/images/inferences/environment-tab.png" alt="Configure Environment tab showing namespace, inference name, protocol and ports, environment variables, arguments, command, volume path, and attach bucket fields" />
     </Frame>
 
     ### Namespace *(required)*
@@ -171,7 +171,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     Use this setting to attach an object storage bucket to your inference service. The default value is **No**.
 
     <Frame>
-      <img src="/images/inference/attach-bucket-yes-selection.png" alt="Attach Bucket dropdown showing the Yes option being selected" />
+      <img src="/images/inferences/attach-bucket-yes-selection.png" alt="Attach Bucket dropdown showing the Yes option being selected" />
     </Frame>
 
     Set it to **Yes** to mount a bucket directly into the inference container's filesystem. When enabled, two additional fields appear:
@@ -180,7 +180,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     - **Bucket Mount Path** — the path inside the container where the bucket will be accessible, for example `/home/abhinav/d7240f30e840-abhinav`.
 
     <Frame>
-      <img src="/images/inference/attach-bucket-after-selecting-yes.png" alt="Bucket Name and Bucket Mount Path fields shown after selecting Yes for Attach Bucket" />
+      <img src="/images/inferences/attach-bucket-after-selecting-yes.png" alt="Bucket Name and Bucket Mount Path fields shown after selecting Yes for Attach Bucket" />
     </Frame>
 
     Once all required fields are filled in, click **Create Inference** to deploy your inference service.
@@ -192,7 +192,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     After clicking **Create Inference**, the platform provisions your container and redirects you to the Inference list. Your new inference service will appear here with its current status. Once the status shows as **Running**, it is ready to use.
 
     <Frame>
-      <img src="/images/inference/after-spawning-inference-ready.png" alt="Inference list showing the newly created inference service in a Running state" />
+      <img src="/images/inferences/after-spawning-inference-ready.png" alt="Inference list showing the newly created inference service in a Running state" />
     </Frame>
 
     From the inference card, click **View Details** to open the full details panel. The panel shows the source model, data centre, plan, endpoints, runtime status, and configuration. Several actions are available from this panel:
@@ -202,7 +202,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     Click the **Open Chat** button to launch the built-in chat interface for your inference service. This allows you to interact with your deployed model directly in the browser without any additional tooling.
 
     <Frame>
-      <img src="/images/inference/click-open-chat-to-open-inference.png" alt="Chat interface for the inference service showing the model waiting to come online" />
+      <img src="/images/inferences/click-open-chat-to-open-inference.png" alt="Chat interface for the inference service showing the model waiting to come online" />
     </Frame>
 
     <Note>
@@ -214,7 +214,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     The **Details** tab shows the full runtime and configuration information for your inference service, including status, public and cluster endpoints, data centre, plan, namespace, Kubernetes name, image tag, and scaling configuration such as min/max replicas and GPU threshold.
 
     <Frame>
-      <img src="/images/inference/click-details-for-all-info.png" alt="Details panel showing full inference service configuration including endpoints, runtime status, placement, and configuration details" />
+      <img src="/images/inferences/click-details-for-all-info.png" alt="Details panel showing full inference service configuration including endpoints, runtime status, placement, and configuration details" />
     </Frame>
 
     ### View Logs
@@ -222,7 +222,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     Click the **Logs** tab to access the real-time container logs for your inference service. This is useful for monitoring model loading progress, debugging startup issues, or diagnosing runtime errors.
 
     <Frame>
-      <img src="/images/inference/click-logs.png" alt="Logs tab showing real-time container output for the inference service" />
+      <img src="/images/inferences/click-logs.png" alt="Logs tab showing real-time container output for the inference service" />
     </Frame>
 
     ### Monitor Resource Usage
@@ -230,7 +230,7 @@ To get started, navigate to **Workspace → Inference** in the left sidebar. If 
     Click the **Monitoring** tab to view live resource utilisation metrics for your inference service, including CPU usage, memory usage, GPU utilisation, CPU throttling, and disk I/O metrics such as read speed, write speed, read IOPS, and write IOPS. You can filter metrics by time range — 5 minutes, 30 minutes, 2 hours, 12 hours, or 24 hours.
 
     <Frame>
-      <img src="/images/inference/click-monitoring.png" alt="Monitoring tab showing CPU, memory, GPU utilisation, and disk I/O metrics for the inference service" />
+      <img src="/images/inferences/click-monitoring.png" alt="Monitoring tab showing CPU, memory, GPU utilisation, and disk I/O metrics for the inference service" />
     </Frame>
 
   </Step>
