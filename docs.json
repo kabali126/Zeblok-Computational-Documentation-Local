@@ -35,6 +35,7 @@
               "spawn-workstation",
               "spawn-microservice",
               "spawn-orchestration-add-on",
+              "spawn-inference",
               "isv-onboarding"
             ]
           },
