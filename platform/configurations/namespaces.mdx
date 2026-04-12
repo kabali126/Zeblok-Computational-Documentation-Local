@@ -1,0 +1,72 @@
+---
+title: "Namespaces"
+description: "Create and manage namespaces to organise and isolate workloads within your organisation on the Ai-MicroCloud platform."
+---
+
+## Overview
+
+The **Namespaces** page is accessible via **Platform → Configurations → Namespaces** in the left sidebar. Namespaces are logical groupings that isolate workloads — workstations, microservices, and inference services — within your organisation. Every workload must be deployed into a namespace, and users can only access namespaces they are members of.
+
+Namespaces make it easy to separate environments (for example, production vs development), teams, or projects within the same Ai-MicroCloud platform without interference between them.
+
+<Frame>
+  <img src="/images/namespaces/namespace-list.png" alt="Namespaces page showing existing namespaces as cards with their name, organisation ID, member count, and visibility" />
+</Frame>
+
+Each namespace card displays the following information:
+
+- **Name** — the unique identifier of the namespace, always in lowercase
+- **Organisation ID** — the organisation this namespace belongs to
+- **Members** — the number of users who are members of this namespace
+- **Visibility** — whether the namespace is **Public** (visible to all users in the organisation) or private (visible only to members)
+
+You can search for a specific namespace using the **Search namespaces** field at the top of the page.
+
+---
+
+## Creating a Namespace
+
+To create a new namespace, click the **+ Add Namespace** button in the top-right corner. You will be taken to the **Create Namespace** page.
+
+<Frame>
+  <img src="/images/namespaces/namespace-created.png" alt="Create Namespace form showing the Name field, Organisation dropdown, Public namespace toggle, and Create Namespace button" />
+</Frame>
+
+Fill in the following fields:
+
+- **Name** *(required)* — enter a unique name for the namespace. The helper text below the field reads: *Name will be converted to lowercase*. Use descriptive names that reflect the team or environment, for example `production`, `dev-team`, or `ml-experiments`.
+- **Organisation** *(required)* — select the organisation this namespace belongs to from the dropdown. This is pre-populated with your organisation ID.
+- **Public namespace** — toggle this on to make the namespace visible and accessible to all users in the organisation. Leave it off to keep the namespace private, accessible only to users you explicitly add as members.
+
+Once all required fields are filled in, click **Create Namespace** to save it. The new namespace will appear on the Namespaces page immediately.
+
+<Note>
+  Namespace names are always converted to lowercase regardless of what you type. Plan your naming convention accordingly.
+</Note>
+
+---
+
+## Namespace Options
+
+Hovering over a namespace card reveals a context menu with two actions:
+
+- **Edit** — opens the edit form to update the namespace name or visibility
+- **Delete** — permanently removes the namespace and all its associated configuration
+
+<Frame>
+  <img src="/images/namespaces/namespace-options.png" alt="Namespace card context menu showing Edit and Delete options" />
+</Frame>
+
+---
+
+## Editing a Namespace
+
+Clicking **Edit** on a namespace opens the edit form where you can update the namespace name and public visibility setting. After making your changes, save them to apply the update.
+
+<Frame>
+  <img src="/images/namespaces/namespace-edit-delete.png" alt="Namespace list showing the Edit and Delete context menu options on a namespace card" />
+</Frame>
+
+<Warning>
+  Deleting a namespace is a permanent and irreversible action. Ensure that no active workloads are running in the namespace before deleting it, as this may disrupt running services.
+</Warning>
