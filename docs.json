@@ -49,6 +49,15 @@
             "group": "Platform",
             "pages": [
               {
+                "group": "Imports",
+                "pages": [
+                  "platform/imports/workstations",
+                  "platform/imports/microservices",
+                  "platform/imports/ai-model-hub",
+                  "platform/imports/datasets"
+                ]
+              },
+              {
                 "group": "Configurations",
                 "pages": [
                   "platform/configurations/datacenter",
