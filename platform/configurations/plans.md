@@ -1,0 +1,91 @@
+x---
+title: "Plans"
+description: "Create and manage resource allocation plans for workstations, microservices, and inference services on the Ai-MicroCloud platform."
+---
+
+## Overview
+
+The **Plans** page is accessible via **Platform → Configurations → Plans** in the left sidebar. Plans define the compute resources — GPU, vCPU, memory, and storage — that are allocated to a workstation, microservice, or inference service when it is spawned. Every workload on the platform must be assigned a plan at creation time.
+
+<Frame>
+  <img src="/images/plans/all-plans.png" alt="Plans page showing the full list of 20 resource allocation plans with their GPU, CPU, memory, storage, datacenter, visibility, and autoscaling details" />
+</Frame>
+
+The plans list displays the following columns for each plan:
+
+| Column | Description |
+|---|---|
+| **Plan Name** | The unique name identifying the plan |
+| **Price** | The cost of the plan in the configured currency |
+| **GPU** | Number of GPUs allocated |
+| **CPU** | Number of vCPUs allocated |
+| **Memory (GB)** | RAM allocated in gigabytes |
+| **Storage (GB)** | Local disk storage allocated in gigabytes |
+| **Datacenter** | The data center this plan is associated with |
+| **Visibility** | Whether the plan is Public, Private, or restricted to the Organisation |
+| **Autoscaling** | Whether autoscaling is enabled for this plan |
+
+You can search for a specific plan using the **Search plans** field in the top-right corner.
+
+---
+
+## Creating a Plan
+
+To create a new plan, click the **+ Add Plan** button in the top-right corner. The New Plan form has two tabs — **Standard Plan** and **Auto-Scaling Plan**.
+
+<Frame>
+  <img src="/images/plans/plan-created.png" alt="New Plan form showing the Standard Plan tab with fields for plan name, price, GPU, vCPU, memory, storage, datacenter, visibility, allowed notebooks, and a Create Plan button" />
+</Frame>
+
+### Standard Plan
+
+A Standard Plan defines a fixed set of resources that will be allocated every time a workload using this plan is spawned. Fill in the following fields:
+
+- **Plan Name** *(required)* — a unique name to identify this plan, for example `gpu-large` or `cpu-small`.
+- **Price** — the price of the plan. Set to `0` for internal or free plans. Select the **Currency** (default is USD).
+- **GPU** — the number of GPUs to allocate. Set to `0` for CPU-only plans.
+- **vCPU** *(required)* — the number of virtual CPU cores to allocate.
+- **Memory (GB)** *(required)* — the amount of RAM in gigabytes.
+- **Storage (GB)** — the amount of local disk storage in gigabytes.
+- **Datacenter** *(required)* — the data center this plan will be associated with. Select from the available data centers in your organisation.
+- **Visibility** *(required)* — controls who can use this plan:
+  - **Public** — available to all users on the platform
+  - **Private** — available only to the plan creator
+  - **Organization** — available to all members of your organisation
+- **Allowed Notebooks** — the maximum number of notebook instances a user can spawn simultaneously using this plan. The helper text below the field reads: *Max number of notebooks a user can spawn with this plan*.
+
+Once all required fields are filled in, click **Create Plan** to save the plan.
+
+### Auto-Scaling Plan
+
+The **Auto-Scaling Plan** tab is used when deploying workloads on public cloud infrastructure such as AWS or Azure. Unlike a standard plan which allocates a fixed amount of resources, an auto-scaling plan allows the platform to dynamically scale compute resources up or down based on workload demand. This is particularly useful for inference services and microservices that experience variable traffic patterns on public cloud deployments.
+
+<Note>
+  Auto-Scaling Plans are intended for use with public cloud data centers. For on-premise deployments, use a Standard Plan with fixed resource allocation.
+</Note>
+
+---
+
+## Plan Options
+
+Each plan in the list has a context menu accessible by hovering over the plan row. The available options are **Edit** and **Delete**.
+
+<Frame>
+  <img src="/images/plans/plan-options.png" alt="Plan row context menu showing Edit and Delete options" />
+</Frame>
+
+---
+
+## Editing a Plan
+
+Clicking **Edit** on a plan opens the **Edit Plan** panel on the right side of the screen. All fields from the original plan creation form are editable here, including Plan Name, Price, GPU, CPU, Memory, Storage, Datacenter, Visibility, Allowed Notebooks, and the AutoScaling toggle.
+
+<Frame>
+  <img src="/images/plans/plan-edit.png" alt="Edit Plan panel showing all editable fields for the demo-plan including GPU, CPU, memory, storage, datacenter, visibility, allowed notebooks, and autoscaling toggle" />
+</Frame>
+
+After making your changes, click **Save Changes** to apply them. Click **Cancel** to discard any edits and close the panel.
+
+<Note>
+  Editing a plan affects all future workloads that use it. Existing running workloads will not be affected by plan changes — they continue to use the resource allocation that was active when they were spawned.
+</Note>
