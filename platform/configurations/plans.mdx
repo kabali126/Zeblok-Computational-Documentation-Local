@@ -34,7 +34,7 @@ You can search for a specific plan using the **Search plans** field in the top-r
 To create a new plan, click the **+ Add Plan** button in the top-right corner. The New Plan form has two tabs — **Standard Plan** and **Auto-Scaling Plan**.
 
 <Frame>
-  <img src="/images/plans/plan-created.png" alt="New Plan form showing the Standard Plan tab with fields for plan name, price, GPU, vCPU, memory, storage, datacenter, visibility, allowed notebooks, and a Create Plan button" />
+  <img src="/images/plans/plan-options.png" alt="New Plan form showing the two tabs Standard Plan and Auto-Scaling Plan" />
 </Frame>
 
 ### Standard Plan
@@ -54,7 +54,11 @@ A Standard Plan defines a fixed set of resources that will be allocated every ti
   - **Organization** — available to all members of your organisation
 - **Allowed Notebooks** — the maximum number of notebook instances a user can spawn simultaneously using this plan. The helper text below the field reads: *Max number of notebooks a user can spawn with this plan*.
 
-Once all required fields are filled in, click **Create Plan** to save the plan.
+Once all required fields are filled in, click **Create Plan** to save the plan. The new plan will then appear in the plans list with its name and configured resources.
+
+<Frame>
+  <img src="/images/plans/plan-created.png" alt="Plans list showing the newly created plan appearing at the top with its name, GPU, CPU, memory, storage, datacenter, and visibility details" />
+</Frame>
 
 ### Auto-Scaling Plan
 
@@ -63,14 +67,6 @@ The **Auto-Scaling Plan** tab is used when deploying workloads on public cloud i
 <Note>
   Auto-Scaling Plans are intended for use with public cloud data centers. For on-premise deployments, use a Standard Plan with fixed resource allocation.
 </Note>
-
----
-
-## Plan Options
-
-<Frame>
-  <img src="/images/plans/plan-options.png" alt="Plan row context menu showing Edit and Delete options" />
-</Frame>
 
 ---
 
