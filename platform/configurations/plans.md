@@ -1,6 +1,6 @@
-x---
+---
 title: "Plans"
-description: "Create and manage resource allocation plans for workstations, microservices, and inference services on the Ai-MicroCloud platform."
+description: "Create and manage resource allocation plans on the Ai-MicroCloud platform."
 ---
 
 ## Overview
