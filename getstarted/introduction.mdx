@@ -1,36 +1,134 @@
 ---
 title: "Introduction"
 description: "Zeblok Computational is a GPU-powered AI/ML platform that gives you a unified environment to develop, train, and deploy machine learning models at scale."
---- 
+---
 
-Zeblok Computational provides a single, pre-configured cloud environment where data scientists, data engineers, and AI engineers can access datasets, GPU-powered AI/ML frameworks, languages, tools, and AI algorithms from the Intelligence Marketplace — all from one place.
+Zeblok Computational provides a single, pre-configured cloud environment where data scientists, data engineers, and AI engineers can access datasets, GPU-powered AI/ML frameworks, languages, tools, and AI algorithms — all from one place.
 
-At the core of the platform is the **Ai-WorkStation**, built on JupyterLab, which lets you write and run code, mix in equations and visualizations, and collaborate with your team without setting up any infrastructure. For high-performance workloads, the **Ai-HPC-WorkStation** adds Slurm-as-a-Service and parallel processing across four or more GPUs.
+At the core of the platform is the **Ai-WorkStation**, built on JupyterLab, which lets you write and run code, mix in equations and visualisations, and collaborate with your team without setting up any infrastructure. For high-performance workloads, the **Ai-HPC-WorkStation** adds Slurm-as-a-Service and parallel processing across four or more GPUs.
 
 The entire platform runs inside **Ai-MicroCloud™** — a turnkey, cloud-native AI environment that spans from Core to Edge and covers the full ML lifecycle: development, testing, training, and production deployment.
 
-## Key components
+---
 
-- **Ai-MicroCloud™** — the underlying cloud-native environment that ties all components together
-- **Ai-WorkStation** — a single unified GPU environment with 1 GPU, 1 vCPU, and 64 GB of storage
-- **Ai-HPC-WorkStation** — scales to 4+ GPUs with Slurm-as-a-Service for parallel workloads
-- **Ai-API™ Engine** — deploys your trained ML models as production REST APIs
-- **Ai-Data Lake** — high-performance storage for structured and unstructured data at SSD speeds
-- **Ai-MicroCloud™ Manager** — admin utility for RBAC, plans, namespaces, and datacenter management
+## Workspace
 
-## Explore the docs
+Your day-to-day environment for building, running, and deploying AI workloads.
+
+<CardGroup cols={3}>
+  <Card title="Ai-WorkStation" icon="book-open" href="/workstation-and-services/spawn-workstation">
+    A JupyterLab-based GPU environment to write code, run experiments, and collaborate — no infrastructure setup required.
+  </Card>
+  <Card title="Ai-MicroServices" icon="cube" href="/workstation-and-services/spawn-microservice">
+    Deploy containerized services with custom ports, private registries, and GPU-backed compute plans.
+  </Card>
+  <Card title="Orchestration Add-on" icon="sitemap" href="/workstation-and-services/orchestration-add-on">
+    Coordinate multi-step AI pipelines and manage dependencies across your workloads.
+  </Card>
+  <Card title="Ai-API Engine" icon="bolt" href="/workstation-and-services/ai-api">
+    Package and serve trained ML models as scalable, production-ready REST APIs.
+  </Card>
+  <Card title="Agents" icon="robot" href="/workstation-and-services/agents">
+    Build and deploy autonomous AI agents that reason, plan, and act on your behalf.
+  </Card>
+  <Card title="Ai-Inference" icon="rocket" href="/workstation-and-services/spawn-inference">
+    Deploy large language models as live, queryable endpoints with a built-in chat interface and OpenAI-compatible API.
+  </Card>
+</CardGroup>
+
+---
+
+## Gen AI Workspace
+
+Purpose-built tools for fine-tuning, distilling, and adapting foundation models.
 
 <CardGroup cols={2}>
-  <Card title="Core concepts" icon="book-open" href="/core-concepts">
-    Understand the building blocks of the Zeblok platform.
+  <Card title="Knowledge Distillations" icon="brain" href="/gen-ai/knowledge-distillations">
+    Compress large foundation models into smaller, faster variants without sacrificing accuracy.
   </Card>
-  <Card title="Create an account" icon="user-plus" href="/create-an-account">
-    Sign up as an individual or accept an invitation from your org admin.
+  <Card title="Domain Adaptations" icon="sliders" href="/gen-ai/domain-adaptations">
+    Fine-tune foundation models on your own domain-specific data to improve task performance.
   </Card>
-  <Card title="Ai-API Engine" icon="microchip" href="/ai-api-engine/introduction">
-    Package and serve trained ML models as scalable REST APIs.
+</CardGroup>
+
+---
+
+## Platform Imports
+
+Onboard external assets — workstation images, microservices, orchestration add-ons, AI models, and datasets — directly into the platform.
+
+<CardGroup cols={3}>
+  <Card title="Import Workstations" icon="book-open" href="/platform/imports/workstations">
+    Bring your own JupyterLab-compatible workstation images into the platform for deployment.
   </Card>
-  <Card title="Data Lake" icon="database" href="/data/datalake">
-    Store, manage, and query structured and unstructured data at scale.
+  <Card title="Import Microservices" icon="cube" href="/platform/imports/microservices">
+    Register custom containerized services from private or public registries.
+  </Card>
+  <Card title="Import Orchestration Add-ons" icon="sitemap" href="/platform/imports/orchestration-add-ons">
+    Onboard custom orchestration components to extend your pipeline capabilities.
+  </Card>
+  <Card title="AI Model Hub" icon="rocket" href="/platform/imports/ai-model-hub">
+    Import models from Hugging Face and make them available for inference deployment.
+  </Card>
+  <Card title="Datasets" icon="database" href="/platform/imports/datasets">
+    Upload and manage structured and unstructured datasets for training and evaluation.
+  </Card>
+</CardGroup>
+
+---
+
+## Configurations
+
+Manage the infrastructure building blocks that power your workloads.
+
+<CardGroup cols={3}>
+  <Card title="Data Centers" icon="server" href="/configurations/data-centers">
+    View and manage the data centre regions available to your organisation.
+  </Card>
+  <Card title="Plans" icon="layer-group" href="/configurations/plans">
+    Define and manage compute plans with custom GPU, vCPU, RAM, and disk allocations.
+  </Card>
+  <Card title="Namespaces" icon="folder-open" href="/configurations/namespaces">
+    Organise and isolate workloads across teams and projects using namespaces.
+  </Card>
+</CardGroup>
+
+---
+
+## Identity & Access Management
+
+Control who can access what across your organisation.
+
+<CardGroup cols={3}>
+  <Card title="Users" icon="user" href="/iam/users">
+    Invite and manage users within your organisation.
+  </Card>
+  <Card title="Roles" icon="shield-halved" href="/iam/roles">
+    Define roles and assign them to users to control platform access.
+  </Card>
+  <Card title="Permissions" icon="key" href="/iam/permissions">
+    Set granular permissions across resources and actions.
+  </Card>
+  <Card title="Policies" icon="file-shield" href="/iam/policies">
+    Create and enforce access policies across your organisation.
+  </Card>
+  <Card title="Organisations" icon="building" href="/iam/organisations">
+    Manage your organisation's structure, members, and settings.
+  </Card>
+  <Card title="User Groups" icon="users" href="/iam/user-groups">
+    Group users together to simplify role and permission assignments.
+  </Card>
+</CardGroup>
+
+---
+
+## More
+
+<CardGroup cols={2}>
+  <Card title="Containerization" icon="box" href="/containerization">
+    Build, tag, and push custom container images directly from the platform.
+  </Card>
+  <Card title="Support" icon="headset" href="/support">
+    Get help from the Zeblok team or browse common issues and known errors.
   </Card>
 </CardGroup>
