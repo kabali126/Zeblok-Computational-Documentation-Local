@@ -1,67 +1,100 @@
 ---
-title: "Core concepts"
-description: "The key components that make up the Zeblok Computational platform."
+title: "Core Concepts"
+description: "The key building blocks that make up the Zeblok Computational platform."
 ---
 
-<AccordionGroup> 
-  <Accordion title="Ai-MicroCloud™">
-    Ai-MicroCloud™ provides a single, cohesive, turnkey, cloud-native AI environment for the development, testing, training, and deployment of an end-to-end AI/ML solution — from Core to Edge.
+## The Platform at a Glance
 
-    It eliminates 12–18 months of engineering effort to integrate the multitude of technologies required for a production AI ecosystem, and reduces go-to-market time for ISVs by 8–12 months.
+Zeblok's **Ai-MicroCloud™** is a turnkey, cloud-native AI environment that eliminates 12–18 months of engineering effort to integrate the technologies required for a production AI ecosystem. It covers the full ML lifecycle — from development and training to testing and deployment — spanning Core to Edge.
+
+---
+
+## Workspace
+
+<AccordionGroup>
+  <Accordion title="Ai-WorkStation" icon="book-open">
+    A single unified JupyterLab environment that orchestrates infrastructure, open-source AI/ML frameworks, and proven AI algorithms. Write code, run experiments, visualise results, and take models to production — all on one platform.
+
+    - **Default resources:** 1 GPU · 1 vCPU · 64 GB storage
+    - Scales easily as your workload grows
+    - Accessible to data scientists, data engineers, and AI engineers
   </Accordion>
 
-  <Accordion title="JupyterLab">
-    JupyterLab is a web-based interactive development environment for Jupyter notebooks, code, and data. It is the interface you work in when you launch an Ai-WorkStation.
+  <Accordion title="Ai-HPC-WorkStation" icon="microchip">
+    Extends the standard Ai-WorkStation for large-scale, compute-intensive workloads. Ideal for training large models that require multi-GPU parallelism or long batch jobs.
 
-    JupyterLab is flexible: you can configure and arrange the interface to support a wide range of workflows in data science, scientific computing, and machine learning. It is also extensible and modular, so you can write plugins that add new components and integrate with existing ones.
-
-    ### The Jupyter Notebook
-
-    The Jupyter Notebook is an open-source web application that lets you create and share documents containing live code, equations, visualizations, and narrative text. Common uses include data cleaning and transformation, numerical simulation, statistical modeling, data visualization, and machine learning.
+    - **4+ GPUs** for demanding training runs
+    - **Slurm-as-a-Service** for job scheduling and workload management
+    - **Parallel processing** across worker nodes
+    - Same JupyterLab interface — no workflow change required
   </Accordion>
 
-  <Accordion title="Ai-WorkStation">
-    The Zeblok Ai-WorkStation provides a single unified environment that seamlessly orchestrates infrastructure, open-source AI/ML frameworks, and proven AI algorithms. An intuitive interface lets a data scientist, data engineer, or AI engineer access petaFLOPS of computing power, develop and train new AI models, and take them to production in a runtime environment — all on the same platform.
-
-    **Default resources:** 1 GPU, 1 vCPU, 64 GB storage. Resources scale easily as your workload grows.
+  <Accordion title="Ai-MicroServices" icon="cube">
+    Deploy containerized services on demand from the platform. Choose from public templates such as nginx, PostgreSQL, MongoDB, MLflow, and ChromaDB — or import your own custom image. Configure ports, environment variables, replicas, and compute plans to match your workload.
   </Accordion>
 
-  <Accordion title="Ai-HPC-WorkStation">
-    The Ai-HPC-WorkStation extends the standard Ai-WorkStation for demanding, large-scale workloads. It adds:
-
-    - **Slurm-as-a-Service** — job scheduling and workload management
-    - **Parallel processing** — distribute jobs across worker nodes
-    - **4+ GPUs** — scale up to the compute your workload requires
-
-    You access HPC resources through the same Jupyter Notebook interface, so the workflow stays consistent.
-
-    <Tip>
-      Use the Ai-HPC-WorkStation when training large models that require multi-GPU parallelism or long batch jobs.
-    </Tip>
+  <Accordion title="Ai-Inference" icon="rocket">
+    Deploy large language models as live, queryable endpoints. Interact with your model through a built-in chat interface or query it programmatically via an OpenAI-compatible API. Supports autoscaling based on GPU utilisation thresholds.
   </Accordion>
 
-  <Accordion title="Ai-Data Lake">
-    Ai-Data Lake is a centralized, high-performance data store that lets you import, filter, and instantly analyze both structured and unstructured data at any scale.
+  <Accordion title="Ai-API™ Engine" icon="bolt">
+    Bridges the gap between data science and DevOps. Deploy trained ML models anywhere as production REST APIs — fast, repeatable, and scalable — without requiring deep infrastructure knowledge.
+  </Accordion>
 
-    Key characteristics:
+  <Accordion title="Agents" icon="robot">
+    Build and deploy autonomous AI agents that reason, plan, and act. Connect agents to tools, APIs, and data sources to automate complex multi-step workflows.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Gen AI Workspace
+
+<AccordionGroup>
+  <Accordion title="Knowledge Distillations" icon="brain">
+    Compress large foundation models into smaller, faster variants that retain accuracy. Distilled models are cheaper to serve and faster to respond — ideal for production deployments with latency or cost constraints.
+  </Accordion>
+
+  <Accordion title="Domain Adaptations" icon="sliders">
+    Fine-tune foundation models on your own domain-specific data to improve task performance. Adapt general-purpose models to specialised use cases such as legal, medical, or financial language.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Platform
+
+<AccordionGroup>
+  <Accordion title="AI Model Hub" icon="rocket">
+    A central registry of AI models available on the platform. Import models directly from Hugging Face — public or private — and make them available for inference deployment. The hub tracks model status, version, serving image, and endpoint details.
+  </Accordion>
+
+  <Accordion title="Ai-Data Lake" icon="database">
+    A centralised, high-performance data store for structured and unstructured data at any scale.
+
     - Operates at **SSD speeds** for fast read/write access
-    - Supports **industry-grade SSL security** and data redundancy for high availability
+    - **Industry-grade SSL security** with data redundancy
     - Scales up as your data grows
   </Accordion>
 
-  <Accordion title="Ai-API™ Engine">
-    Getting a machine learning model into production is hard. Data scientists are rarely experts in building production services, and handing off a pickled model or weights file to an engineering team is time-consuming and error-prone.
+  <Accordion title="Ai-MicroCloud™ Manager" icon="shield-halved">
+    The centralised administration utility for the entire platform. Organisation administrators can manage every component from one place.
 
-    Zeblok's Ai-API™ Engine lives inside Ai-MicroCloud™ and bridges the gap between data science and DevOps. It lets you deploy trained ML models anywhere as production APIs in a fast, repeatable, and scalable way — without requiring deep infrastructure knowledge.
-  </Accordion>
-
-  <Accordion title="Ai-MicroCloud™ Manager">
-    Ai-MicroCloud™ Manager is the centralized administration utility for the entire platform. It lets organization administrators manage and orchestrate all components, including the Ai-WorkStation, Ai-HPC-WorkStation, Ai-Data Lake, Intelligence Marketplace, and Ai-API™ Engine.
-
-    With the Manager, you can:
-    - Define **role-based access control (RBAC)** for users and teams
-    - Configure **infrastructure plans** — vCPUs, GPUs, memory, and storage
-    - Define **namespaces** and add accessible data centers
-    - View **metering data** for resource utilization, billing, or chargeback purposes
+    - **RBAC** — role-based access control for users and teams
+    - **Plans** — configure vCPUs, GPUs, memory, and storage
+    - **Namespaces** — isolate workloads across teams and projects
+    - **Metering** — view resource utilisation for billing or chargeback
   </Accordion>
 </AccordionGroup>
+
+---
+
+## JupyterLab
+
+The interface you work in when you launch an Ai-WorkStation or Ai-HPC-WorkStation. JupyterLab is a web-based interactive development environment for notebooks, code, and data.
+
+It is flexible, extensible, and modular — you can arrange the interface to support a wide range of workflows in data science, scientific computing, and machine learning, and extend it with plugins that integrate with existing tools.
+
+<Tip>
+  New to JupyterLab? The [official JupyterLab documentation](https://jupyterlab.readthedocs.io) is a great place to get started.
+</Tip>
