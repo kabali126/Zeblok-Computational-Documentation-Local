@@ -1,0 +1,174 @@
+---
+title: "AI Model Hub"
+description: "Learn how to import AI models from Hugging Face into the Ai-MicroCloud platform's AI Model Hub, making them available for inference deployment."
+---
+
+## Overview
+
+The **AI Model Hub** allows you to import models directly from Hugging Face into the Ai-MicroCloud platform. Once imported, these models become available in the **Model** dropdown when creating a new inference service. You can import both public and private Hugging Face models.
+
+To get started, navigate to **Platform → Imports → AI Model Hub** in the left sidebar. Click the **Import Model** button in the top-right corner to begin.
+
+<Frame>
+  <img src="/images/imports/ai-model-hub.png" alt="AI Model Hub page showing existing imported models with Ready status" />
+</Frame>
+
+---
+
+<Steps>
+
+  <Step title="Provide Your Hugging Face Token">
+
+    On the **Import Model** page, the first field you will encounter is the **Hugging Face Token**.
+
+    <Frame>
+      <img src="/images/imports/import-model-page.png" alt="Import Model form showing Hugging Face Token field and Select Model dropdown" />
+    </Frame>
+
+    ### Hugging Face Token *(required)*
+
+    Enter your **Hugging Face API token** in the token field. This token authenticates your request with Hugging Face and allows the platform to fetch model metadata and files on your behalf.
+
+    <Tip>
+      You can generate or copy your Hugging Face token from [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens). Use a token with at least **read** access.
+    </Tip>
+
+    <Frame>
+      <img src="/images/imports/hugging-face-token.png" alt="Hugging Face Token field filled in on the Import Model form" />
+    </Frame>
+
+    ### Private Hugging Face Repository *(optional)*
+
+    If the model you wish to import resides in a **private repository**, toggle on the **Private Hugging Face repository** switch at the top of the form. This ensures the platform uses your token to access gated or private model repositories.
+
+  </Step>
+
+  <Step title="Select a Model">
+
+    Once your token is entered, use the **Select Model** dropdown to search for and choose the Hugging Face model you want to import.
+
+    <Frame>
+      <img src="/images/imports/model-select.png" alt="Select Model dropdown showing search results for meta-llama/Llama-3.1-8B-Instruct with multiple variants listed" />
+    </Frame>
+
+    ### Searching for a Model
+
+    Type the model name or Hugging Face repository path into the search field. For example:
+
+    - `meta-llama/Llama-3.1-8B-Instruct`
+    - `EleutherAI/gpt-neo-125m`
+    - `facebook/opt-125m`
+
+    A dropdown list of matching models will appear. Each result shows the model name, repository path, and its provider tag. Select the model you want to import.
+
+    ### Make Imported Model Public in Model Hub *(optional)*
+
+    Toggle **Make imported model public in Model Hub** if you want this model to be visible and usable by other members of your organisation. Leave it off to keep the model private to your account.
+
+  </Step>
+
+  <Step title="Review Auto-Filled Details">
+
+    After selecting a model, the platform automatically fetches and populates the remaining fields from Hugging Face metadata. You do not need to fill these in manually.
+
+    <Frame>
+      <img src="/images/imports/rest-detail-auto-filled.png" alt="Import Model form with auto-filled fields including Selected Model, Provider, Serving Image, Endpoint, Description, and Model Details tags" />
+    </Frame>
+
+    The following fields are auto-populated:
+
+    | Field | Description |
+    |---|---|
+    | **Selected Model** | The model name and Hugging Face repository path |
+    | **Provider** | The organisation or user who published the model (e.g. `meta`) |
+    | **Serving Image** | The default inference runtime image (e.g. `vllm/vllm-openai:v0.8.0`) |
+    | **AI-Daptive** | Indicates whether the serving image is AI-Daptive optimised |
+    | **Endpoint** | The API endpoint path the model will serve (e.g. `/v1/chat/completions`) |
+    | **Description** | A short description imported from the model's Hugging Face page |
+    | **Model Details** | Tags describing the model's type and capabilities (e.g. `transformers`, `llama`, `text-generation`) |
+
+    Review these details to ensure they match your expectations, then click **Import Model** to submit the import request.
+
+  </Step>
+
+  <Step title="Monitor Import Progress via Email">
+
+    After clicking **Import Model**, the platform queues the download and sends you email notifications at each stage of the import process.
+
+    ### Stage 1 — Model Import Queued
+
+    You will first receive an email confirming that your model import request has been received and queued for processing.
+
+    <Frame>
+      <img src="/images/imports/model-queued-email.png" alt="Zeblok system email stating MODEL IMPORT HAS BEEN QUEUED" />
+    </Frame>
+
+    ### Stage 2 — Model Is Downloading
+
+    Once the platform begins fetching the model files from Hugging Face, you will receive a second email notifying you that the model download is in progress.
+
+    <Frame>
+      <img src="/images/imports/model-downloading-email.png" alt="Zeblok system email stating MODEL IS DOWNLOADING" />
+    </Frame>
+
+    <Note>
+      Large models such as Llama 3.1 70B can take several minutes to download. You can monitor the live status in the AI Model Hub without waiting for an email.
+    </Note>
+
+    All status emails are sent from `donotreply@zeblok.com`. If you do not receive them, check your spam folder or contact **Support@zeblok.com**.
+
+  </Step>
+
+  <Step title="Monitor Download Status in the UI">
+
+    While the model is being downloaded, you can track its progress directly in the **AI Model Hub**. The model card will display a **Downloading** status badge until the import is complete.
+
+    <Frame>
+      <img src="/images/imports/model-downloading-ui.png" alt="AI Model Hub showing Llama 3.1 8B Instruct card with a Downloading status badge" />
+    </Frame>
+
+    Once the download finishes, the badge will automatically update to **Ready**, indicating the model is available for use.
+
+  </Step>
+
+  <Step title="Model Ready to Use">
+
+    When the model has finished downloading and is ready to be deployed, you will receive a final email notification.
+
+    <Frame>
+      <img src="/images/imports/model-ready-to-use-email.png" alt="Zeblok system email stating MODEL IS READY TO BE USED" />
+    </Frame>
+
+    Your model will now appear in the **AI Model Hub** with a **Ready** status, and it will be selectable in the **Model** dropdown when creating a new inference service.
+
+    <Frame>
+      <img src="/images/imports/model-view-details.png" alt="AI Model Hub showing the imported Llama 3.1 8B Instruct model details panel with READY status, type, version, endpoint, provider, visibility, and Docker image information" />
+    </Frame>
+
+    From the model card, click any entry to open its **details panel** on the right. The panel shows:
+
+    - **Status** — Current readiness state (e.g. `READY`)
+    - **Type** — Inference runtime type (e.g. `VLLM`)
+    - **Version** — Internal version hash
+    - **Endpoint** — The API path served by this model (e.g. `/v1/chat/completions`)
+    - **Provider** — The upstream model publisher
+    - **Visibility** — Whether the model is public or private within your organisation
+    - **Docker Image** — The serving container image used (e.g. `vllm/vllm-openai:v0.8.0`)
+    - **Description** — Source repository reference
+    - **Tags** — Associated metadata tags
+
+    You can also **Edit** or **Delete** the model from this panel using the buttons in the top-right corner.
+
+  </Step>
+
+</Steps>
+
+---
+
+## Next Steps
+
+Once your model shows a **Ready** status in the AI Model Hub, it is available to deploy as a live inference endpoint. Navigate to **Workspace → Inference** and click **Create Inference** to get started. Your imported model will appear in the **Model** dropdown during setup.
+
+<Card title="Spawn Ai-Inference" icon="rocket" href="/inferences/spawn-inference">
+  Learn how to deploy your imported model as a GPU-powered inference endpoint.
+</Card>
