@@ -7,7 +7,11 @@ description: "Learn how to import AI models from Hugging Face into the Ai-MicroC
 
 The **AI Model Hub** allows you to import models directly from Hugging Face into the Ai-MicroCloud platform. Once imported, these models become available in the **Model** dropdown when creating a new inference service. You can import both public and private Hugging Face models.
 
-To get started, navigate to **Platform → Imports → AI Model Hub** in the left sidebar. Click the **Import Model** button in the top-right corner to begin.
+To get started, navigate to **Platform → Imports → AI Model Hub** in the left sidebar. You will see all previously imported models listed here. Click the **Import Model** button in the top-right corner to begin.
+
+<Frame>
+  <img src="/images/import-ai-model-hub/import-model-page.png" alt="AI Model Hub listing page showing all imported models with their Ready status, type tags, and version info" />
+</Frame>
 
 ---
 
@@ -15,10 +19,10 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
 
   <Step title="Provide Your Hugging Face Token">
 
-    On the **Import Model** page, the first field you will encounter is the **Hugging Face Token**.
+    On the **Import Model** form, enter your Hugging Face credentials to authenticate and search for models.
 
     <Frame>
-      <img src="/images/import-ai-model-hub/import-model-page.png" alt="Import Model form showing Hugging Face Token field and Select Model dropdown" />
+      <img src="/images/import-ai-model-hub/hugging-face-token.png" alt="Import Model form showing the Hugging Face Token field filled in, Select Model dropdown, and Import Model button" />
     </Frame>
 
     ### Hugging Face Token *(required)*
@@ -28,10 +32,6 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
     <Tip>
       You can generate or copy your Hugging Face token from [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens). Use a token with at least **read** access.
     </Tip>
-
-    <Frame>
-      <img src="/images/import-ai-model-hub/hugging-face-token.png" alt="Hugging Face Token field filled in on the Import Model form" />
-    </Frame>
 
     ### Private Hugging Face Repository *(optional)*
 
