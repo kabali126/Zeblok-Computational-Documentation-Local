@@ -33,8 +33,7 @@
             "pages": [
               "getstarted/introduction",
               "getstarted/core-concepts",
-              "getstarted/create-an-account",
-              "getstarted/sign-in"
+              "getstarted/signup-and-login"
             ]
           },
           {
