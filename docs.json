@@ -5,7 +5,7 @@
   "logo": {
     "light": "/images/logo-black.png",
     "dark": "/images/logo-white.png",
-    "width": 800
+    "width": 800  
   },
   "favicon": "https://icons.duckduckgo.com/ip3/computationaldocs.zeblok.com.ico",
   "colors": {
