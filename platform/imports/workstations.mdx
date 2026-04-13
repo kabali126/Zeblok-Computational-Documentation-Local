@@ -1,0 +1,123 @@
+---
+title: "Import Workstations"
+description: "Import custom workstation images into the Ai-MicroCloud platform to make them available for spawning."
+---
+
+## Overview
+
+The **Workstation Images** page is accessible via **Platform → Imports → Workstations** in the left sidebar. It lists all workstation images that have been imported into your organisation's Ai-MicroCloud platform — both public images provided by Zeblok and custom images imported by your team.
+
+Each workstation card displays the name, description, container type, number of image tags, number of associated plans, visibility, the user who added it, and the date it was imported. Some workstations are marked with an **AI-Daptive** badge indicating they are optimised for AI-Daptive+ workloads.
+
+<Frame>
+  <img src="/images/import-workstations/import-workstation-tab.png" alt="Workstation Images page showing all imported workstation cards with their name, description, container type, tags, plans, visibility, and date" />
+</Frame>
+
+To import a new workstation image, click the **+ Import Workstation** button in the top-right corner. The Import Workstation form has two tabs — **Details** and **Registry & Plans**.
+
+---
+
+## Step 1 — Details
+
+The **Details** tab collects all the metadata about the workstation image you are importing.
+
+<Frame>
+  <img src="/images/import-workstations/details-all-fields.png" alt="Import Workstation Details tab showing all fields including Name, Description, Type of Container, Command, Image Tags, License Type, Provider Info, Logo, Provider Logo, and Public Access toggle" />
+</Frame>
+
+Fill in the following fields:
+
+- **Name** *(required)* — a unique name for the workstation image, for example `Test Notebook` or `Custom ML Environment`.
+- **Description** *(required)* — a brief description of what the workstation contains and its intended use.
+- **Type of Container** *(required)* — select the category that best describes this workstation. Three options are available: **Data Science**, **Algorithm**, or **Slurm**.
+
+<Frame>
+  <img src="/images/import-workstations/type-of-container-select.png" alt="Type of Container dropdown showing the three options Data Science, Algorithm, and Slurm" />
+</Frame>
+
+- **Command** *(optional)* — an optional start command to override the container's default entrypoint. Enter without single quotes.
+- **Image Tags** *(required)* — add one or more Docker image tags for this workstation. Each tag has two fields:
+  - **Display name** — a human-readable label for the tag, for example `notebook-image` or `Python 3.11`
+  - **Docker image** — the full Docker image URL, for example `hub.docker.zeblok.com/zeblok/minimal-notebook:latest`
+  - Click **Add Tag** to add additional image tags.
+- **License Type** *(required)* — select the license type for this workstation image. Two options are available: **Open Source** or **Third Party**.
+
+<Frame>
+  <img src="/images/import-workstations/license-type.png" alt="License Type dropdown showing Open Source and Third Party options" />
+</Frame>
+
+- **Provider Info** *(optional)* — the name of the organisation or provider that created this image, for example `NVIDIA` or `Hugging Face`.
+- **Logo** *(optional)* — upload a logo image to represent this workstation in the platform UI.
+- **Provider Logo** *(optional)* — upload the logo of the provider organisation.
+- **Public Access** — toggle this on to make the workstation image available to all users on the platform. Leave it off to restrict access to your organisation only.
+
+Once all required fields on the Details tab are filled in, click **Next** to proceed to the Registry & Plans tab.
+
+---
+
+## Step 2 — Registry & Plans
+
+The **Registry & Plans** tab configures where the Docker image is pulled from and which compute plans will be available when this workstation is spawned.
+
+### Private Registry
+
+By default, the **Private Registry** toggle is off, meaning the platform will pull the Docker image from a public registry. If your image is hosted in a private container registry, enable this toggle.
+
+<Frame>
+  <img src="/images/import-workstations/select-private-registry.png" alt="Registry and Plans tab showing the Private Registry toggle enabled with fields for Registry URL, Email, Username, and Password" />
+</Frame>
+
+When enabled, four additional fields appear:
+
+- **Registry URL** *(required)* — the URL of your private container registry, for example `registry.example.com`
+- **Email** *(required)* — the email address associated with your registry account
+- **Username** *(required)* — your registry login username
+- **Password** *(required)* — your registry login password
+
+### Plans
+
+The **Plans** field *(required)* lets you associate one or more compute plans with this workstation image. Users will be able to select from these plans when spawning this workstation.
+
+<Frame>
+  <img src="/images/import-workstations/select-plans.png" alt="Plans dropdown showing available compute plans with their GPU, vCPU, memory, and storage specs for selection" />
+</Frame>
+
+Use the **Search and add plans** dropdown to find and select plans. You can add multiple plans — each selected plan appears as a tag that can be removed individually.
+
+<Frame>
+  <img src="/images/import-workstations/can-add-multiple-plans-but-one-default.png" alt="Registry and Plans tab showing multiple plans added as tags and a Default Plan dropdown set to one of the selected plans" />
+</Frame>
+
+After adding multiple plans, you must also set a **Default Plan** *(required)* — this is the plan that will be pre-selected when a user spawns this workstation. Only one plan can be set as the default at a time.
+
+Once all fields are complete, click **Import Workstation** to complete the import.
+
+---
+
+## After Import
+
+Once imported, the workstation appears in the Workstation Images list. Click **View Details** on any workstation card to open the details panel.
+
+<Frame>
+  <img src="/images/import-workstations/plan-created.png" alt="Workstation Images list showing the newly imported Test Notebook workstation card with its container type, tags, plans, visibility, and date" />
+</Frame>
+
+### View Details
+
+The details panel shows the full configuration of the workstation image including visibility, category, container type, number of image tags, number of associated plans, owner, provider, and creation date. Two tabs are available — **Image Tags** and **Security Scan**.
+
+<Frame>
+  <img src="/images/import-workstations/view-details.png" alt="Workstation details panel showing the Image Tags tab with the notebook-image tag and its full Docker image URL" />
+</Frame>
+
+### Security Scan
+
+Clicking the **Security Scan** tab runs an automated vulnerability scan on the workstation's Docker image. The scan results are displayed grouped by severity — **High**, **Medium**, and **Low** — with each CVE entry showing the affected package, current version, and the fixed version where available.
+
+<Frame>
+  <img src="/images/import-workstations/security-scan-logs.png" alt="Security Scan tab showing vulnerability scan results for the notebook-image tag with High, Medium, and Low severity CVEs listed with package names and version details" />
+</Frame>
+
+<Note>
+  The security scan results help you identify known vulnerabilities in your workstation images. Reviewing and addressing High severity CVEs before making a workstation public is strongly recommended.
+</Note>
