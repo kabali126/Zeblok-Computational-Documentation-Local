@@ -10,7 +10,7 @@ The **AI Model Hub** allows you to import models directly from Hugging Face into
 To get started, navigate to **Platform → Imports → AI Model Hub** in the left sidebar. Click the **Import Model** button in the top-right corner to begin.
 
 <Frame>
-  <img src="/images/imports/ai-model-hub.png" alt="AI Model Hub page showing existing imported models with Ready status" />
+  <img src="/images/import-ai-model-hub/ai-model-hub.png" alt="AI Model Hub page showing existing imported models with Ready status" />
 </Frame>
 
 ---
@@ -22,7 +22,7 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
     On the **Import Model** page, the first field you will encounter is the **Hugging Face Token**.
 
     <Frame>
-      <img src="/images/imports/import-model-page.png" alt="Import Model form showing Hugging Face Token field and Select Model dropdown" />
+      <img src="/images/import-ai-model-hub/import-model-page.png" alt="Import Model form showing Hugging Face Token field and Select Model dropdown" />
     </Frame>
 
     ### Hugging Face Token *(required)*
@@ -34,7 +34,7 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
     </Tip>
 
     <Frame>
-      <img src="/images/imports/hugging-face-token.png" alt="Hugging Face Token field filled in on the Import Model form" />
+      <img src="/images/import-ai-model-hub/hugging-face-token.png" alt="Hugging Face Token field filled in on the Import Model form" />
     </Frame>
 
     ### Private Hugging Face Repository *(optional)*
@@ -48,7 +48,7 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
     Once your token is entered, use the **Select Model** dropdown to search for and choose the Hugging Face model you want to import.
 
     <Frame>
-      <img src="/images/imports/model-select.png" alt="Select Model dropdown showing search results for meta-llama/Llama-3.1-8B-Instruct with multiple variants listed" />
+      <img src="/images/import-ai-model-hub/model-select.png" alt="Select Model dropdown showing search results for meta-llama/Llama-3.1-8B-Instruct with multiple variants listed" />
     </Frame>
 
     ### Searching for a Model
@@ -72,7 +72,7 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
     After selecting a model, the platform automatically fetches and populates the remaining fields from Hugging Face metadata. You do not need to fill these in manually.
 
     <Frame>
-      <img src="/images/imports/rest-detail-auto-filled.png" alt="Import Model form with auto-filled fields including Selected Model, Provider, Serving Image, Endpoint, Description, and Model Details tags" />
+      <img src="/images/import-ai-model-hub/rest-detail-auto-filled.png" alt="Import Model form with auto-filled fields including Selected Model, Provider, Serving Image, Endpoint, Description, and Model Details tags" />
     </Frame>
 
     The following fields are auto-populated:
@@ -100,7 +100,7 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
     You will first receive an email confirming that your model import request has been received and queued for processing.
 
     <Frame>
-      <img src="/images/imports/model-queued-email.png" alt="Zeblok system email stating MODEL IMPORT HAS BEEN QUEUED" />
+      <img src="/images/import-ai-model-hub/model-queued-email.png" alt="Zeblok system email stating MODEL IMPORT HAS BEEN QUEUED" />
     </Frame>
 
     ### Stage 2 — Model Is Downloading
@@ -108,7 +108,7 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
     Once the platform begins fetching the model files from Hugging Face, you will receive a second email notifying you that the model download is in progress.
 
     <Frame>
-      <img src="/images/imports/model-downloading-email.png" alt="Zeblok system email stating MODEL IS DOWNLOADING" />
+      <img src="/images/import-ai-model-hub/model-downloading-email.png" alt="Zeblok system email stating MODEL IS DOWNLOADING" />
     </Frame>
 
     <Note>
@@ -124,7 +124,7 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
     While the model is being downloaded, you can track its progress directly in the **AI Model Hub**. The model card will display a **Downloading** status badge until the import is complete.
 
     <Frame>
-      <img src="/images/imports/model-downloading-ui.png" alt="AI Model Hub showing Llama 3.1 8B Instruct card with a Downloading status badge" />
+      <img src="/images/import-ai-model-hub/model-downloading-ui.png" alt="AI Model Hub showing Llama 3.1 8B Instruct card with a Downloading status badge" />
     </Frame>
 
     Once the download finishes, the badge will automatically update to **Ready**, indicating the model is available for use.
@@ -136,13 +136,13 @@ To get started, navigate to **Platform → Imports → AI Model Hub** in the lef
     When the model has finished downloading and is ready to be deployed, you will receive a final email notification.
 
     <Frame>
-      <img src="/images/imports/model-ready-to-use-email.png" alt="Zeblok system email stating MODEL IS READY TO BE USED" />
+      <img src="/images/import-ai-model-hub/model-ready-to-use-email.png" alt="Zeblok system email stating MODEL IS READY TO BE USED" />
     </Frame>
 
     Your model will now appear in the **AI Model Hub** with a **Ready** status, and it will be selectable in the **Model** dropdown when creating a new inference service.
 
     <Frame>
-      <img src="/images/imports/model-view-details.png" alt="AI Model Hub showing the imported Llama 3.1 8B Instruct model details panel with READY status, type, version, endpoint, provider, visibility, and Docker image information" />
+      <img src="/images/import-ai-model-hub/model-view-details.png" alt="AI Model Hub showing the imported Llama 3.1 8B Instruct model details panel with READY status, type, version, endpoint, provider, visibility, and Docker image information" />
     </Frame>
 
     From the model card, click any entry to open its **details panel** on the right. The panel shows:
