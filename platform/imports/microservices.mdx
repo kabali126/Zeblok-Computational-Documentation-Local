@@ -1,0 +1,113 @@
+---
+title: "Microservices"
+description: "Import custom microservice images into the Ai-MicroCloud platform to make them available for deployment."
+---
+
+## Overview
+
+The **Microservices** page is accessible via **Platform → Imports → Microservices** in the left sidebar. It lists all microservice images imported into your organisation's Ai-MicroCloud platform — both public images provided by Zeblok and custom images imported by your team. Available microservices include databases, web servers, ML platforms, and vector stores such as MongoDB, PostgreSQL, MySQL, Nginx, MLflow, ChromaDB, and more.
+
+Each microservice card displays the name, description, image tags, number of ports, number of associated plans, visibility, the user who added it, and the date it was imported. Some microservices are marked with a **VectorDB** badge indicating they support vector database workloads.
+
+<Frame>
+  <img src="/images/import-microservices/import-microservice-tab.png" alt="Microservices page showing all imported microservice cards with their name, description, image tags, ports, plans, visibility, and date" />
+</Frame>
+
+To import a new microservice image, click the **+ Import Microservice** button in the top-right corner. The Import Microservice form has three tabs — **Details**, **Parameters**, and **Registry & Plans**.
+
+---
+
+## Step 1 — Details
+
+The **Details** tab collects the metadata about the microservice image you are importing.
+
+<Frame>
+  <img src="/images/import-microservices/details-all-fields.png" alt="Import Microservice Details tab showing all fields including Name, Description, Image Display Name, Docker Image, License Type, Provider Info, Logo, Provider Logo, Public Access, and Vector DB toggles" />
+</Frame>
+
+Fill in the following fields:
+
+- **Name** *(required)* — a unique name for the microservice image, for example `Nginx-Testing` or `Custom PostgreSQL`.
+- **Description** *(required)* — a brief description of what the microservice does and its intended use.
+- **Image Display Name** *(required)* — a human-readable label for the Docker image tag, for example `nginx-image`.
+- **Docker Image** *(required)* — the full Docker image reference, for example `nginx:latest`.
+- **License Type** *(required)* — select the license type. Two options are available: **Open Source** or **Third Party**.
+
+<Frame>
+  <img src="/images/import-microservices/license-type.png" alt="License Type dropdown showing Open Source and Third Party options" />
+</Frame>
+
+- **Provider Info** *(optional)* — the name of the organisation or provider that created this image, for example `Redis Labs` or `Weaviate`.
+- **Logo** *(optional)* — upload a logo image to represent this microservice in the platform UI.
+- **Provider Logo** *(optional)* — upload the logo of the provider organisation.
+- **Public Access** — toggle this on to make the microservice image available to all users on the platform.
+- **Vector DB** — toggle this on if this microservice is a vector database. This adds the **VectorDB** badge to the microservice card.
+
+Once all required fields on the Details tab are filled in, click **Next** to proceed to the Parameters tab.
+
+---
+
+## Step 2 — Parameters
+
+The **Parameters** tab defines the runtime networking and configuration defaults that will be pre-filled when a user spawns this microservice.
+
+<Frame>
+  <img src="/images/import-microservices/parameters.png" alt="Parameters tab showing Protocol and Ports, Environment Variables, Arguments, and Volume Path fields" />
+</Frame>
+
+- **Protocol & Ports** — define the default port mapping for the microservice. The default entry is HTTP on port 80 with label UI-default. Click **Add Port** to add additional port mappings.
+- **Environment Variables** *(optional)* — add default key-value environment variable pairs that will be injected into the container at startup. Click **Add Env Variable** to add rows.
+- **Arguments** *(optional)* — add default command-line arguments for the container entrypoint, for example `--workers=4`. Click **Add Argument** to add rows.
+- **Volume Path** *(optional)* — set a default container path for volume mounting, for example `/data`.
+
+Once done, click **Next** to proceed to the Registry & Plans tab.
+
+---
+
+## Step 3 — Registry & Plans
+
+The **Registry & Plans** tab configures where the Docker image is pulled from and which compute plans will be available when this microservice is deployed.
+
+### Private Registry
+
+By default, the **Private Registry** toggle is off, meaning the platform pulls the Docker image from a public registry. If your image is hosted in a private container registry, enable this toggle.
+
+<Frame>
+  <img src="/images/import-microservices/select-private-registry.png" alt="Registry and Plans tab showing the Private Registry toggle enabled with fields for Registry URL, Username, and Password" />
+</Frame>
+
+When enabled, three additional fields appear:
+
+- **Registry URL** *(required)* — the URL of your private container registry, for example `registry.example.com`
+- **Username** *(required)* — your registry login username
+- **Password** *(required)* — your registry login password
+
+### Plans
+
+The **Plans** field *(required)* lets you associate one or more compute plans with this microservice image. You can add multiple plans — each selected plan appears as a removable tag. You must also set a **Default Plan** *(required)* — the plan that will be pre-selected when a user deploys this microservice.
+
+<Frame>
+  <img src="/images/import-microservices/can-add-multiple-plans-but-one-default.png" alt="Registry and Plans tab showing multiple plans added as tags and a Default Plan dropdown set to one of the selected plans" />
+</Frame>
+
+Once all fields are complete, click **Import Microservice** to complete the import.
+
+---
+
+## After Import
+
+Once imported, the microservice appears in the Microservices list. Click **View Details** on any microservice card to open the details panel showing visibility, category, ports, plans, owner, provider, and creation date.
+
+<Frame>
+  <img src="/images/import-microservices/microservice-created.png" alt="Microservices list showing the newly imported Nginx-Testing microservice card at the top with its image tag, ports, plans, visibility, and date" />
+</Frame>
+
+The details panel has two tabs — **Ports** and **Security Scan**. The Ports tab lists all configured port mappings for the microservice. The Security Scan tab runs an automated vulnerability scan on the Docker image, displaying CVEs grouped by severity — **High**, **Medium**, and **Low** — with each entry showing the affected package, current version, and the fixed version where available.
+
+<Frame>
+  <img src="/images/import-microservices/view-details.png" alt="Microservice details panel showing the Ports tab with HTTP port 80 UI-default entry and a Security Scan tab button" />
+</Frame>
+
+<Note>
+  Reviewing and addressing High severity CVEs before making a microservice public is strongly recommended.
+</Note>
