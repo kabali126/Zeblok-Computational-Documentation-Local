@@ -76,8 +76,6 @@
             "group": "Reference",
             "pages": [
               "releases/release-notes",
-              "releases/known-issues",
-              "releases/common-errors",
               "support"
             ]
           }
