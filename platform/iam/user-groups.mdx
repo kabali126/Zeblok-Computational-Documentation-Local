@@ -1,0 +1,139 @@
+---
+title: "User Groups"
+description: "Bundle users into named groups so attaching a role propagates permissions to every member at once."
+---
+
+
+## Overview
+
+The **User Groups** page is accessible via **Platform → IAM → User Groups** in the left sidebar. It is where you compose users into named bundles, attach roles to those bundles, and let role membership propagate to every user in the group at once. Without User Groups, attaching the `developer` role to fifteen team members means fifteen edits on the Users page. With User Groups, it means one edit on the group.
+
+![User Groups page showing the directory of groups across organisations with their visibility, member counts, and role counts](/images/iam/user-groups/iam-user-groups.png)
+
+A **User Group** sits between Users and Roles in the IAM stack. Roles define what permissions exist; Users hold those roles; User Groups give you a way to manage role-holding at the team level rather than per-individual.
+
+Groups can also be referenced by Policies (via the User Groups field in the Policy scope), so a single group can act as both a role-attachment point and a policy-targeting unit. Once a user joins a group, they inherit:
+
+- All roles attached to the group (their permissions update immediately).
+- Any policies scoped to the group (those policies now evaluate against this user's requests).
+
+### Common groups
+
+Most organisations on the platform have a few groups with familiar names — `Developers`, `Viewers`, `Administrators`, and similar. The same group name can exist in many different organisations, each scoped to its own org. *Your* `Developers` group is independent of *another organisation's* `Developers` group, even though they share the name. This is by design and is consistent with how organisation isolation works elsewhere on the platform.
+
+The list view distinguishes groups by their parent organisation (shown as an opaque ID under the group name), so when you see what looks like duplicates, those are actually separate groups owned by different organisations.
+
+### What you see depends on your privilege role
+
+| Role | What's listed | What you can do |
+| --- | --- | --- |
+| **SuperAdmin** | Every group across every organisation. | Create, edit, delete groups in any organisation. |
+| **Admin** | Only groups belonging to your own organisation. | Create, edit, delete groups in your own organisation. |
+| **Standard User** | Nothing — Standard Users do not see this page. | None. |
+
+---
+
+## Step 1 — Add a User Group
+
+Click **+ Add Group** in the top-right corner to open the **Add User Group** dialog. The form gathers everything in one screen — there's no separate "configure permissions later" step.
+
+![Add User Group dialog with the Group Name field highlighted](/images/iam/user-groups/user-group-name.png)
+
+Fill in the following fields:
+
+- **Group Name** *(required)* — a short identifier, for example `ML Engineers`, `Data Auditors`, or `Backend Team`. Group names must be unique within their parent organisation.
+
+- **Organisation** *(required)* — the organisation this group belongs to. As an Admin, this defaults to your own organisation. SuperAdmins see a dropdown of every organisation on the platform and must pick one — a group cannot exist independently of an organisation.
+
+  ![Organisation dropdown showing the list of available organisations the group can be assigned to](/images/iam/user-groups/user-group-organisation.png)
+
+- **Roles** *(optional but recommended)* — search and select one or more existing IAM roles. Members of this group will inherit every role you attach here. Each selected role appears as a chip that can be removed individually. The dialog text confirms the model: *"Members inherit all selected roles."*
+
+  ![Roles dropdown open showing available roles to attach to the group, with checkbox selectors next to each role](/images/iam/user-groups/user-group-roles.png)
+
+- **Members** *(optional)* — search and add existing users to the group at create time. You can also leave this empty and add members later from the Edit dialog.
+
+  ![Members dropdown showing the user search field with available users to add to the group](/images/iam/user-groups/user-group-members.png)
+
+- **Public Group toggle** — controls cross-organisation visibility:
+
+  - **Private (default)** — the group is only visible within its own organisation. *Most groups should stay private unless you're building a cross-tenant template.*
+  - **Public** — Admins of other organisations can see this group as a reference template, but **membership and permissions still stay scoped to this organisation's users**. Public is a template-visibility flag, not a cross-org-membership flag — no user from another organisation ever inherits anything from a Public group, even when they can see it.
+
+  ![Public Group toggle enabled showing the group will be discoverable across organisations](/images/iam/user-groups/user-group-public.png)
+
+  Groups can be created Public from the start by enabling this toggle during creation, as shown above. In practice, almost every group on the platform is Private — Public is reserved for shared templates an organisation explicitly wants to publish for reference.
+
+Once the form is complete, click **Create**. The new group appears immediately in the User Groups list with its name, member count, role count, and visibility.
+
+![User Groups list showing the newly created Test group at the top with 1 member and 4 roles](/images/iam/user-groups/after-user-group-creation.png)
+
+---
+
+## Step 2 — Viewing Group Details
+
+Click any group's card to open its details panel.
+
+![User Group details panel showing Overview, Roles, Members, and Effective Permissions sections for the Test group](/images/iam/user-groups/user-group-details.png)
+
+The details panel surfaces everything about the group on a single Details tab.
+
+The **Overview** section lists the group's identity — Group Name, Visibility, Roles count, parent Organisation, Members count, and Created date.
+
+The **Roles** section lists every IAM role attached to the group, as chips. Selecting a chip navigates to the corresponding Roles details page.
+
+The **Members** section lists every user in the group with their name and email. To change the membership, use the Edit dialog (described below) — this list is read-only here.
+
+### Effective Permissions
+
+The most useful section on the page is **Effective Permissions** — a flattened, deduplicated view of every action every member of this group is permitted to perform, computed by combining all attached roles.
+
+Each row of the table is a resource (such as `compute.spawned-images` or `infrastructure.datacenters`). Each row's actions list shows exactly which verbs the group's members can use against that resource — including operational verbs like `start`, `stop`, `share`, `upload`, and `download`, on top of the standard `create`, `read`, `update`, `delete`.
+
+Use this section as your primary debugging surface. If a user reports that they can't perform an action they think they should be able to, check whether their group's Effective Permissions table covers that resource and verb. If it doesn't, attaching the right role to the group propagates the permission to every member at once — no per-user edits required.
+
+---
+
+## Editing a Group
+
+The details panel has **Edit** and **Delete** buttons in the top-right corner.
+
+Click **Edit** to open the **Edit User Group** dialog. Every field from the create form is editable here — Group Name, Organisation, Roles, Members, and the Public toggle.
+
+![Edit User Group dialog with all editable fields including the Roles and Members sections](/images/iam/user-groups/user-group-edit.png)
+
+The most common edits in practice are adding or removing members and adding or removing roles — both happen in the same dialog without the two-tab structure that Policies and Roles use.
+
+<Note>
+**There is no Active toggle on User Groups.** Unlike Roles and Policies, which can be disabled without deletion, a group is either present and active or it doesn't exist. If you need to temporarily stop a group from granting its roles to its members, the only options are to remove the roles from the group (preserving membership) or to remove the members from the group (preserving roles). Both edits are reversible from this dialog.
+</Note>
+
+Click **Save Changes** to apply.
+
+---
+
+## Deleting a Group
+
+Click **Delete** on the details panel to permanently remove a group.
+
+<Note>
+**Deletion is silent and immediate.** When you delete a group, every member loses any roles they inherited *only* through this group. Members keep direct role attachments and any roles they hold through other groups, but they will not be warned that a group they relied on has been removed.
+
+Before deleting a group, review its **Members** and **Roles** sections and either reassign affected members to an equivalent group, attach roles directly to those members, or accept that they will lose access to the inherited permissions. There is no undo, and unlike Roles or Policies there is no Active toggle to disable the group temporarily as a safer alternative.
+</Note>
+
+---
+
+## Important Rules
+
+A few platform-wide rules apply across every User Group action on this page:
+
+- **Groups are organisation-scoped.** A group always belongs to exactly one organisation. The same name can be used in different organisations without conflict, and members from one organisation cannot be added to another organisation's group — the Members search only surfaces users belonging to the group's own org.
+- **Public ≠ cross-org membership.** A Public group can be seen by Admins in other organisations as a template, but its members and permissions remain scoped to the owning organisation. Use Public sparingly, only for groups you genuinely want to publish as a reference.
+- **Standard Users cannot manage groups.** Group creation, editing, and deletion are Admin and SuperAdmin actions only. A user can be a member of groups, but cannot see or manage the User Groups page itself.
+- **Permissions are additive across roles.** When a group has multiple roles attached, members inherit the union of all those roles' permissions. The Effective Permissions table on the details panel shows that union, deduplicated.
+- **Removing a role from a group affects every member.** If a group has fifteen members and you remove a role from the group, all fifteen members lose that role's permissions on the next request — not just the most recently added member. Use the Effective Permissions table to verify the impact before saving an edit.
+
+## Continuing the IAM Setup
+
+User Groups complete the IAM picture. With Users, Roles, Policies, Organisations, and User Groups in place, you have a full toolkit for managing access on the platform — defining what users can do, bundling them sensibly, and applying organisation-wide constraints with priority-based override. From here, the natural next step is configuring the platform itself: the data centres your workloads run in, the compute plans available to users, and the namespaces that organise resources within an organisation. Continue to the [Configurations](/platform/configurations/datacenter) section to set those up.
