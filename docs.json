@@ -41,7 +41,8 @@
             "pages": [
               "workstation-and-services/spawn-workstation",
               "workstation-and-services/spawn-microservice",
-              "workstation-and-services/spawn-inference"
+              "workstation-and-services/spawn-inference",
+              "workstation-and-services/spawn-orchestration-addon"
             ]
           },
           {
