@@ -54,7 +54,8 @@
                   "platform/imports/workstations",
                   "platform/imports/microservices",
                   "platform/imports/ai-model-hub",
-                  "platform/imports/datasets"
+                  "platform/imports/datasets",
+                  "platform/imports/orchestration-addons"
                 ]
               },
               {
