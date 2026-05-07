@@ -1,0 +1,186 @@
+---
+title: "Policies"
+description: "Define explicit allow and deny rules that govern which users, roles, and groups can perform which actions on which resources."
+---
+
+
+## Overview
+
+The **Policies** page is accessible via **Platform → IAM → Policies** in the left sidebar. It lists every policy active on your organisation and is where you create, edit, simulate, and delete policy documents.
+
+![Policies page showing the three pre-seeded policies with their priority, status, and rule counts](/images/iam/policies/iam-policies.png)
+
+A **Policy** is an explicit set of allow and deny rules that the platform evaluates on every request. Policies sit above Roles in the permission stack:
+
+- **Roles** grant baseline permissions to a user — *what they can do*.
+- **Policies** apply organisation-wide rules that allow or deny specific actions on specific resources, with priority-based ordering — *what the platform enforces on top of those baseline permissions*.
+
+The two layers are evaluated together. **Explicit deny in a policy always overrides any allow** — whether that allow comes from a Role or from another policy. This is the platform's core safety mechanism: a high-priority deny policy can lock down behaviour across the whole organisation regardless of how Roles are configured.
+
+### How policies are evaluated
+
+Three rules govern policy evaluation:
+
+1. **Priority decides order.** Each policy has a numeric priority (the `P` value on the list view). Higher priority policies are evaluated first.
+2. **Explicit deny wins.** If any matching rule denies an action, the action is denied — even if other rules allow it, and even if a Role grants it.
+3. **No matching policy means the Role decides.** If no policy mentions a given action on a given resource, the user's Role permissions determine the outcome. Policies only override; they don't replace Roles.
+
+### The three pre-seeded policies
+
+Every organisation ships with three policies installed at platform setup. These appear at the top of the Policies list with reserved priorities:
+
+| Policy | Priority | Purpose |
+| --- | --- | --- |
+| **Organization Isolation** | P200 | Denies access when the resource being requested does not belong to the same organisation as the user. This is the policy that *enforces* organisation isolation across the platform. |
+| **No Delete Active Resources** | P100 | Prevents deletion of resources that are currently running or active — protecting against accidental destruction of in-use workstations, microservices, and add-ons. |
+| **plans** | P0 | A baseline policy seeded on platform setup. The specifics depend on your cluster's launch configuration. |
+
+These pre-seeded policies can only be modified or deleted by the SuperAdmin. Admins can view them, see how they evaluate, and use the Testing tab against them, but cannot edit them.
+
+<Note>
+The `Organization Isolation` rule documented elsewhere in the IAM model — the guarantee that no Admin can ever see another organisation's data — is implemented as the **Organization Isolation** policy at P200. If a SuperAdmin ever modifies or disables this policy, the isolation guarantee no longer holds. Treat it as load-bearing.
+</Note>
+
+---
+
+## Step 1 — Add a Policy: Basics
+
+Click **+ Add Policy** in the top-right corner to open the **New Policy** form. The form has two tabs — **Basics** and **Rules** — that must both be completed before the policy is saved.
+
+The **Basics** tab captures the policy's identity, priority, and scope.
+
+![New Policy form Basics tab with the Name field highlighted](/images/iam/policies/policie-name.png)
+
+Fill in the following fields:
+
+- **Name** *(required)* — a short identifier for the policy, for example `doc`, `data-scientist-uploads`, or `audit-readonly`. Names should be unique within your organisation.
+
+- **Priority** — a numeric value that determines evaluation order. Higher numbers are evaluated first. New policies default to `0`. Use higher priorities for rules that should override others, and reserve very high values (above P100) for policies that mirror the pre-seeded system policies in importance.
+
+![New Policy form with the Priority field highlighted showing the default value of 0 and a numeric stepper](/images/iam/policies/policie-priority.png)
+
+- **Description** *(optional)* — a short explanation of what the policy enforces and why. Other admins reading the list view see this directly under the policy name, so a clear description prevents confusion later.
+
+![New Policy form with the Description field highlighted](/images/iam/policies/policie-description.png)
+
+### Scope — who the policy applies to
+
+The Scope section restricts the policy to specific subjects. Three multi-select fields are available, each independent of the others:
+
+- **Organisations** — restrict the policy to one or more organisation IDs.
+
+  ![Organisations dropdown showing the multi-select list of organisation IDs](/images/iam/policies/police-organisation.png)
+
+- **Roles** — restrict the policy to users holding any of the selected roles.
+
+  ![Roles dropdown showing the available roles for selection](/images/iam/policies/policie-roles.png)
+
+- **User Groups** — restrict the policy to members of the selected User Groups.
+
+  ![User Groups dropdown showing available groups for selection](/images/iam/policies/policie-groups.png)
+
+**Empty rows mean "applies to everyone in that category."** If you leave Organisations empty, the policy applies regardless of organisation; if you leave Roles empty, it applies regardless of role; and so on. Combining filters narrows the policy further — for example, *Roles = developer* and *User Groups = Developers* together means *only users who hold the developer role AND are members of the Developers group*.
+
+<Note>
+Standard Admins only see their own organisation in the Organisations dropdown. The wider list of organisation IDs visible above is shown only to a SuperAdmin. Admin-created policies are scoped to their own organisation by default, regardless of how the field looks.
+</Note>
+
+Once the Basics tab is complete, click **Next** to move to the Rules tab.
+
+---
+
+## Step 2 — Add a Policy: Rules
+
+The **Rules** tab is where the policy actually does work. A policy must contain at least one rule.
+
+![New Policy Rules tab showing an empty allow rule with the Resource dropdown open and Effect set to Allow](/images/iam/policies/policie-rule.png)
+
+Each rule has four parts:
+
+- **Resource** *(required)* — the resource type the rule applies to, selected from a dropdown of all resource families (`compute.spawned-images`, `infrastructure.namespaces`, `iam.users`, and so on). Each rule targets exactly one resource type. To cover multiple resource types, click **+ Add Rule** at the top of the tab to add another rule.
+
+- **Effect** *(required)* — either **Allow** or **Deny**. Allow rules grant the listed actions; Deny rules forbid them. Remember: deny always wins.
+
+- **Actions** *(required)* — the action verbs this rule covers. The available actions go beyond simple CRUD — depending on the resource type, you'll see `Create`, `Read`, `Update`, `Delete`, plus operational verbs like `Stop`, `Share`, `Upload`, and `Download`. Tick every action the rule should govern.
+
+- **Conditions** *(optional)* — additional constraints under which the rule applies. Click **+ Add condition** to attach one. Conditions let a rule fire only in specific circumstances rather than blanket every request matching the resource and action.
+
+To add another rule to the same policy, click **+ Add Rule** at the top of the tab. A single policy can hold many rules — useful for grouping related allow/deny logic under one named, prioritised document.
+
+When the policy has at least one complete rule, click **Create Policy**. The new policy appears in the Policies list with its name, priority, and rule counts.
+
+![Policies list showing the newly created doc policy alongside the three pre-seeded policies](/images/iam/policies/after-policie-created.png)
+
+---
+
+## Viewing Policy Details
+
+Click any policy card to open its details panel. The panel has two tabs: **Details** and **Testing**.
+
+![Policy details panel showing Overview, Scope, and Rules sections](/images/iam/policies/policie-detail.png)
+
+The **Details** tab summarises the policy:
+
+- **Overview** — Name, Description, Priority, Version, Status, Created date.
+- **Scope** — the Organisations, Roles, and User Groups this policy applies to. Empty rows display as such.
+- **Rules** — a numbered list of rules with their Effect, target Resource, and Actions. Rules are evaluated in the order shown — explicit `deny` overrides `allow` within the same policy as well as across policies.
+
+---
+
+## Testing a Policy
+
+This is one of the most useful features on the Policies page. The **Testing** tab lets you simulate how a policy evaluates against a hypothetical user request — without actually executing the request — so you can verify rules work as intended before exposing them to real traffic.
+
+![Policy Testing tab with Simulated Subject section showing Organisation picker, Impersonate as toggle, and User dropdown, plus a Request section with Action and Resource context fields](/images/iam/policies/policie-testing.png)
+
+To run a test:
+
+1. **Pick an Organisation** from the *Simulated Subject* section.
+2. Choose **Impersonate as** — *User* simulates a specific user with all their roles and group memberships; *Role* simulates a generic user holding only that single role. Use *User* for end-to-end realism, *Role* for isolating role-level behaviour.
+3. **Pick the user (or role)** to impersonate from the dropdown.
+4. In the *Request* section, choose the **Action** you want to test ("What is the user trying to do?").
+5. Optionally fill in the **Resource context (JSON)** field. This is a JSON object describing the resource being acted on, used to evaluate any conditions attached to the policy's rules. Leave it as `{}` if your rules have no conditions.
+6. Click **Run Test**.
+
+The test result shows how the policy evaluates the simulated request and which rule (if any) made the decision. Use this to validate new policies, debug unexpected behaviour, or verify that a deny rule fires under the conditions you expect.
+
+<Note>
+Testing simulates evaluation of **the single policy you're viewing** — not the full policy stack. A request that this policy allows in isolation may still be denied at runtime by a higher-priority deny in another policy. To verify end-to-end behaviour, test against the highest-priority policies that would apply to the same subject.
+</Note>
+
+---
+
+## Editing a Policy
+
+The policy details panel has **Edit** and **Delete** buttons in the top-right corner.
+
+Click **Edit** to open the **Edit Policy** form. The edit view contains everything from the create form, plus an **Active toggle** that disables the policy without removing it. *Inactive policies are not evaluated during access checks*, so toggling Active off is the safest way to test what happens when a policy is removed before actually deleting it.
+
+![Edit Policy form showing all editable fields including Active toggle, Scope, and the existing rules](/images/iam/policies/policie-edit.png)
+
+The Rules tab on Edit lets you add, remove, and reorder rules with the same controls used at create time. Click **Save Changes** to persist edits.
+
+---
+
+## Deleting a Policy
+
+Click **Delete** on the details panel to permanently remove a policy.
+
+<Note>
+Deleting a policy takes effect on the next request — every action the policy was previously allowing or denying is re-evaluated against the remaining policies and the user's Roles. Before deleting, prefer to **toggle Active off** in the Edit form. Inactive policies stop applying immediately but can be re-enabled later with all their rules and scope intact.
+</Note>
+
+---
+
+## Important Rules
+
+A few platform-wide rules apply across every Policy action on this page:
+
+- **Pre-seeded policies are SuperAdmin-only.** Unlike the built-in Roles — which any Admin can edit — the three pre-seeded policies (`Organization Isolation`, `No Delete Active Resources`, `plans`) can only be modified or deleted by a SuperAdmin. Admins can view them and use the Testing tab against them.
+- **Standard Users cannot manage policies.** Policy creation, editing, and deletion are Admin and SuperAdmin actions only. Standard Users do not see this page.
+- **Admin-created policies are organisation-scoped.** Despite the Organisations dropdown's appearance, Admin policies only ever apply within their own organisation. Cross-organisation policy authorship is reserved for the SuperAdmin.
+- **Explicit deny overrides everything.** A high-priority deny policy will block actions even if a user's Role grants them and even if a lower-priority policy explicitly allows them. Use deny sparingly; debug carefully.
+
+## User Groups
+
+Now that Users, Roles, and Policies are in place, the next step is to compose them into manageable units — User Groups. A User Group lets you bundle users together and assign them roles and policies in one step, rather than configuring each user individually. Continue to the **User Groups** page to learn more.
