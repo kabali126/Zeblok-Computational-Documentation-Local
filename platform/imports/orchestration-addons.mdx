@@ -1,0 +1,83 @@
+---
+title: "Orchestration Addons"
+description: "Import custom orchestration add-on templates into the Ai-MicroCloud platform to make them available for spawning."
+---
+
+
+
+## Overview
+
+The **Orchestration Addons** page is accessible via **Platform → Imports → Orchestration Add-on** in the left sidebar. It lists all orchestration add-on templates that have been imported into your organisation's Ai-MicroCloud platform — both public templates provided by Zeblok (such as **Ray Cluster**, **Spark Operator**, and **MLflow**) and custom templates imported by your team. Each addon card displays the name, description, image tag, the number of head and worker plans associated with it, the visibility (Public or Private), and the default plan. Templates listed here populate the **Addon Template** dropdown when users spawn a new orchestration add-on from the workspace.
+
+![Orchestration Addons page showing imported addon templates with their name, description, image tag, head and worker plan counts, visibility, and default plan](/images/import-orchestration-addons/imports-Orchestration-Add-ons.png)
+
+To import a new orchestration add-on template, click the **+ Add Addon** button in the top-right corner. The Add Addon form has two tabs — **Addon Configuration** and **Plans**.
+
+---
+
+## Step 1 — Addon Configuration
+
+The **Addon Configuration** tab collects all the metadata about the orchestration add-on template you are importing.
+
+Fill in the following fields:
+
+- **Name** *(required)* — a unique name for the orchestration add-on, for example `Ray Cluster` or `Custom Spark Operator`.
+
+![Name field highlighted on the Addon Configuration tab with the placeholder e.g. Ray Cluster](/images/import-orchestration-addons/name-Orchestration-Add-ons.png)
+
+- **Description** *(optional)* — a brief description of what the add-on does and its intended use, for example `Distributed computing framework for ML workloads with auto-scaling worker nodes.`
+
+![Description field highlighted on the Addon Configuration tab](/images/import-orchestration-addons/description-Orchestration-Add-ons.png)
+
+- **Image Tag** *(required)* — the full Docker image URL for the add-on, for example `rayproject/ray:2.9.0` or `ghcr.io/mlflow/mlflow:v2.10.0`. Unlike workstations and microservices, orchestration add-ons take a single image tag rather than a list of tags.
+
+![Image Tag field highlighted with the placeholder e.g. rayproject/ray:2.9.0](/images/import-orchestration-addons/image-tag-Orchestration-Add-ons.png)
+
+- **Logo** *(optional)* — upload a logo image to represent this orchestration add-on in the platform UI.
+- **Public Access** — toggle this on to make the add-on template available to all users on the platform. Leave it off to restrict access to your organisation only.
+
+Once all required fields on the Addon Configuration tab are filled in, click **Next** to proceed to the Plans tab.
+
+---
+
+## Step 2 — Plans
+
+The **Plans** tab configures which compute plans will be available for the head node and worker nodes when this add-on is spawned. Orchestration add-ons require **two separate plan selections** — one set for head nodes and one set for worker nodes — because the head node runs the add-on's control plane (for example the Ray dashboard and GCS server) while worker nodes run the actual distributed workload.
+
+### Head Plans
+
+The **Head Plans** field *(required)* lets you associate one or more compute plans with the add-on's head node. Use the **Search and add head plans** dropdown to find and select plans. You can add multiple plans — each selected plan appears as a tag that can be removed individually.
+
+![Head Plans dropdown showing available compute plans with their GPU, vCPU, RAM, and disk specs for selection](/images/import-orchestration-addons/select-head-plans.png)
+
+### Worker Plans
+
+The **Worker Plans** field *(required)* works the same way, but the plans selected here apply to each worker node in the cluster. Worker plans typically have higher GPU and CPU allocations than head plans because workers do the bulk of the computation.
+
+![Worker Plans dropdown showing available compute plans for worker node selection](/images/import-orchestration-addons/select-worker-plan.png)
+
+### Default Plan
+
+After adding plans for both head and worker nodes, use the **Default Plan** dropdown *(required)* to choose which plan should be pre-selected when a user spawns this add-on from the workspace. The dropdown contains every plan you added across the Head Plans and Worker Plans fields, and only one plan can be set as the default at a time. If you added a single plan to both fields, that plan will be the only option available — as shown below.
+
+![Default Plan dropdown showing the selected plan ready to be set as the default](/images/import-orchestration-addons/select-default-plan.png)
+
+Once all fields are complete, click **Create Addon** to complete the import.
+
+---
+
+## After Import
+
+Once imported, the new orchestration add-on appears in the Orchestration Addons list alongside the public templates. The card shows the same name, description, image tag, head and worker plan counts, visibility, and default plan as the public templates — and the imported add-on becomes immediately available in the **Addon Template** dropdown when a user spawns a new orchestration add-on from **Workspace → Orchestration Add-on**.
+
+![Orchestration Addons list showing the newly imported Ray Cluster card alongside the public templates](/images/import-orchestration-addons/after-import-Orchestration-Add-ons.png)
+
+### View Details
+
+Click **View Details** on any addon card to open the details panel. The details panel shows the full configuration of the orchestration add-on including visibility, image tag, head plans, worker plans, default plan, owner, and creation date.
+
+![Orchestration addon details panel showing the full configuration of the imported template](/images/import-orchestration-addons/details-import-Orchestration-Add-ons.png)
+
+## Spawn Orchestration Add-ons
+
+Now that your orchestration add-on template is onboarded, launch it as a distributed compute cluster — Ray, Spark, MLflow, or your own custom framework — to run multi-node workloads, parallel data processing, and large-scale model training.
