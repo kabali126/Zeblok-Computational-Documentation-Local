@@ -3,10 +3,9 @@ title: "Spawn Orchestration Add-ons"
 description: "Learn how to configure and launch a distributed orchestration add-on — such as a Ray Cluster, Spark Operator, or MLflow tracking server — on the Ai-MicroCloud platform in a few simple steps."
 ---
 
-> ## Documentation Index
-> Fetch the complete documentation index at: <https://zeblokcomputationalprivatelimited.mintlify.app/llms.txt>
->
-> Use this file to discover all available pages before exploring further.
+<Note>
+**Documentation Index** — Fetch the complete documentation index at [https://zeblokcomputationalprivatelimited.mintlify.app/llms.txt](https://zeblokcomputationalprivatelimited.mintlify.app/llms.txt). Use this file to discover all available pages before exploring further.
+</Note>
 
 ## Overview
 
@@ -46,7 +45,7 @@ Select the **Data Center** where your add-on will be deployed. The dropdown list
 
 ### Head Node Plan *(required)*
 
-Choose a **Head Node Plan** to define the compute resources allocated to the add-on’s head node. For a Ray Cluster, the head node hosts the dashboard, the Global Control Service (GCS), and acts as the cluster’s coordination point. For Spark Operator and MLflow, the head node serves the equivalent control-plane components. Each plan displays the number of GPUs, vCPUs, RAM, and local disk storage it provides.
+Choose a **Head Node Plan** to define the compute resources allocated to the add-on's head node. For a Ray Cluster, the head node hosts the dashboard, the Global Control Service (GCS), and acts as the cluster's coordination point. For Spark Operator and MLflow, the head node serves the equivalent control-plane components. Each plan displays the number of GPUs, vCPUs, RAM, and local disk storage it provides.
 
 | Plan Name             | GPU | vCPU      | RAM      | Disk  |
 | --------------------- | --- | --------- | -------- | ----- |
@@ -125,7 +124,7 @@ From the add-on card you can click **View Details** to open the full details pan
 
 ### Open the Add-on
 
-Click the **Open** button to launch the add-on’s native dashboard directly in your browser. For a Ray Cluster, this opens the Ray Dashboard with tabs for **Overview**, **Jobs**, **Serve**, **Cluster**, **Actors**, **Metrics**, and **Logs** — giving you full visibility into cluster utilisation, running jobs, node status, and resource demands. Spark Operator and MLflow open their respective web UIs.
+Click the **Open** button to launch the add-on's native dashboard directly in your browser. For a Ray Cluster, this opens the Ray Dashboard with tabs for **Overview**, **Jobs**, **Serve**, **Cluster**, **Actors**, **Metrics**, and **Logs** — giving you full visibility into cluster utilisation, running jobs, node status, and resource demands. Spark Operator and MLflow open their respective web UIs.
 
 ![Ray Dashboard opened in a new tab showing Cluster utilization, Recent jobs, Serve Applications, Node count, Node Status, and Resource Status panels](/images/orchestration-addons/click-open-to-open-orchestration.png)
 
@@ -157,7 +156,7 @@ Click the **Sessions** tab to view active sessions associated with the add-on. F
 
 ### View Logs
 
-Click the **Logs** tab to access the real-time container logs for the add-on’s pods. This is useful for debugging cluster startup issues or monitoring framework processes. If the underlying pod has been restarted or stopped, the panel will display a **Pod not found** message — click **Retry** to reconnect once the pod is healthy again.
+Click the **Logs** tab to access the real-time container logs for the add-on's pods. This is useful for debugging cluster startup issues or monitoring framework processes. If the underlying pod has been restarted or stopped, the panel will display a **Pod not found** message — click **Retry** to reconnect once the pod is healthy again.
 
 ![Logs tab showing the log view with a Pod not found message and a Retry button](/images/orchestration-addons/click-logs.png)
 
