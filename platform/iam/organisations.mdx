@@ -1,0 +1,108 @@
+---
+title: "Organisations"
+description: "Browse the organisations registered on the platform and inspect their members, namespaces, and user groups."
+---
+
+
+## Overview
+
+The **Organisations** page is accessible via **Platform → IAM → Organisations** in the left sidebar. It is a read-only directory of every organisation visible to your account on the platform. The page lets you find an organisation, see who belongs to it, and confirm what namespaces and user groups it contains — but it does not provide controls for creating, editing, or deleting an organisation.
+
+![Organisations page showing the directory of all organisations with their ID, country, visibility, and member count](/images/iam/organisations/iam-organisations.png)
+
+An **Organisation** is the top-level isolation boundary on the Ai-MicroCloud platform. Every user, namespace, role, policy, and resource on the platform belongs to exactly one Organisation, and one Admin owns exactly one Organisation. Organisations cannot see each other's data — this isolation is enforced at runtime by the **Organization Isolation** policy at priority P200 (see [Policies](/platform/iam/policies)).
+
+### What you see depends on your privilege role
+
+The Organisations page is the same physical page for every role, but the contents change based on who is viewing it:
+
+| Role | What's listed | What you can do |
+| --- | --- | --- |
+| **SuperAdmin** | Every organisation on the platform. | View any organisation's details. |
+| **Admin** | Your own organisation only. | View your own organisation's details. |
+| **Standard User** | Your own organisation only. | View your own organisation's details. |
+
+No role — including SuperAdmin — has buttons to add, edit, or delete an organisation directly from this page. Organisations are created elsewhere on the platform (see "How organisations are created" below) and their metadata is set at the time of creation.
+
+### How organisations are created
+
+New organisations are not created from this page. They come into existence through one of three paths:
+
+1. **Launcher provisioning** — when the platform is first set up, the Launcher provisions the SuperAdmin's organisation automatically. This happens once per cluster and uses the Tech Contact details supplied at setup time.
+2. **SuperAdmin invite** — the SuperAdmin invites an Admin via the [Users](/platform/iam/users) page, and the platform creates a new isolated organisation for that Admin.
+3. **Self-signup** — a new customer self-registers from the public sign-up flow, which auto-creates a fresh isolated organisation with the signing-up user as its Admin.
+
+Once an organisation exists, it persists for the lifetime of the platform. There is no UI to delete an organisation — that operation, where supported, is handled at the cluster-administration level.
+
+---
+
+## The Directory View
+
+The list view shows every organisation visible to your account, paginated as cards. Each card displays:
+
+- **Organisation ID** — an opaque hex identifier such as `255f89e3c30e`. For most organisations this is also the only name. A small number of organisations (the Launcher-provisioned SuperAdmin org and any organisations explicitly named at creation time) carry a human-readable name shown in place of the ID.
+- **Country** — the country code or country name registered with the organisation.
+- **Visibility** — `Private` for every organisation in the standard model. The Visibility field exists for forward-compatibility with potentially public organisations but is not used by Admin or Standard User flows today.
+- **Member count** — the number of users currently registered to the organisation.
+
+A search bar at the top of the page filters organisations by ID or name as you type. The Filters button beside it opens a panel for narrowing by country, visibility, or other attributes.
+
+---
+
+## Viewing Organisation Details
+
+Click any organisation card to open its details panel on the right.
+
+![Organisation details panel showing Overview, Namespaces & Groups, and Users sections for the selected organisation](/images/iam/organisations/organisation-details.png)
+
+The top of the panel shows three summary chips — **Members**, **Groups**, and **Namespaces** — followed by a single **Details** tab.
+
+### Overview
+
+The Overview section lists the organisation's metadata:
+
+- **Name** — usually the same as the organisation ID. Filled in only when the organisation was created with a specific name (such as the Launcher-provisioned SuperAdmin org).
+- **Country** — the country registered for the organisation.
+- **Visibility** — Private or Public. Almost always Private.
+- **Business Contact** — the business point-of-contact for the organisation. Often unset.
+- **Created** — the date the organisation was first registered.
+- **Company Type** — the organisation's business classification. Often unset.
+- **Admin** — the name of the organisation's Admin user. Often unset, because this field is populated by metadata supplied at creation rather than derived from the user list.
+- **Members** — the number of users in the organisation.
+- **Billing Contact** — the contact responsible for billing on the organisation. Often unset.
+
+Many of these fields appear blank as a dash (`—`) for most organisations. They are not editable from this page — populating them happens at provisioning time, and a future release may surface an editor for them. For now, treat them as informational.
+
+### Namespaces & Groups
+
+This section lists the namespaces and user groups that exist within the organisation, as a quick snapshot of how the organisation is internally structured.
+
+- **Namespaces** — each namespace is shown as a clickable chip. Selecting a chip navigates to the corresponding namespace page where you can inspect or manage it (subject to your privilege role).
+- **User Groups** — each user group within the organisation is listed as a chip. Selecting a chip navigates to the [User Groups](/platform/iam/user-groups) page filtered to that group.
+
+If the organisation has no user groups, this subsection displays *No user groups in this organisation.*
+
+### Users
+
+The Users section lists every user belonging to the organisation, with three columns:
+
+- **User** — name and email of the user.
+- **Role** — the user's privilege role (`Admin` or `Standard`).
+- **Status** — whether the user account is currently `Active` or `Inactive`.
+
+This list is read-only on the Organisations page. To manage users — invite new ones, edit profiles, change roles, or deactivate accounts — go to the [Users](/platform/iam/users) page.
+
+---
+
+## Important Rules
+
+A few points apply across every interaction with the Organisations page:
+
+- **The page is read-only by design.** No role, including SuperAdmin, can create, edit, or delete organisations from this page. Organisations are created at provisioning time and their metadata is supplied then.
+- **Organisation isolation is absolute.** An Admin or Standard User who clicks this page sees only their own organisation. Even with full read access in their own org, they cannot enumerate or inspect any other organisation. SuperAdmin is the only role with cross-organisation visibility.
+- **The summary chips are navigational.** The `Members`, `Groups`, and `Namespaces` chips on the details panel — and the chips inside the Namespaces & Groups section — link out to the dedicated pages for those entities. Use those pages, not this one, when you need to *do* anything beyond viewing.
+- **Treat empty metadata fields as informational.** Company Type, Admin, Business Contact, and Billing Contact often display as `—`. They are not currently editable from the UI; an unset field is not an error.
+
+## User Groups
+
+Now that you've seen how organisations contain users, the next step is to compose those users into bundles that can carry roles together — User Groups. Continue to the **User Groups** page to learn how groups are created and how attaching a role to a group propagates permissions to all its members.
