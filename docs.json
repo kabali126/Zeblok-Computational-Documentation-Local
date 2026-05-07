@@ -69,6 +69,14 @@
             ]
           },
           {
+            "group": "IAM",
+            "pages": [
+              "platform/IAM/Users",
+              "platform/IAM/Roles",
+              "platform/IAM/Policies",
+              "platform/IAM/Organisations",
+              "platform/IAM/User Groups"
+          {
             "group": "SDK & Integrations",
             "pages": [
               "sdk/overview"
