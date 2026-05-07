@@ -1,0 +1,136 @@
+---
+title: "Roles"
+description: "Create and manage IAM roles — named permission sets that define what users can do across resources in your organisation."
+---
+
+
+
+## Overview
+
+The **Roles** page is accessible via **Platform → IAM → Roles** in the left sidebar. It lists every IAM role available in your organisation and is where you create custom permission sets, edit existing ones, and review which users a role applies to.
+
+![Roles page showing the list of system and custom roles with their visibility, member count, and permission count](/images/iam/roles/iam-roles.png)
+
+An **IAM Role** is a named bundle of resource-action permissions — for example, *can create workstations*, *can read datasets*, *can update microservices*. Roles are attached to Users (directly) or to User Groups (so every member of the group inherits them). The permissions that actually apply to a user at runtime come from the union of every role they hold, whether attached directly or through a group.
+
+It is worth distinguishing two things on the platform that both involve the word "role":
+
+- **Privilege Role** — the coarse Admin / Standard User toggle set on the user form. Controls organisation-wide capabilities. See the [Users](/platform/iam/users) page.
+- **IAM Role** — what this page is about. A named permission set granting fine-grained CRUD access on individual resource types.
+
+These layers reinforce each other. When you create a user with **Privilege Role: Standard User**, the system also attaches the IAM role `standard-user` to them as a baseline. Any custom role you build here gets layered on top.
+
+### The four built-in roles
+
+Four IAM roles are provided out of the box on every organisation:
+
+| Role | Default purpose |
+| --- | --- |
+| **viewer** | Read-only access across all resources. |
+| **standard-user** | Default read-only baseline granted to every Standard User. |
+| **developer** | Compute, data, and AI resource access with ownership constraints. |
+| **admin** | Organisation-level administrative access. |
+
+Unlike pre-seeded Plans and Namespaces — which only the SuperAdmin can modify — these built-in roles **can be edited or deleted by any Admin within their own organisation**. If your org needs the `developer` role to grant slightly different permissions than the default, you can edit it directly. Just be aware that doing so changes the effective permissions of every user already holding that role.
+
+---
+
+## Step 1 — Add a Role
+
+Click **+ Add Role** in the top-right corner to open the **Add Role** dialog. Roles are created in two stages: first you set the role's identity, then you assign its permissions on the details panel after creation.
+
+![Add Role dialog with the Role Name field highlighted and the Public toggle on by default](/images/iam/roles/role-name.png)
+
+Fill in the following fields:
+
+- **Role Name** *(required)* — a short, lowercase, hyphenated identifier that describes the role's purpose, for example `data-scientist`, `read-only-auditor`, or `mlops-engineer`. Role names should be unique within your organisation.
+
+- **Description** *(optional)* — a brief description of what the role is for and who should hold it. This appears under the role name in the list view, so a clear description helps other admins assign roles correctly.
+
+![Add Role dialog with the Description field highlighted and the role name filled in](/images/iam/roles/role-description.png)
+
+- **Public toggle** — controls visibility within your organisation:
+  - **Public (default)** — the role is visible to and assignable by any user in your organisation who has role-management capability.
+  - **Private** — the role is visible only to the user who created it.
+
+  Despite the dialog's wording, **roles never cross organisation boundaries**. The Public toggle is an in-org visibility control, not a cross-org one. Organisation isolation always applies; an Admin in a different organisation will never see your roles, regardless of this setting.
+
+Click **Create**. The new role appears immediately in the Roles list with **0 permissions** — you'll grant those in Step 2.
+
+![Roles list showing the newly created admin role alongside the four built-in roles](/images/iam/roles/after-role-creation.png)
+
+---
+
+## Step 2 — Assign Permissions
+
+Click the new role's card to open its details panel. The panel has two tabs: **Details** and **Permissions**.
+
+The **Details** tab summarises the role's identity — Role Name, Description, Visibility, Status, the parent Organisation ID, the Creation date — and lists the User Groups and individual Users currently holding this role.
+
+![Role details panel showing the Details tab with role name, organisation, status, visibility, user groups, and effective users sections](/images/iam/roles/role-details.png)
+
+Switch to the **Permissions** tab to grant the role its actual capabilities.
+
+![Role Permissions tab showing the per-resource permission matrix grouped by Compute, Registry, Infrastructure, and Data families with Create, Read, Update, and Delete checkboxes](/images/iam/roles/role-permission.png)
+
+Permissions are organised into **resource families** — `compute.*`, `registry.*`, `infrastructure.*`, `data.*`, and so on. Within each family, every resource type has its own row with four checkboxes:
+
+| Action | What it grants |
+| --- | --- |
+| **Create** | Permission to create new instances of this resource type. |
+| **Read** | Permission to view instances of this resource type. |
+| **Update** | Permission to modify existing instances. |
+| **Delete** | Permission to remove instances. |
+
+Tick the boxes that match what the role should allow. Permissions in the IAM model are **own-only by default** — a Standard User holding a role with `compute.spawned-images: Read` can read their own spawned images, not every spawned image in the organisation. Cross-user visibility within an org belongs to the Admin Privilege Role.
+
+When you tick the first checkbox, a **Save Changes** button appears. Continue ticking permissions across the matrix, then click **Save Changes** to persist them. The role's permission count on the Roles list view updates to reflect the new total.
+
+<Note>
+Permission grants are **additive across roles**. If a user holds two roles — one granting `compute.spawned-services: Read` and another granting `compute.spawned-services: Create` — the user can do both. Plan your roles around least-privilege building blocks rather than monolithic "everything for this team" roles, so you can compose access without duplication.
+</Note>
+
+---
+
+## Editing a Role
+
+The role details panel has **Edit** and **Delete** buttons in the top-right corner.
+
+Click **Edit** to open the **Edit Role** dialog. The edit form lets you change:
+
+- **Role Name** and **Description**
+- **Public toggle** — same in-org visibility control as Add Role.
+- **Active toggle** — disable a role without deleting it. *Inactive roles have no effect* — users still appear to hold the role on their profile, but its permissions stop applying. Re-enable the role at any time by toggling Active back on.
+
+![Edit Role dialog showing Role Name, Description, Public, and Active toggles](/images/iam/roles/role-edit.png)
+
+To change the role's permissions, close the Edit dialog and use the **Permissions** tab on the details panel — the Edit dialog only governs identity and lifecycle.
+
+Click **Save Changes** to apply.
+
+---
+
+## Deleting a Role
+
+Click **Delete** on the role details panel to permanently remove the role.
+
+<Note>
+**Deletion is silent and immediate.** When you delete a role, every user and every User Group that held it loses the associated permissions instantly — without warning, and without an automatic notification to those users. Before deleting a role, review its **Effective Users** section on the Details tab and either reassign those users to an equivalent role or accept that they will lose access.
+
+If you only want to stop the role from applying without dismantling its assignments, toggle **Active** off in the Edit dialog instead. Inactive roles can be re-enabled later with their assignments preserved.
+</Note>
+
+---
+
+## Important Rules
+
+A few platform-wide rules apply across every Role action on this page:
+
+- **Organisation isolation is absolute.** Custom roles created in your organisation never appear in any other organisation, regardless of the Public toggle. SuperAdmin is the only role with cross-organisation visibility.
+- **Built-in roles are editable.** Unlike pre-seeded Plans, Namespaces, and templates — which only SuperAdmin can modify — the four built-in IAM roles (`viewer`, `standard-user`, `developer`, `admin`) can be edited or deleted by any Admin in your organisation. Be deliberate about modifying them, since every user inheriting them is affected.
+- **Standard Users cannot manage roles.** Role creation, editing, and deletion are Admin and SuperAdmin actions only. Standard Users can hold roles but cannot see this page.
+- **Privilege Role and IAM Role layer together.** Promoting a user to **Privilege Role: Admin** does not remove their existing IAM roles. Conversely, attaching the `admin` IAM role to a Standard User does not promote them to Admin Privilege Role — the two layers operate independently and are both checked at request time.
+
+## Policies
+
+Roles answer the question *what is a user allowed to do?* Policies extend that with conditions and constraints — *under which circumstances*, *against which resources*, *with which limits*. Continue to the **Policies** page to learn how policy documents are written and attached.
