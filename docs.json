@@ -65,18 +65,18 @@
                   "platform/configurations/plans",
                   "platform/configurations/namespaces"
                 ]
-              }
-            ]
-          },
-          {
-            "group": "IAM",
-            "pages": [
-              "platform/IAM/Users",
-              "platform/IAM/Roles",
-              "platform/IAM/Policies",
-              "platform/IAM/Organisations",
-              "platform/IAM/User Groups"
-            ]
+             },
+            {
+             "group": "IAM",
+             "pages": [
+               "platform/iam/users",
+               "platform/iam/roles",
+               "platform/iam/policies",
+               "platform/iam/organisations",
+               "platform/iam/user-groups"
+             ]
+            }
+          ]
           },
           {
             "group": "SDK & Integrations",
