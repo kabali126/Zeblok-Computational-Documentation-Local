@@ -76,6 +76,8 @@
               "platform/IAM/Policies",
               "platform/IAM/Organisations",
               "platform/IAM/User Groups"
+            ]
+          },
           {
             "group": "SDK & Integrations",
             "pages": [
