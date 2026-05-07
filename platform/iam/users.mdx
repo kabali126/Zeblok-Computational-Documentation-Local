@@ -1,0 +1,164 @@
+---
+title: "Users"
+description: "Manage user accounts, privilege roles, and access within your organisation on the Ai-MicroCloud platform."
+---
+
+> ## Documentation Index
+> Fetch the complete documentation index at: [https://zeblokcomputationalprivatelimited.mintlify.app/llms.txt](https://zeblokcomputationalprivatelimited.mintlify.app/llms.txt)
+>
+> Use this file to discover all available pages before exploring further.
+
+## Overview
+
+The **Users** page is accessible via **Platform → IAM → Users** in the left sidebar. It lists every user inside your organisation and is the entry point for adding new members, changing their role, granting them direct IAM roles, and managing their access. Each user card displays the name, email, current status, and a **Beta** badge if the user has access to beta features.
+
+![Users page showing the list of all users in the organisation with their name, email, and active status](/images/iam/users/IAM-users.png)
+
+The IAM model on Ai-MicroCloud is built around three privilege roles, each with a clearly defined scope.
+
+| Role | Scope | Created by |
+| --- | --- | --- |
+| **SuperAdmin** | Global — every organisation, every resource, every IAM setting. The only role that can modify or delete pre-seeded system resources. | Provisioned automatically by the Launcher at cluster setup. **Cannot** be created through the UI. |
+| **Admin** | One organisation. Full control over all resources and users inside that organisation; cannot see or affect any other organisation. | Invited by a SuperAdmin, or self-registered via Signup (Signup always creates a new isolated organisation). |
+| **Standard User** | Their own resources within their Admin's organisation. Can create and manage their own workstations, microservices, plans, and so on. No IAM management. | Invited by their organisation's Admin. |
+
+The Users page lets an Admin add new Standard Users to their organisation in two ways — directly by setting their credentials with **Add User**, or by sending an email invitation with **Invite**. Both buttons sit in the top-right corner of the page.
+
+<Note>
+**Standard Users must always be invited, never told to sign up.** Signup creates a brand-new organisation with the signing-up user as its Admin — which would put your team member into an orphan organisation isolated from yours. Always use **Invite** or **Add User** for team members.
+</Note>
+
+---
+
+## Step 1 — Add a User Directly
+
+Click **+ Add User** in the top-right corner to open the **Create User** dialog. Use this flow when you want to create the user's credentials yourself and hand them over — useful for service accounts, internal testing users, or situations where email delivery isn't reliable. Fill in the following fields:
+
+- **Full Name** *(required)* — the user's display name, for example `Jane Smith`.
+
+![Create User dialog with the Full Name field highlighted](/images/iam/users/user-full-name.png)
+
+- **Email** *(required)* — the user's email address. Used as the primary identifier for login.
+
+![Create User dialog with the Email field highlighted](/images/iam/users/user-email.png)
+
+- **Username** *(required)* — a unique handle for the user, for example `jane.smith`. This is separate from the email and is used for login and display in lists.
+
+![Create User dialog with the Username field highlighted](/images/iam/users/user-username.png)
+
+- **Password** *(required)* — set an initial password for the user. Minimum 8 characters. The eye icon toggles visibility while typing. Share the password with the user through a secure channel.
+
+![Create User dialog with the Password field highlighted and visibility toggle visible](/images/iam/users/user-password.png)
+
+- **Privilege Role** *(required)* — the platform-wide privilege tier for this user. Two options are available:
+  - **Standard User** — the default. Can create and manage their own resources, but has no IAM management access.
+  - **Admin** — full organisation-scoped control. Can manage users, roles, policies, and all resources inside your organisation.
+
+    The SuperAdmin role is **not** available here — SuperAdmin is provisioned only by the Launcher at cluster setup.
+
+![Privilege Role dropdown showing the Admin and Standard User options](/images/iam/users/privilege-role.png)
+
+- **User Groups** *(optional)* — select one or more existing User Groups to add this user to. If no groups exist yet, the dropdown will show **No groups found** — you can still create the user and assign groups later from the User Groups page.
+
+![User Groups dropdown showing the search field with no groups found](/images/iam/users/user-groups.png)
+
+- **Namespaces** *(optional)* — select one or more namespaces this user should have access to. The dropdown supports multi-select with checkboxes.
+
+![Namespaces dropdown with the multi-select checkbox interface](/images/iam/users/user-namespace.png)
+
+Once the form is complete, click **Create User**. The new user appears immediately in the Users list with status **Active**.
+
+![Users list showing the newly created Smith user alongside the existing user](/images/iam/users/after-user-creation.png)
+
+---
+
+## Step 2 — Invite a User by Email
+
+Click **Invite** in the top-right corner to open the **Invite User** dialog. Use this flow when you want the user to set their own credentials — the typical path for inviting team members.
+
+- **Email** *(required)* — the email address to send the invitation to.
+
+![Invite User dialog with the Email field](/images/iam/users/invite-user.png)
+
+Click **Send Invite**. The recipient receives an email from **Zeblok System** with a **Create account** button.
+
+![Invitation email titled You've been invited to Zeblok with a Create account button](/images/iam/users/mail-invite.png)
+
+When the recipient clicks the button, they land on a **Complete your registration** page where they fill in their Full Name, Email, Username, Password, and Confirm Password, accept the Terms and Conditions, and click **Continue** to finish setup.
+
+![Registration page titled Finish setting up your workspace access with the account details and password fields](/images/iam/users/invite-user-login.png)
+
+<Note>
+Invitation links are **single-use and expire after 48 hours**. If the link expires before the recipient registers, send a new invitation from the Users page. Forwarded links should be treated as invalid — they will not work after the original recipient has used them, and they should never be shared.
+</Note>
+
+---
+
+## Viewing User Details
+
+Click any user card to open the details panel on the right. The panel is divided into three sections.
+
+![User details panel showing User Info, Access, and Effective Permissions sections](/images/iam/users/user-details.png)
+
+**User Info** lists the basic identity fields — Name, Username, Status, Namespaces, Allowed Notebooks, Last Active, Email, Organisation ID, Beta User flag, and Created date.
+
+**Access** breaks down where the user's permissions come from:
+
+- **Platform Role** — the high-level privilege tier (Admin or Standard User).
+- **Direct Roles** — IAM roles attached straight to this user, independent of any group.
+- **User Groups** — the groups this user belongs to. Group memberships also carry roles.
+- **Effective Roles** — the union of Direct Roles and any roles inherited through User Groups. This is what actually applies at runtime.
+
+**Effective Permissions** is a per-resource table showing exactly which actions (read, write, delete, manage) the user can perform on each resource type — workstations, microservices, agents, datasets, and so on. Use this section to verify that a user has exactly the access you intended.
+
+---
+
+## Editing a User
+
+The top-right of the details panel has three actions: **Edit**, **Role**, and **Delete**.
+
+Click **Edit** to open the **Edit User** dialog. The edit form contains every field from the Create form plus a few extras that are only available after the user exists:
+
+- **Direct IAM Roles** — search and attach IAM roles directly to this user. Each attached role appears as a tag that can be removed individually. This is independent of the user's User Group memberships.
+- **Active toggle** — disable a user without deleting them. *Inactive users cannot log in*, but their record and resources are preserved. Re-enable them at any time by toggling Active back on.
+- **Beta User toggle** — grant or revoke access to platform features that are still in beta.
+- **Allowed Notebooks** — set the maximum number of notebook templates this user is permitted to spawn.
+
+Email, Username, Privilege Role, User Groups, and Namespaces remain editable on this dialog as well. Click **Save Changes** to apply.
+
+![Edit User dialog showing all editable fields including Direct IAM Roles, Active and Beta User toggles, and Allowed Notebooks](/images/iam/users/edit-user.png)
+
+---
+
+## Changing a User's Privilege Role
+
+Click **Role** in the top-right of the details panel to open the **Change Role** dialog. This is a focused, two-option control for promoting a Standard User to Admin or demoting an Admin back to Standard User without opening the full Edit form.
+
+![Change Role dialog with Admin and Standard User radio options](/images/iam/users/user-role.png)
+
+Select the desired role and click **Save**. The change takes effect immediately — the user's Effective Permissions table will refresh to reflect the new tier.
+
+<Note>
+Promoting a user to **Admin** grants them full organisation-scoped control. They will be able to manage every other user, role, and resource inside your organisation, and they will see workloads belonging to every Standard User under your org. Promote with care.
+</Note>
+
+---
+
+## Deleting a User
+
+Click **Delete** in the top-right of the details panel to permanently remove a user. Before deleting, consider whether you actually want to **disable** them instead — toggling **Active** off in the Edit dialog revokes login without losing the audit trail or any associated metadata.
+
+---
+
+## Important Rules
+
+A few platform-wide rules apply across every IAM action on this page:
+
+- **Organisation isolation is absolute.** Admins can manage every user and resource inside their own organisation, but cannot see, edit, or affect any user, resource, or setting in any other organisation. Only the SuperAdmin has cross-organisation visibility.
+- **Pre-seeded system resources are protected.** Plans, namespaces, workstation templates, microservice templates, and the data centre that were auto-created at platform setup can only be modified or deleted by the SuperAdmin. Admins and Standard Users can view and use them, and can freely create their own resources of the same type — but the system defaults are locked.
+- **Standard Users have no IAM management access.** Even though they can see their own profile, they cannot view or edit other users, roles, policies, or user groups. The IAM tab they see is read-only on their own entry.
+- **Always invite, never sign up.** As stated above — Signup creates a new isolated organisation with the signing-up user as its Admin, which is the wrong outcome for any team member. Always use **Invite** or **Add User**.
+
+## Roles & Policies
+
+Now that you've added users, the next step is to define what those users can actually do — by attaching IAM roles and policies. Continue to the **Roles** page to learn how custom permission sets are built and assigned.
