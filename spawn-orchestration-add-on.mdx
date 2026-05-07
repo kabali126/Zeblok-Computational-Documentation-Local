@@ -1,62 +1,172 @@
 ---
-title: "Orchestration Add-on"
-description: "Enable HPC capabilities with Ray cluster orchestration."
+title: "Spawn Orchestration Add-ons"
+description: "Learn how to configure and launch a distributed orchestration add-on — such as a Ray Cluster, Spark Operator, or MLflow tracking server — on the Ai-MicroCloud platform in a few simple steps."
 ---
+
+> ## Documentation Index
+> Fetch the complete documentation index at: <https://zeblokcomputationalprivatelimited.mintlify.app/llms.txt>
+>
+> Use this file to discover all available pages before exploring further.
 
 ## Overview
 
-The Orchestration Add-on enables **Slurm-as-a-Service** and **Ray clusters** inside the Ai-MicroCloud for high-performance computing (HPC) workloads. Once spawned, a Ray cluster gives you auto-scaling parallel compute that you can target directly from Python — making it well-suited for:
+An **Orchestration Add-on** is a managed distributed-compute framework that you can deploy on demand from the Ai-MicroCloud platform. Add-ons coordinate multi-step AI pipelines and manage dependencies across your workloads — for example, a Ray Cluster for distributed Python workloads, a Spark Operator for large-scale data processing, or an MLflow tracking server for experiment management. This guide walks you through every field on the **New Add-on** form so you can configure and launch your add-on with confidence. To get started, navigate to **Workspace → Orchestration Add-on** in the left sidebar. If you have not spawned any add-ons yet, you will see an empty state page. Click the **New Add-on** button in the top-right corner to begin.
 
-- Parallel data processing across large datasets
-- Training complex machine learning models distributed across multiple workers
-- Running immense computations that exceed the capacity of a single node
+![Orchestration Add-ons page showing no add-ons spawned yet](/images/orchestration-addons/no-orchestration-addons.png)
 
-The add-on provisions a Ray head node together with a configurable pool of worker nodes. You set the minimum and maximum worker count to control auto-scaling behavior.
-
-## Spawn an Orchestration Add-on
+---
 
 <Steps>
-  <Step title="Navigate to the Orchestration tab">
-    In the left-hand navigation menu, click the **Orchestration** tab to open the orchestration management view.
-  </Step>
 
-  <Step title="Create an orchestration add-on definition">
-    Click the **Create Orchestration Addon** button in the top-right corner of the page. This registers a new add-on definition that you will later spawn into your workspace.
-  </Step>
+<Step title="Configure">
 
-  <Step title="Fill in the add-on form">
-    Complete the required fields in the creation form, then click **Add Orchestration Addon** to save the definition. The new add-on appears in the list on the current tab.
-  </Step>
+The **Configure** tab is the first step of the setup form. It collects the core settings needed to define which orchestration framework you want to run, where it is hosted, and how it scales.
 
-  <Step title="Go to your Workspace">
-    After the add-on definition is created, click the **Workspace** button to navigate to your Ai-WorkSpace. This is where you spawn a live Ray cluster from the definition you just created.
-  </Step>
+### Addon Template *(required)*
 
-  <Step title="Spawn the Orchestration Add-on">
-    Inside the workspace, click the **Spawn Orchestration Addon** button to begin the deployment wizard.
-  </Step>
+Use the **Addon Template** dropdown to select the type of orchestration framework you want to deploy. Each template comes pre-packaged with the right image and runtime configuration. Several public templates are available, including:
 
-  <Step title="Configure the Ray cluster deployment">
-    Fill in the deployment parameters:
+- **Ray Cluster** — `rayproject/ray:2.9.0`
+- **Spark Operator** — `ghcr.io/googlecloudplatform/spark-operator:v1beta2-1.4.6`
+- **MLflow** — `ghcr.io/mlflow/mlflow:v2.10.0`
 
-    - **Service** — select the orchestration add-on definition you created in Step 3
-    - **Datacenter** — choose the datacenter where the cluster will run
-    - **Plan** — select the default plan, or choose a custom plan you attached to the add-on at creation time
-    - **Namespace** — select the namespace to deploy into
-    - **Minimum workers** — the lower bound for auto-scaling (cluster will not scale below this count)
-    - **Maximum workers** — the upper bound for auto-scaling (cluster will not scale above this count)
-    - **Deployment name** — enter a name to identify this cluster deployment
-  </Step>
+Click on the template that best matches your workload. Each option is labeled **Public**, indicating it is available to all users on the platform. Unlike Workstations and Microservices, the image tag is bundled with the template and shown inline next to the template name — there is no separate Image Tag field.
 
-  <Step title="Connect to the cluster from Python">
-    Once the cluster is running, it appears under **Spawned Orchestration Addons** in your workspace. Copy the endpoint URL and use it in your Python code to submit Ray tasks:
+![Addon Template dropdown showing Ray Cluster, Spark Operator, and MLflow templates](/images/orchestration-addons/orchestration-addon-select.png)
 
-    ```python
-    import ray
+---
 
-    ray.init(address="<your-cluster-url>")
-    ```
+### Data Center *(required)*
 
-    Your distributed workloads now execute across the auto-scaling Ray cluster.
-  </Step>
+Select the **Data Center** where your add-on will be deployed. The dropdown lists all data centres available to your organisation. Each entry shows the data centre name, location, and whether it is the primary region.
+
+![Data Center dropdown showing the Phison-Prod data centre in Redmond, WA, US](/images/orchestration-addons/datacenter-select.png)
+
+---
+
+### Head Node Plan *(required)*
+
+Choose a **Head Node Plan** to define the compute resources allocated to the add-on’s head node. For a Ray Cluster, the head node hosts the dashboard, the Global Control Service (GCS), and acts as the cluster’s coordination point. For Spark Operator and MLflow, the head node serves the equivalent control-plane components. Each plan displays the number of GPUs, vCPUs, RAM, and local disk storage it provides.
+
+| Plan Name             | GPU | vCPU      | RAM      | Disk  |
+| --------------------- | --- | --------- | -------- | ----- |
+| Custom-Plan-dyZ-c5Dw  | 0   | 1         | 1 GB     | —     |
+| Custom-Plan-b7d2t1pv  | 0   | 1         | 1 GB     | —     |
+| Custom-Plan-vlvRqDkg  | 2   | 28        | 400 GB   | —     |
+| testing-public        | 0   | 10000     | 10000 GB | 10 GB |
+| testing               | 0   | 6         | 10 GB    | 10 GB |
+| Custom-Plan-RpnuBCkb  | 0   | 8         | 32 GB    | 5 GB  |
+
+Select the plan that matches the expected control-plane load. If none of the existing plans meet your needs, click **+ New Dynamic Plan** to create a custom resource configuration.
+
+![Head Node Plan dropdown listing available compute plans with GPU, vCPU, RAM, and disk details](/images/orchestration-addons/head-node-plan-select.png)
+
+---
+
+### Worker Node Plan *(required)*
+
+Choose a **Worker Node Plan** to define the compute resources allocated to **each** worker node in the cluster. Workers do the actual computation — Ray tasks and actors, Spark executors, or MLflow training jobs — so this is where you allocate the bulk of your GPU and CPU capacity. The same plan list shown for the head node is available here.
+
+![Worker Node Plan dropdown showing the same plans available for worker node selection](/images/orchestration-addons/worker-node-plan-select.png)
+
+---
+
+### Min Workers *(required)*
+
+Set **Min Workers** — the minimum number of worker replicas the cluster will keep running at all times. The default placeholder is `1`. The cluster will never scale below this number, even when idle, which guarantees baseline capacity.
+
+![Min Workers field highlighted with the placeholder value 1](/images/orchestration-addons/min-worker.png)
+
+---
+
+### Max Workers *(required)*
+
+Set **Max Workers** — the maximum number of worker replicas the cluster is allowed to scale up to. The default placeholder is `3`. The autoscaler will add workers up to this ceiling as workload demand increases, and remove them as demand drops back down toward Min Workers.
+
+![Max Workers field highlighted with the placeholder value 3](/images/orchestration-addons/max-worker.png)
+
+Once you have filled in all required fields on the Configure tab, click **Next** to proceed to the Environment tab.
+
+</Step>
+
+<Step title="Environment">
+
+The **Environment** tab for orchestration add-ons is intentionally lightweight — the framework templates handle their own networking, ports, and runtime configuration internally, so you only need to provide a deployment namespace and a name.
+
+### Namespace *(required)*
+
+Select the **Namespace** in which your add-on will be deployed. Namespaces are used to organise and isolate workloads within your organisation. Use the dropdown to choose from the namespaces available to your account.
+
+<Note>
+You must be a member of a namespace to deploy into it. If the namespace you need is not listed, contact your OrgAdmin to be added. OrgAdmins can manage namespace membership from the IAM section.
+</Note>
+
+![Namespace dropdown showing the available namespace for the user](/images/orchestration-addons/select-namespace.png)
+
+---
+
+### Addon Name *(required)*
+
+Enter a unique **Addon Name** to identify your orchestration add-on. Pick a name that reflects the purpose of the cluster — for example, `ray-training-cluster` or `mlflow-tracking-prod`.
+
+![Addon Name field highlighted, ready for input next to the selected namespace](/images/orchestration-addons/instance-name.png)
+
+Once both fields are filled in, click **Create** to spawn your add-on.
+
+</Step>
+
+<Step title="Accessing Your Orchestration Add-on">
+
+After clicking **Create**, the platform provisions the head node and worker pods, then redirects you to the Orchestration Add-ons list. Your new add-on will appear here with its current status, the source template, the data centre, and the configured worker range. Once the status shows as **Running**, it is ready to use.
+
+![Orchestration Add-ons list showing the newly spawned Ray Cluster add-on in a Running state](/images/orchestration-addons/after-spawning-orchestration-ready.png)
+
+From the add-on card you can click **View Details** to open the full details panel, where several actions are available.
+
+### Open the Add-on
+
+Click the **Open** button to launch the add-on’s native dashboard directly in your browser. For a Ray Cluster, this opens the Ray Dashboard with tabs for **Overview**, **Jobs**, **Serve**, **Cluster**, **Actors**, **Metrics**, and **Logs** — giving you full visibility into cluster utilisation, running jobs, node status, and resource demands. Spark Operator and MLflow open their respective web UIs.
+
+![Ray Dashboard opened in a new tab showing Cluster utilization, Recent jobs, Serve Applications, Node count, Node Status, and Resource Status panels](/images/orchestration-addons/click-open-to-open-orchestration.png)
+
+### View Details
+
+The **Details** tab shows the full runtime and configuration information for your add-on, including:
+
+- **Endpoints** — the external HTTPS URL and the in-cluster service URL with port
+- **Runtime** — current status and public access setting
+- **Placement** — data centre, namespace, category, and Kubernetes resource name
+- **Capacity** — head plan, worker plan, minimum and maximum workers
+- **Overview** — template, owner, creation time, and last update time
+
+From the top of the details panel you can also use **Open**, **Stop**, **Reconfigure**, and **Share** to manage the add-on without leaving the page.
+
+![Details panel showing endpoints, runtime, placement, capacity, and overview sections for the Ray Cluster add-on](/images/orchestration-addons/click-details-for-all-info.png)
+
+### Monitor Resource Usage
+
+Click the **Monitoring** tab to view live resource utilisation metrics for your add-on, including **CPU Usage**, **Memory Usage**, **GPU Utilization**, and **CPU Throttling**. You can filter metrics by time range — 5 minutes, 30 minutes, 2 hours, 12 hours, or 24 hours.
+
+![Monitoring tab showing CPU usage, memory usage, GPU utilization, and CPU throttling charts for the Ray Cluster add-on](/images/orchestration-addons/click-monitoring.png)
+
+### Sessions
+
+Click the **Sessions** tab to view active sessions associated with the add-on. For Ray Clusters this surfaces interactive session connections; if no sessions are active or the session service is not yet ready, the panel will show a message and a **Retry** button to refresh the view.
+
+![Sessions tab showing the session view with a Retry button](/images/orchestration-addons/click-session.png)
+
+### View Logs
+
+Click the **Logs** tab to access the real-time container logs for the add-on’s pods. This is useful for debugging cluster startup issues or monitoring framework processes. If the underlying pod has been restarted or stopped, the panel will display a **Pod not found** message — click **Retry** to reconnect once the pod is healthy again.
+
+![Logs tab showing the log view with a Pod not found message and a Retry button](/images/orchestration-addons/click-logs.png)
+
+</Step>
+
 </Steps>
+
+---
+
+## Bring Your Own Orchestration Add-on
+
+The Ai-MicroCloud platform is not limited to the built-in public templates. If you have a custom orchestration framework — a Dask scheduler, an Airflow deployment, a Kubeflow pipeline runner, or any other distributed system packaged as a container — you can import it directly into the platform and deploy it just like any other add-on. Head over to **Platform → Imports → Import Orchestration Add-ons** to onboard your own image, complete with private registry credentials, head and worker plans, and your preferred autoscaling range.
