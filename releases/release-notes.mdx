@@ -8,127 +8,127 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 <AccordionGroup>
 
   <Accordion title="🚀 v2.0.0 — May 2026 (Major Release)">
-    **Our biggest release yet.** A complete platform evolution — rebuilt from the ground up. This release rebuilds the Launcher from the ground up, introduces KVM-based on-prem provisioning, adds AI-Adaptive Cache integration, and strengthens authentication and security across the platform.
+    **Our biggest release yet.** A complete platform evolution — rebuilt from the ground up. This release rebuilds the Launcher from scratch, introduces KVM-based on-prem provisioning, introduces AI-Adaptive Cache acceleration, and strengthens authentication and security across the platform.
 
-    **SaaS — AI-MicroCloud Platform**
+    **Top 5 things in v2.0.0**
 
-    - **AI-Adaptive Cache Plans:** Dedicated AI-Adaptive plans tab in the plan stepper with logo indicator and validation (GPU min 1, max 2 when AI-Adaptive is enabled).
-    - **AI-Adaptive Workstation Support:** Workstations now support cache acceleration during creation and update, with restricted Flash Memory selection.
-    - **Memory Offloading Fine-Tuning:** New fine-tuning workstation supports memory offloading, enabling larger models with reduced memory footprint.
-    - **Inference Offloading + KV Cache:** Inference workloads can be offloaded with KV cache storage and reuse for improved performance on long sessions.
-    - **Datacenter Page:** New datacenter page with detailed resource info modal and refreshed CPU/GPU/Flash Memory rendering.
-    - **Workstation Configuration Page:** Centralized configuration page introduced with refreshed spawn flow.
-    - **Organization Unit Structure:** Defined customer onboarding structure for cleaner multi-tenant separation.
-    - **Namespace Member Management:** Edit namespace cards with user selection dropdown and member visibility for collaboration.
-    - **Workstation Image Update for MS:** Running microservice instances can now be updated to new images without re-creation.
-    - **Cluster Card UI:** Refreshed cluster cards with region key and additional data fields.
-    - **Plan Display:** Plan tables now show datacenter name (instead of ID) for clarity.
-    - **Replica/Storage Logic:** Multi-replica blocks PVC mount, and PVC-in-use blocks replica scaling.
-    - **Private Registry Imports:** Standardized import flow across microservices and workstations.
+    - 🚀 Brand-new AI-MicroCloud® and Launcher experience
+    - 🖥️ KVM on-prem provisioning
+    - ⚡ AI-Adaptive Cache acceleration
+    - 🔐 Stronger security across every layer
+    - 🤖 Smarter agents with OpenClaw
+
+    **SaaS — AI-MicroCloud® Platform**
+
+    - **AI-Adaptive Cache Plans** — A new dedicated plan category that lets you launch workloads on AI-Adaptive Cache hardware, with the right configuration applied automatically.
+    - **AI-Adaptive Workstations** — Spin up workstations with cache acceleration to dramatically speed up model loading and data-heavy workflows.
+    - **Memory Offloading for Fine-Tuning** — Fine-tune larger models on smaller GPU footprints by offloading memory dynamically — train models that previously required premium hardware.
+    - **Inference Offloading with KV Cache Reuse** — Long chat sessions and multi-turn conversations now run faster and cheaper, thanks to intelligent KV cache reuse across requests.
+    - **Redesigned Datacenter Page** — A complete view of every datacenter's compute, GPU, and memory resources at a glance.
+    - **Unified Workstation Configuration** — A single, streamlined screen to configure and launch workstations — fewer clicks, faster setup.
+    - **Multi-Tenant Organization Structure** — A cleaner organizational model giving enterprise customers stronger separation between teams, business units, and projects.
+    - **Namespace Member Management** — Easily add, edit, and view team members directly from any namespace, making collaboration faster across your organization.
+    - **Live Microservice Image Updates** — Update the underlying image of a running microservice without losing state or redeploying from scratch.
+    - **Enhanced Cluster Cards** — At-a-glance details on every cluster, including region and key configuration, right from the dashboard.
+    - **Unified Private Registry Imports** — A single, consistent way to bring images from your private registry into the platform — whether for workstations or microservices.
 
     **SaaS — Inference & Observability**
 
-    - **GenAI Key for Inference:** New access-control layer using GenAI Keys for both offloading and non-offloading inference.
-    - **Authentication Layer for Inference:** Token-based authentication introduced as part of the API Key flow.
-    - **Inference Utilization Dashboard:** Real-time monitoring of inference performance, including TTFT (Time To First Token) and TPOT (Time Per Output Token).
-    - **Inference Metrics Storage:** Metrics persisted to enable historical analytics alongside live monitoring.
-    - **AI-Adaptive SSD Monitoring:** New SSD Read/Write and Usage % visibility for AI-Adaptive Cache workloads.
+    - **Secure Inference Access with GenAI Keys** — A new key-based access layer makes it easy to securely share and govern who can call your inference endpoints.
+    - **Token-Based Inference Authentication** — Every inference call is now backed by token authentication, giving you full control and audit visibility over API usage.
+    - **Inference Utilization Dashboard** — Track real-time inference performance with built-in metrics like Time to First Token (TTFT) and Time per Output Token (TPOT) — essential for monitoring user experience.
+    - **Historical Inference Analytics** — Performance metrics are now persisted, so you can analyze trends, plan capacity, and tune workloads over time.
+    - **AI-Adaptive Cache Monitoring** — Watch SSD read/write activity and usage in real time to fine-tune cache-accelerated workloads.
 
     **IaaS — Launcher (Major Rebuild)**
 
-    - **Modernized Launcher UI:** Ground-up rebuild with a redesigned, guided user experience.
-    - **New Dashboard:** Stat cards, resource overview, and a recent clusters table for quick visibility.
-    - **Multi-Step Cluster Wizard:** Guided wizard with node pool, GPU configuration, and SSH validation.
-    - **Multi-Cloud + Bare Metal:** End-to-end cluster creation for AWS (EKS), Azure (AKS), and Bare Metal — across both Pro and Edge variants.
-    - **Secondary Datacenter Linking:** Attach a secondary datacenter and link a secondary cluster to a primary cluster.
-    - **Real-Time Deployment Log Streaming:** Live log streaming during deployment for visibility into setup progress.
-    - **SSH-Based Health Checks:** Per-node metrics and SSH-based health checks for accurate cluster monitoring.
-    - **3-Step AI-MicroCloud Request Flow:** Cleaner, guided experience for deployment requests.
-    - **Live Cluster Status Indicators:** Pending, Setting Up, Configuration, Running, Failed, Deleting, and Deleted states surfaced in real time.
-    - **Re-Apply Support:** Added for AWS and Azure Pro clusters.
-    - **Edge Server Support:** Native support for edge servers when creating Edge clusters.
-    - **Server Pool Management:** Add Servers and Select Server flows for Edge/Non-Edge Bare Metal with pagination.
-    - **Unified Edge & Pro Cluster Model:** Edge and Pro clusters consolidated into a single management model.
+    - **All-New Launcher Experience** — A completely redesigned, intuitive Launcher interface built around your workflow.
+    - **At-a-Glance Dashboard** — A unified home screen showing your clusters, resources, and recent activity in one place.
+    - **One Launcher, Every Environment** — Deploy on AWS (EKS), Azure (AKS), or your own bare metal — for both Pro and Edge variants — from a single workflow.
+    - **Secondary Datacenter Support** — Pair a primary cluster with a secondary datacenter for redundancy, geographic distribution, or specialized workloads.
+    - **Live Deployment Logs** — See exactly what's happening during cluster creation in real time — no more guessing or waiting in the dark.
+    - **Deeper Health Monitoring** — Per-node health checks give you accurate cluster monitoring all the way down to individual machines.
+    - **Faster AI-MicroCloud® Requests** — A streamlined 3-step request flow gets your environment provisioned with minimum friction.
+    - **Live Cluster Status** — Always know your cluster's exact state, with real-time status updates from creation through deletion.
+    - **Cluster Re-Apply for AWS & Azure** — Reapply configurations to running AWS and Azure Pro clusters without rebuilding from scratch.
+    - **Edge Server Provisioning** — Add and manage edge servers natively when building Edge clusters.
+    - **Unified Cluster Management** — Edge and Pro clusters now share a single management experience, simplifying operations across hybrid environments.
 
     **IaaS — KVM Provisioning**
 
-    - **KVM Host Provisioning:** End-to-end automated KVM host preparation from the Launcher, including pre-setup and post-setup workflows.
-    - **Add KVM Host UI Flow:** New Add KVM Host page, prerequisite screen, Create KVM screen, and sidebar navigation with status tracking.
-    - **Smart IP Discovery:** Automatic subnet scan to pick 1 VIP and 3 master IPs from the available pool.
-    - **Resume-on-Interruption:** If users navigate away or the host reboots mid-setup, the flow can resume from the last completed step.
-    - **Post-Reboot Verification:** Automatic verification of host readiness after reboot.
-    - **Create VM Flow:** New Create VM experience with free IP/resource discovery and persistent VM details on the KVM list page.
+    - **Automated KVM Host Provisioning** — Spin up KVM hosts end-to-end from the Launcher — no more manual setup or scripting.
+    - **Guided KVM Host Setup** — A clean, step-by-step interface walks you through prerequisites, host configuration, and provisioning.
+    - **Automatic IP Discovery** — The Launcher scans your network and picks available IPs automatically, removing one of the most error-prone steps in on-prem deployment.
+    - **Resume Anywhere** — Step away from setup or hit a reboot? The Launcher remembers exactly where you left off, so you can pick up right where you stopped.
+    - **Automatic Post-Reboot Verification** — After every reboot, the system automatically validates that your KVM host is healthy and ready.
+    - **Easy VM Creation** — Create virtual machines with automatic resource discovery and a single, persistent view of every VM you've launched.
 
     **IaaS — Edge & Cluster Infrastructure**
 
-    - **Edge Platform GA:** Edge variant of the platform now generally available.
-    - **Edge GPU Workloads:** GPU-enabled workloads now supported on Edge clusters.
-    - **Edge MongoDB Compatibility:** Compatibility delivered for environments without AVX support.
-    - **AI-Adaptive 3-Node Cluster:** Fully automated provisioning for 3-node AI-Adaptive Cache clusters.
-    - **AI-Adaptive Standalone Cluster:** Standalone AI-Adaptive Cache cluster setup completed and shipped.
-    - **NVMe Auto-Partitioning:** NVMe disks are partitioned automatically during Bare Metal setup.
-    - **Multi-Cluster Domain Support:** Cluster domains are managed dynamically, enabling true multi-cluster deployments.
-    - **Email Verification & Password Reset:** Email verification post-signup, license key validation page, and Forgot Password experience.
+    - **Edge Platform Generally Available** — Our Edge variant is now production-ready, purpose-built for distributed and on-prem deployments.
+    - **GPU Workloads on Edge** — Run accelerated AI workloads directly at the edge, closer to your data.
+    - **DDIL Support for the Edge** — Resources running on the edge node remain accessible locally even when the connection between the HUB and the Edge breaks, with local visibility surfaced in the UI.
+    - **Wider Hardware Compatibility on Edge** — The platform now runs on edge hardware without AVX support, opening up more deployment options.
+    - **Automatic NVMe Disk Setup** — NVMe disks are partitioned and prepared automatically during bare-metal setup, eliminating one of the trickiest manual steps.
+    - **Multi-Cluster Domain Management** — Run multiple clusters under dynamically managed domains — ideal for multi-region or multi-environment setups.
+    - **Account Security Essentials** — Email verification at signup, license key validation, and full Forgot Password support — all built in.
+    - **Standalone AI-Adaptive Cluster Option** — A simpler single-node AI-Adaptive deployment for smaller environments and pilots.
 
     **PaaS — Seeding & Onboarding**
 
-    - **Default & Customized Seeding Flows:** Launcher now offers default and customized seeding paths with a dedicated log tracking screen.
-    - **Selective Seeding:** Customers can pick exactly which Workstations, Microservices, Agents, and Models to seed, with clear seeded vs. non-seeded markers.
-    - **Admin User Seeding:** Single admin identity associated across workstations, microservices, agents, and models, with credentials delivered via email.
-    - **Initialize Seed Action:** "Initialize Seed" entry point on cluster cards, contextually enabled only when the cluster is active.
-    - **Expanded Seed Catalog:** Seed catalog expanded with 10 new plans and corresponding mapping.
-    - **Faster Catalog Loads:** Caching introduced on Launcher to reduce repeat catalog calls.
+    - **Flexible Environment Seeding** — Choose default or fully custom seeding to populate your environment exactly the way you want, with full log visibility throughout.
+    - **Pick & Choose What to Seed** — Select exactly which workstations, microservices, agents, and models to seed, with clear status markers showing what's already loaded.
+    - **Pre-Configured Admin Identity** — A single admin identity is provisioned across the platform, with secure credentials delivered straight to your inbox.
+    - **One-Click Seed Initialization** — Kick off seeding directly from the cluster card, with smart enabling that prevents action before your cluster is ready.
+    - **Faster Catalog Browsing** — Smart caching means catalog screens load near-instantly, even with large environments.
 
     **PaaS — Model Lifecycle & Storage**
 
-    - **Multi-Backend Model Downloader:** Now supports AWS, Azure, and MinIO with dynamic storage backend detection.
-    - **Validated Model Uploads:** Workflows validated for Mistral-7B and Llama 3.x (incl. 70B variants).
-    - **MLflow 3.9.0:** Upgraded with refreshed model serving flow.
-    - **Public CLI:** CLI is now publicly accessible, enabling programmatic platform interaction.
-    - **Updated Workstation & Microservice Catalog:** Workstation images and core microservices refreshed to latest upstream versions.
+    - **Universal Model Downloader** — Pull models from AWS, Azure, or MinIO — the platform automatically detects and uses the right backend.
+    - **Validated for Popular LLMs** — Out-of-the-box compatibility tested with Mistral-7B and Llama 3.x (including 70B variants).
+    - **Latest MLflow Integration** — Updated to MLflow 3.9.0 with a refreshed model-serving flow.
+    - **Refreshed Catalog** — Workstation images and core microservices updated to the latest stable versions.
 
     **PaaS — Agents & Inference Platform**
 
-    - **OpenClaw Microservice:** Delivered with two deployment modes — self-hosted LLM and external API.
-    - **Memory-Offload Inference Mode:** Inference deployment now supports memory offloading for larger model footprints.
-    - **Upgraded Agent Backbone:** Agent backbone upgraded to Qwen3-Coder-Next FP8 (80B MoE) for more reliable workspace-instruction following.
-    - **Custom Agent Personas:** Per-agent personas with skill allowlists, allowing tailored agent behavior across workspaces.
-    - **MCP Server Integration:** External services can now be wired in as agent tools via MCP.
-    - **API Key Mechanism:** API Key issuance and management for programmatic AI-MicroCloud and Inference access.
+    - **Introducing OpenClaw** — A new agent runtime that supports both self-hosted LLMs and external APIs, giving you full flexibility on how you run agents.
+    - **Memory-Offload Inference** — Run larger models on smaller hardware footprints with our new memory-offloading inference mode.
+    - **Smarter Agent Backbone** — Agents now run on Qwen3-Coder-Next FP8 (80B MoE), delivering significantly better instruction-following and reasoning.
+    - **Custom Agent Personas** — Define unique personas and skill permissions per agent — perfect for tailored, role-specific assistants.
+    - **MCP Server Integration** — Plug external tools and services into your agents using the MCP standard.
+    - **API Key Management** — Issue, rotate, and manage API keys for programmatic platform and inference access.
 
     **Security (Cross-Layer)**
 
-    - **Control Plane Hardening:** Master and worker control plane hardening applied across managed clusters.
-    - **Node-Level Security:** Kernel hardening, AppArmor profiles, and unattended security updates applied at the node level.
-    - **ETCD Encryption:** Cluster state encrypted at rest.
-    - **Auditing & Logging:** Cluster-level auditing and logging enabled for traceability and compliance.
-    - **Network Policy Extensions:** Deny-all network policy extensions strengthen workload isolation.
-    - **Server Lockdown:** Server-level access control restricting platform access to trusted endpoints.
-    - **Role-Based Access Control:** Three-tier RBAC introduced — Admin, User, and Superadmin roles.
-    - **AES-256 Backend Encryption:** AES-256 encryption applied for sensitive data at the backend layer.
-    - **Password Strength Enforcement:** Strength rules enforced on all user-set credentials.
+    - **Hardened Kubernetes Control Plane** — Stronger security baselines applied across master and worker nodes for production-grade protection.
+    - **Encrypted Cluster State** — All cluster state in ETCD is now encrypted at rest, protecting sensitive configuration and secrets.
+    - **Built-In Audit Trails** — Comprehensive auditing and logging for compliance, traceability, and incident response.
+    - **Default-Deny Network Isolation** — Workload isolation strengthened with deny-all network policies, reducing lateral attack surface.
+    - **Tightened Server Access** — Server access locked down to trusted endpoints only, drastically reducing exposure.
+    - **Three-Tier Role-Based Access Control** — New Admin, User, and Superadmin roles give you precise control over who can do what.
+    - **AES-256 Encryption at the Backend** — Sensitive data is now encrypted at the backend with AES-256, the industry standard.
+    - **Strong Password Policies** — Enforced password strength rules across every user account.
 
     **Documentation**
 
-    - **New Zeblok Documentation Portal:** Public-facing documentation portal launched at https://zeblokcomputationalprivatelimited.mintlify.app/.
-    - **KVM Implementation Guide:** New KVM design and process documentation for on-prem deployments.
+    - **Brand-New Documentation Portal** — A redesigned public docs experience launched at https://zeblokcomputationalprivatelimited.mintlify.app/
 
-    **Bug fixes**
+    **Bug Fixes**
 
-    - Resolved namespace creation, Invite User, and Create User errors caused by missing organization context.
-    - Stabilized model dropdown identifiers for predictable selection behavior.
-    - NVMe listing restricted to valid host paths only.
-    - Fixed save restriction when updating workstation images during onboarding.
-    - Resolved image version inconsistency in Spawn WS dropdown.
-    - Fixed "Selected Plan is not available for the Workstation" error in custom plan spawn.
-    - Spawn requests now correctly reflect user-defined CPU and memory limits.
-    - Volumes now auto-created via configuration, eliminating manual entry.
-    - Stopped/deleted inferences no longer appear in the agent spawn list.
-    - Fixed Azure cluster naming/casing inconsistencies and Azure log download.
-    - Storage buckets and model-hub data now reliably attached to spawned environments.
-    - Downloaded models stored in proper UTF-8 format for better compatibility.
-    - Worker node addition to Bare Metal clusters now succeeds end-to-end.
-    - Default seed data is no longer overwritten on service restart.
+    - Resolved errors when creating namespaces and inviting or creating users.
+    - Fixed inconsistent behavior when selecting models from dropdowns.
+    - NVMe disk listings now show only relevant, valid disks — cleaner and easier to navigate.
+    - Fixed an issue that prevented saving updated workstation images during onboarding.
+    - Resolved image version inconsistencies when launching workstations.
+    - Fixed the "Selected Plan is not available" error when launching workstations with custom plans.
+    - Workstation and microservice launches now correctly apply your specified CPU and memory limits.
+    - Volume paths are now created automatically — no more manual entry during deployment.
+    - Stopped or deleted inferences no longer clutter the agent setup list.
+    - Fixed Azure cluster name display issues and the Azure log download flow.
+    - Storage buckets and model-hub data are now reliably attached to launched environments.
+    - Downloaded models are now stored in the proper format for full compatibility.
+    - Adding worker nodes to bare-metal clusters now works reliably end-to-end.
+    - Default seed data is preserved across service restarts.
   </Accordion>
 
   <Accordion title="v1.3.8 — January 2026">
@@ -638,3 +638,8 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
   </Accordion>
 
 </AccordionGroup>
+
+---
+
+<sub>© 2026 Zeblok Computational Pvt. Ltd. All rights reserved.</sub>
+<sub>AI-MicroCloud® is a registered trademark of Zeblok Computational Pvt. Ltd. All other product names, logos, and brands are property of their respective owners.</sub>
