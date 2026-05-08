@@ -7,6 +7,377 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
 <AccordionGroup>
 
+  <Accordion title="v2.0.0 — May 2026">
+    A major release that rebuilds the Launcher from the ground up, introduces KVM-based on-prem provisioning, adds AI-Adaptive Cache integration, and strengthens authentication and security across the platform.
+
+    **SaaS — AI-MicroCloud Platform**
+
+    - **AI-Adaptive Cache Plans:** Dedicated AI-Adaptive plans tab in the plan stepper with logo indicator and validation (GPU min 1, max 2 when AI-Adaptive is enabled).
+    - **AI-Adaptive Workstation Support:** Workstations now support cache acceleration during creation and update, with restricted Flash Memory selection.
+    - **Memory Offloading Fine-Tuning:** New fine-tuning workstation supports memory offloading, enabling larger models with reduced memory footprint.
+    - **Inference Offloading + KV Cache:** Inference workloads can be offloaded with KV cache storage and reuse for improved performance on long sessions.
+    - **Datacenter Page:** New datacenter page with detailed resource info modal and refreshed CPU/GPU/Flash Memory rendering.
+    - **Workstation Configuration Page:** Centralized configuration page introduced with refreshed spawn flow.
+    - **Organization Unit Structure:** Defined customer onboarding structure for cleaner multi-tenant separation.
+    - **Namespace Member Management:** Edit namespace cards with user selection dropdown and member visibility for collaboration.
+    - **Workstation Image Update for MS:** Running microservice instances can now be updated to new images without re-creation.
+    - **Cluster Card UI:** Refreshed cluster cards with region key and additional data fields.
+    - **Plan Display:** Plan tables now show datacenter name (instead of ID) for clarity.
+    - **Replica/Storage Logic:** Multi-replica blocks PVC mount, and PVC-in-use blocks replica scaling.
+    - **Private Registry Imports:** Standardized import flow across microservices and workstations.
+
+    **SaaS — Inference & Observability**
+
+    - **GenAI Key for Inference:** New access-control layer using GenAI Keys for both offloading and non-offloading inference.
+    - **Authentication Layer for Inference:** Token-based authentication introduced as part of the API Key flow.
+    - **Inference Utilization Dashboard:** Real-time monitoring of inference performance, including TTFT (Time To First Token) and TPOT (Time Per Output Token).
+    - **Inference Metrics Storage:** Metrics persisted to enable historical analytics alongside live monitoring.
+    - **AI-Adaptive SSD Monitoring:** New SSD Read/Write and Usage % visibility for AI-Adaptive Cache workloads.
+
+    **IaaS — Launcher (Major Rebuild)**
+
+    - **Modernized Launcher UI:** Ground-up rebuild with a redesigned, guided user experience.
+    - **New Dashboard:** Stat cards, resource overview, and a recent clusters table for quick visibility.
+    - **Multi-Step Cluster Wizard:** Guided wizard with node pool, GPU configuration, and SSH validation.
+    - **Multi-Cloud + Bare Metal:** End-to-end cluster creation for AWS (EKS), Azure (AKS), and Bare Metal — across both Pro and Edge variants.
+    - **Secondary Datacenter Linking:** Attach a secondary datacenter and link a secondary cluster to a primary cluster.
+    - **Real-Time Deployment Log Streaming:** Live log streaming during deployment for visibility into setup progress.
+    - **SSH-Based Health Checks:** Per-node metrics and SSH-based health checks for accurate cluster monitoring.
+    - **3-Step AI-MicroCloud Request Flow:** Cleaner, guided experience for deployment requests.
+    - **Live Cluster Status Indicators:** Pending, Setting Up, Configuration, Running, Failed, Deleting, and Deleted states surfaced in real time.
+    - **Re-Apply Support:** Added for AWS and Azure Pro clusters.
+    - **Edge Server Support:** Native support for edge servers when creating Edge clusters.
+    - **Server Pool Management:** Add Servers and Select Server flows for Edge/Non-Edge Bare Metal with pagination.
+    - **Unified Edge & Pro Cluster Model:** Edge and Pro clusters consolidated into a single management model.
+
+    **IaaS — KVM Provisioning**
+
+    - **KVM Host Provisioning:** End-to-end automated KVM host preparation from the Launcher, including pre-setup and post-setup workflows.
+    - **Add KVM Host UI Flow:** New Add KVM Host page, prerequisite screen, Create KVM screen, and sidebar navigation with status tracking.
+    - **Smart IP Discovery:** Automatic subnet scan to pick 1 VIP and 3 master IPs from the available pool.
+    - **Resume-on-Interruption:** If users navigate away or the host reboots mid-setup, the flow can resume from the last completed step.
+    - **Post-Reboot Verification:** Automatic verification of host readiness after reboot.
+    - **Create VM Flow:** New Create VM experience with free IP/resource discovery and persistent VM details on the KVM list page.
+
+    **IaaS — Edge & Cluster Infrastructure**
+
+    - **Edge Platform GA:** Edge variant of the platform now generally available.
+    - **Edge GPU Workloads:** GPU-enabled workloads now supported on Edge clusters.
+    - **Edge MongoDB Compatibility:** Compatibility delivered for environments without AVX support.
+    - **AI-Adaptive 3-Node Cluster:** Fully automated provisioning for 3-node AI-Adaptive Cache clusters.
+    - **AI-Adaptive Standalone Cluster:** Standalone AI-Adaptive Cache cluster setup completed and shipped.
+    - **NVMe Auto-Partitioning:** NVMe disks are partitioned automatically during Bare Metal setup.
+    - **Multi-Cluster Domain Support:** Cluster domains are managed dynamically, enabling true multi-cluster deployments.
+    - **Email Verification & Password Reset:** Email verification post-signup, license key validation page, and Forgot Password experience.
+
+    **PaaS — Seeding & Onboarding**
+
+    - **Default & Customized Seeding Flows:** Launcher now offers default and customized seeding paths with a dedicated log tracking screen.
+    - **Selective Seeding:** Customers can pick exactly which Workstations, Microservices, Agents, and Models to seed, with clear seeded vs. non-seeded markers.
+    - **Admin User Seeding:** Single admin identity associated across workstations, microservices, agents, and models, with credentials delivered via email.
+    - **Initialize Seed Action:** "Initialize Seed" entry point on cluster cards, contextually enabled only when the cluster is active.
+    - **Expanded Seed Catalog:** Seed catalog expanded with 10 new plans and corresponding mapping.
+    - **Faster Catalog Loads:** Caching introduced on Launcher to reduce repeat catalog calls.
+
+    **PaaS — Model Lifecycle & Storage**
+
+    - **Multi-Backend Model Downloader:** Now supports AWS, Azure, and MinIO with dynamic storage backend detection.
+    - **Validated Model Uploads:** Workflows validated for Mistral-7B and Llama 3.x (incl. 70B variants).
+    - **MLflow 3.9.0:** Upgraded with refreshed model serving flow.
+    - **Public CLI:** CLI is now publicly accessible, enabling programmatic platform interaction.
+    - **Updated Workstation & Microservice Catalog:** Workstation images and core microservices refreshed to latest upstream versions.
+
+    **PaaS — Agents & Inference Platform**
+
+    - **OpenClaw Microservice:** Delivered with two deployment modes — self-hosted LLM and external API.
+    - **Memory-Offload Inference Mode:** Inference deployment now supports memory offloading for larger model footprints.
+    - **Upgraded Agent Backbone:** Agent backbone upgraded to Qwen3-Coder-Next FP8 (80B MoE) for more reliable workspace-instruction following.
+    - **Custom Agent Personas:** Per-agent personas with skill allowlists, allowing tailored agent behavior across workspaces.
+    - **MCP Server Integration:** External services can now be wired in as agent tools via MCP.
+    - **API Key Mechanism:** API Key issuance and management for programmatic AI-MicroCloud and Inference access.
+
+    **Security (Cross-Layer)**
+
+    - **Control Plane Hardening:** Master and worker control plane hardening applied across managed clusters.
+    - **Node-Level Security:** Kernel hardening, AppArmor profiles, and unattended security updates applied at the node level.
+    - **ETCD Encryption:** Cluster state encrypted at rest.
+    - **Auditing & Logging:** Cluster-level auditing and logging enabled for traceability and compliance.
+    - **Network Policy Extensions:** Deny-all network policy extensions strengthen workload isolation.
+    - **Server Lockdown:** Server-level access control restricting platform access to trusted endpoints.
+    - **Role-Based Access Control:** Three-tier RBAC introduced — Admin, User, and Superadmin roles.
+    - **AES-256 Backend Encryption:** AES-256 encryption applied for sensitive data at the backend layer.
+    - **Password Strength Enforcement:** Strength rules enforced on all user-set credentials.
+
+    **Documentation**
+
+    - **New Zeblok Documentation Portal:** Public-facing documentation portal launched at https://zeblokcomputationalprivatelimited.mintlify.app/.
+    - **KVM Implementation Guide:** New KVM design and process documentation for on-prem deployments.
+
+    **Bug fixes**
+
+    - Resolved namespace creation, Invite User, and Create User errors caused by missing organization context.
+    - Stabilized model dropdown identifiers for predictable selection behavior.
+    - NVMe listing restricted to valid host paths only.
+    - Fixed save restriction when updating workstation images during onboarding.
+    - Resolved image version inconsistency in Spawn WS dropdown.
+    - Fixed "Selected Plan is not available for the Workstation" error in custom plan spawn.
+    - Spawn requests now correctly reflect user-defined CPU and memory limits.
+    - Volumes now auto-created via configuration, eliminating manual entry.
+    - Stopped/deleted inferences no longer appear in the agent spawn list.
+    - Fixed Azure cluster naming/casing inconsistencies and Azure log download.
+    - Storage buckets and model-hub data now reliably attached to spawned environments.
+    - Downloaded models stored in proper UTF-8 format for better compatibility.
+    - Worker node addition to Bare Metal clusters now succeeds end-to-end.
+    - Default seed data is no longer overwritten on service restart.
+  </Accordion>
+
+  <Accordion title="v1.3.8 — January 2026">
+    This release unifies Edge and Non-Edge environments, expands LLM capabilities, and improves infrastructure automation, security, and performance across the Launcher, DevOps, SDK, and UI.
+
+    **SaaS — AIMC Platform**
+
+    - **Unified Edge & Non-Edge Platform:** Consolidated edge and non-Edge environments into a single AIMC platform, simplifying user experience and operations.
+    - **AI Agent Support:** Introduced AI Agent lifecycle support within the Lifecycle Manager for advanced AI orchestration.
+    - **External Data Sources for LLMs:** Enabled integration of external data sources, allowing LLMs to generate real-time, context-aware responses.
+    - **AIMC Branding & UI Enhancements:** Delivered updated AIMC branding along with multiple UI and usability improvements.
+    - **Grafana Time-Limit Configuration:** Configurable time limits for Grafana graph visualizations to improve observability control.
+    - **Model Configuration Handling:** Disabled the "Remove Model" option when a model is already selected to prevent invalid actions.
+    - **Autoscaling Configuration Cleanup:** Streamlined autoscaling parameters for improved clarity and control.
+    - **Storage Bucket Detach:** Added support to detach an attached storage bucket from a microservice.
+
+    **IaaS — Launcher**
+
+    - **Standalone Launcher:** Released a standalone Launcher application supporting both Edge and Non-Edge deployments.
+    - **Unified Database Layer:** Integrated a single database layer to improve data consistency and simplify management.
+    - **Automated SSL Configuration:** Implemented automated SSL configuration within the Launcher installation workflow.
+
+    **IaaS — Infrastructure**
+
+    - **Network Policies:** Implemented Kubernetes Network Policies to strengthen security across deployments.
+    - **K3s Standalone Setup:** Completed standalone K3s setup for lightweight deployments.
+    - **Vault Auto-Unseal:** Vault now automatically unseals during server restarts, improving availability.
+
+    **PaaS — DevOps**
+
+    - **CI/CD Merge-Based Deployments:** CI/CD pipelines now trigger deployments only after successful merges.
+    - **Generic AI-MicroCloud Image:** Introduced a generic AI-MicroCloud image compatible with Basic editions.
+    - **Terraform & Shell Reliability:** Enhanced Terraform modules and shell scripts for better automation and reliability.
+    - **Grafana Email Alerts:** Enabled Grafana email alerts for Workstations, Microservices, Agents, Inference, and KD Pipelines.
+
+    **PaaS — SDK**
+
+    - **Programmatic Workstation Creation:** Added SDK support to spawn workstations programmatically.
+
+    **Security (Cross-Layer)**
+
+    - **DoS Protection:** Safeguards added against event-loop blocking, large payloads, infinite loops, and excessive requests.
+    - **Input Validation Hardening:** Strengthened protection against SQL/NoSQL injection, XSS, and command injection attacks.
+    - **Dependency Vulnerability Mitigation:** Reduced risks associated with outdated or vulnerable npm packages.
+    - **Secure Configuration Management:** Improved handling of environment variables, debug modes, and secrets.
+    - **Authentication & Authorization Enforcement:** Strengthened access control validation to prevent unauthorized access.
+    - **Sensitive Data Logging Prevention:** Eliminated logging of passwords, tokens, and PII.
+    - **File Upload & Base64 Safety Controls:** Added validation and restrictions for large or untrusted file uploads.
+
+    **Performance**
+
+    - **Dashboard Activity Logs Performance:** Activity logs now load within acceptable response times.
+    - **Spawn Microservice Reload Performance:** Resolved delays during Spawn Microservice page reloads.
+    - **Security Scan Log Refresh:** Improved refresh performance for security scan logs.
+
+    **Bug fixes**
+
+    - Workspace onboarding now displays validation notifications for incomplete fields.
+    - Resolved screen loss issues encountered during account management operations.
+    - Fixed incorrect total CPU utilization values displayed in the dashboard.
+    - Addressed multiple UI issues related to KD Pipelines and Microservices.
+    - Additional refinements to improve overall UI stability and usability.
+
+    **Documentation**
+
+    - Updated AI-MicroCloud documentation on the Zeblok website.
+  </Accordion>
+
+  <Accordion title="v1.3.7 — October 2025">
+    This release focuses on enhancing the entire AI-MicroCloud — from infrastructure to the end-user application layer — with a strong emphasis on integrating advanced Generative AI capabilities and improving administrative control.
+
+    **SaaS — Gen-AI Agentic Chat**
+
+    - **Image Support for Agents:** Agents can now interpret, analyze, and generate image-based content directly in chats, enabling richer multimodal interactions.
+    - **Streaming Responses:** Real-time text streaming allows users to see responses as they're being generated, making conversation faster, smoother, and more dynamic.
+    - **Agent-Based Chat History:** Chat history is now maintained individually for each agent, preserving context for more intelligent and personalized responses.
+    - **Model Transparency:** The active model's name is now visible in the chat interface, improving transparency and trust.
+    - **Agent Notifications:** Notifications added for each pod, triggered by key lifecycle events.
+
+    **PaaS — AI-MicroCloud (AIMC)**
+
+    - **AI-Inference Sharing:** Seamless and secure AI inference output sharing among authorized users or teams within the platform.
+    - **Simplified Plan Creation Flow:** The Type field has been removed from plan creation for a more streamlined and intuitive experience.
+    - **Storage Configuration Decoupled:** Storage configuration is now separated from plan creation, improving clarity, flexibility, and maintainability.
+    - **UI Updates:** Enhanced UI design and responsiveness for the Spawn buttons. The Info Panel is now disabled by default for a cleaner interface.
+
+    **PaaS — SDK**
+
+    - **Attach Datacenter to a Dataset:** Map a datacenter ID and create datasets directly within the selected datacenter for improved data organization and resource mapping.
+
+    **IaaS — Launcher**
+
+    - **Edit/Delete Functionality for Additional Datacenters:** Edit and delete additional datacenters directly from the interface for easier infrastructure management.
+    - **Secondary Cluster Support:** Configure secondary clusters under any existing primary cluster, providing enhanced flexibility and scalability.
+    - **UI Alignment for BareMetal Table:** BareMetal Cluster table UI updated to ensure visual consistency with AKS and EKS cluster layouts.
+
+    **IaaS — Core Updates**
+
+    - **Harbor Version Update:** Integrated Harbor registry upgraded to the latest stable version for improved security, performance, and compatibility.
+    - **Kubectl Microservice Enhancement:** Role creation (Developer, Admin, User) and assignments completed; restriction policies defined for proper access control and secure role-based operations.
+    - **Enhanced Logging:** Consolidated client and server logs to improve traceability and debugging efficiency.
+
+    **Bug fixes**
+
+    - Resolved an issue where the Kubernetes deployment YAML lacked the resources key during Chat Playground restarts.
+    - Addressed an issue where certain plans were not visible within the AI-API interface; all active plans are now properly listed.
+    - Fixed an issue where the delete functionality for AKS and EKS clusters was not working as intended.
+    - Fixed a bug that prevented workstation start events from triggering correctly; all workstation lifecycle events are now accurately captured.
+    - Corrected a logging mix-up between model and pipeline logs, ensuring accurate log mapping.
+  </Accordion>
+
+  <Accordion title="v1.3.6 — August 2025">
+    **SaaS — AI Agents (Agentic Framework)**
+
+    - **Agent Lifecycle Management:** Deploy, configure, and manage agents effortlessly within the platform.
+    - **LLM Integration:** Agents can now connect directly with Large Language Models for intelligent decision-making and automation.
+    - **Cross-Service Orchestration:** Agents work seamlessly across multiple services, ensuring reliability and scalability in real-world use cases.
+    - **Dedicated Agent Interface:** A purpose-built UI allows intuitive interaction with agents, making integration and communication smoother than ever.
+
+    **PaaS — SDK & AIMC**
+
+    - Resolved orchestration issues during deployments to ensure smoother operations.
+    - Addressed user management issues, ensuring consistent org-level user creation and assignment.
+
+    **IaaS — Launcher & Infrastructure**
+
+    - **Image Uploads During Provisioning:** The Launcher now supports image uploads during provisioning, enabling greater customization.
+    - **Expanded Cluster Validation:** Improved validation ensures both cloud-based and bare-metal clusters operate seamlessly within the platform.
+    - **Improved Failover Handling:** Clearer issue resolution for uninterrupted continuity.
+
+    **CaaS — Reliability**
+
+    - Resolved critical issues that caused MLflow saved models to fail during containerization.
+  </Accordion>
+
+  <Accordion title="v1.3.5 — June 2025">
+    **IaaS — Smarter Infrastructure**
+
+    - **Native Multi-Datacenter Support:** Multi-datacenter support is now native, whether it's a cluster or a single-node instance.
+    - **Object Stores Linked to Datacenters:** Object stores are linked to individual datacenters, enabling efficient storage management.
+    - **Datacenter-Specific Bucket Mounting:** Bucket mounting is datacenter-specific for better isolation and performance.
+    - **Datacenter Targeting:** Select your target datacenter when spawning workstations, microservices, creating datasets, and other managed services.
+    - **Datacenter-Specific Plans:** Launch datacenter-specific plans to optimize workloads per region or deployment strategy.
+    - **Real-Time Multi-Datacenter Monitoring:** Monitor all datacenters in real-time directly from MicroCloud, with a complete view of system health, GPU, CPU, memory usage, active users, services, and resource availability.
+
+    **SaaS — Gen-AI Workspace**
+
+    - **Embedded Model References:** Knowledge Distillation now supports embedded model references and multi-modular datasets, including PDFs.
+    - **Reuse Running Models:** Reuse running model instances from the Chat Playground for distillation workflows.
+    - **Organizational Dropdown for Model Selection:** A new organizational dropdown makes reusable model selection fast and intuitive.
+
+    **IaaS — Launcher**
+
+    - **Reliable/Remote Cluster Deployment:** Deploy reliable/remote clusters directly through the Launcher.
+    - **Bring Your Own Cluster:** Seamlessly bring existing EKS or AKS clusters and register them as full-fledged datacenters; once integrated, they are fully accessible and manageable within the platform.
+
+    **PaaS — UX Improvements**
+
+    - Fixed service creation issues with additional port configurations during microservice edits.
+    - Smoothed out form validations for a cleaner interaction.
+    - Improved pop-up notifications for instant clarity.
+    - **Plan Visibility Control:** Plans now have visibility control — share them as public, private, or organization-specific.
+
+    **PaaS — SDK Gen-AI Workflows**
+
+    - **Gen-AI Toolkit:** Seamless text generation using pretrained models.
+    - **Historical Chat Retrieval:** Built-in SDK utilities allow retrieval of historical chat data from object storage for smoother session management.
+
+    **Bug fixes**
+
+    - Extra ports added via the edit feature now correctly create a Service.
+    - Pop-up alerts for unfilled form fields improve user experience.
+    - Private plans can now be set as Public, Private, or Organization-only, giving users flexible privacy controls.
+  </Accordion>
+
+  <Accordion title="v1.3.4 — April 2025">
+    **SaaS — Knowledge Distillation in Gen-AI Workspace**
+
+    The most significant addition in this release is the Gen-AI Workspace featuring Knowledge Distillation:
+
+    - Automatically extracts key insights by generating question-answer pairs from uploaded documents.
+    - Computes and stores vector embeddings for intelligent document interactions.
+    - Enables fast, context-aware AI responses across large knowledge bases.
+    - This workspace lays the foundation for next-level productivity and intelligent automation.
+
+    **SaaS — Secure API Key Management (Gen-AI Key)**
+
+    - API keys can now be generated, validated, and revoked directly from the credentials tab.
+    - Built-in checks for expiry, revocation, and hash-based validation.
+    - Each key is linked to a user and tracked via audit logs for accountability.
+
+    **PaaS — SDK**
+
+    - **API Key-Based Authentication:** Integrated into the SDK.
+    - **Completion API Integration:** Integrated for inference workflows.
+    - **LLM Pretrained Models List:** Available via SDK.
+    - **LLM Chat Integration:** Supports getting answers to a question (no chat history yet).
+
+    **IaaS — Monitoring**
+
+    - **Pod-Level GPU Monitoring:** View real-time GPU metrics at the pod level for detailed usage insights.
+    - **Storage Monitoring & Alerts:** Track storage consumption with alerting support for high-availability environments.
+
+    **PaaS — UI Improvements (Dark Mode)**
+
+    - Dark mode visibility issues addressed across checkboxes, inputs, selects, form elements, headers, documentation icons, and section labels.
+
+    **IaaS — Reliability**
+
+    - Improved system stability and compatibility across deployment environments.
+    - Better performance and flexibility for managing object storage and file operations.
+
+    **Bug fixes**
+
+    - Resolved multi-GPU training issues for large model fine-tuning.
+    - Numerous improvements across logging, environment validation, and file handling.
+    - Support tickets answered at high priority and resolved as requested.
+  </Accordion>
+
+  <Accordion title="v1.3.3 — February 2025">
+    **SaaS — GenAI Workspace**
+
+    - **Seamless AI Collaboration:** Introducing the GenAI Workspace, a powerful environment for teams to interact with AI models in real time.
+    - **Enhanced AI-Assisted Development:** Users can leverage AI-generated insights to accelerate coding, debugging, and problem-solving.
+    - **User-Friendly Interface:** A streamlined UI designed for efficient interaction with AI-powered tools.
+
+    **PaaS — Workstation to Microservice Conversion**
+
+    - **Effortless Transformation:** Automates the process of converting Workstations to Microservices using ZBL-CLI.
+    - **Streamlined Workflow:** Enhances efficiency by reducing manual intervention.
+
+    **PaaS — UI & AIM Enhancements**
+
+    - **Improved Navigation & Usability:** Streamlined UI for a smoother experience.
+    - **Enhanced File Management:** Users can now observe uploaded files.
+    - **Environment Variable Validation:** Ensures all variables are checked before execution.
+    - **Configurable Info Cards:** Option to enable/disable the info card.
+    - **Custom Profile Pictures:** Users can upload their own profile pictures.
+    - **Better Form Validation:** Improved checks for file uploads.
+    - **Revamped Email Templates:** Enhanced readability and engagement.
+    - **Edit Feature Improvements:** A bucket can now be attached to any already spawned/running workstation/microservice using the edit feature, and extra PVC attachment is now possible on running workstations/microservices.
+
+    **IaaS — Infrastructure Enhancements**
+
+    - **Terraform Script Updates:** Improved automation for cloud infrastructure provisioning.
+    - **AWS Integration:** Enhanced support and optimization for AWS deployments.
+    - **Azure Integration:** Improved compatibility and performance for Azure environments.
+  </Accordion>
+
   <Accordion title="v1.2.9 — June 2024">
     Updates from v1.2.8 are also included in this release.
 
