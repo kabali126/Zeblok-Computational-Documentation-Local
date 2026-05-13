@@ -8,19 +8,18 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 <AccordionGroup>
 
   <Accordion title="🚀 v2.0.0 — May 2026 (Major Release)">
-    **Our biggest release yet.** A complete platform evolution — rebuilt from the ground up. This release rebuilds the Launcher from scratch, introduces KVM-based on-prem provisioning, introduces AI-Adaptive Cache acceleration, and strengthens authentication and security across the platform.
+    **Our biggest release yet.** A complete platform evolution — rebuilt from the ground up. This release introduces AI-Adaptive Cache acceleration and strengthens authentication and security across the platform.
 
     **🌟 Top things in v2.0.0**
 
-    - 🚀 Brand-new AI-MicroCloud® and Launcher experience
-    - 🖥️ KVM on-prem provisioning
+    - 🚀 Brand-new AI-MicroCloud® platform experience
     - ⚡ AI-Adaptive Cache acceleration
     - 🔐 Stronger security across every layer
     - 🤖 Smarter agents with OpenClaw
-    - 💰 TCO Calculator — forecast your 5-year savings with memory offloading
+    - 💰 TCO Calculator — available exclusively as part of Zeblok Labs
     - 🩺 Health Check Application — built-in diagnostics across your environment
 
-    **SaaS — AI-MicroCloud® Platform**
+    **SaaS Layer**
 
     - **AI-Adaptive Cache Plans** — A new dedicated plan category that lets you launch workloads on AI-Adaptive Cache hardware, with the right configuration applied automatically.
     - **AI-Adaptive Workstations** — Spin up workstations with cache acceleration to dramatically speed up model loading and data-heavy workflows.
@@ -33,10 +32,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
     - **Live Microservice Image Updates** — Update the underlying image of a running microservice without losing state or redeploying from scratch.
     - **Enhanced Cluster Cards** — At-a-glance details on every cluster, including region and key configuration, right from the dashboard.
     - **Unified Private Registry Imports** — A single, consistent way to bring images from your private registry into the platform — whether for workstations or microservices.
-    - **TCO Calculator** — Calculate your total cost of ownership and see exactly how much you can save over the next 5 years with memory offloading enabled. The calculator quantifies the long-term GPU savings you'll unlock by running larger models on smaller, more efficient hardware footprints.
-
-    **SaaS — Inference & Observability**
-
+    - **TCO Calculator** *(Available exclusively as part of Zeblok Labs)* — Calculate your total cost of ownership and see exactly how much you can save over the next 5 years with memory offloading enabled. The calculator quantifies the long-term GPU savings you'll unlock by running larger models on smaller, more efficient hardware footprints.
     - **Secure Inference Access with GenAI Keys** — A new key-based access layer makes it easy to securely share and govern who can call your inference endpoints.
     - **Token-Based Inference Authentication** — Every inference call is now backed by token authentication, giving you full control and audit visibility over API usage.
     - **Inference Utilization Dashboard** — Track real-time inference performance with built-in metrics like Time to First Token (TTFT) and Time per Output Token (TPOT) — essential for monitoring user experience.
@@ -44,31 +40,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
     - **AI-Adaptive Cache Monitoring** — Watch SSD read/write activity and usage in real time to fine-tune cache-accelerated workloads.
     - **Health Check Application** — A built-in diagnostic app that runs end-to-end health validation across your environment, surfacing issues before they impact production and giving your operations team confidence in cluster readiness at any moment.
 
-    **IaaS — Launcher (Major Rebuild)**
-
-    - **All-New Launcher Experience** — A completely redesigned, intuitive Launcher interface built around your workflow.
-    - **At-a-Glance Dashboard** — A unified home screen showing your clusters, resources, and recent activity in one place.
-    - **One Launcher, Every Environment** — Deploy on AWS (EKS), Azure (AKS), or your own bare metal — for both Pro and Edge variants — from a single workflow.
-    - **Secondary Datacenter Support** — Pair a primary cluster with a secondary datacenter for redundancy, geographic distribution, or specialized workloads.
-    - **Live Deployment Logs** — See exactly what's happening during cluster creation in real time — no more guessing or waiting in the dark.
-    - **Deeper Health Monitoring** — Per-node health checks give you accurate cluster monitoring all the way down to individual machines.
-    - **Faster AI-MicroCloud® Requests** — A streamlined 3-step request flow gets your environment provisioned with minimum friction.
-    - **Live Cluster Status** — Always know your cluster's exact state, with real-time status updates from creation through deletion.
-    - **Cluster Re-Apply for AWS & Azure** — Reapply configurations to running AWS and Azure Pro clusters without rebuilding from scratch.
-    - **Edge Server Provisioning** — Add and manage edge servers natively when building Edge clusters.
-    - **Unified Cluster Management** — Edge and Pro clusters now share a single management experience, simplifying operations across hybrid environments.
-    - **Local Harbor Registry** — A fully on-prem container registry shipped with the Launcher, keeping all your container images securely within your network for tighter security, faster image pulls, and complete sovereignty over your supply chain.
-
-    **IaaS — KVM Provisioning**
-
-    - **Automated KVM Host Provisioning** — Spin up KVM hosts end-to-end from the Launcher — no more manual setup or scripting.
-    - **Guided KVM Host Setup** — A clean, step-by-step interface walks you through prerequisites, host configuration, and provisioning.
-    - **Automatic IP Discovery** — The Launcher scans your network and picks available IPs automatically, removing one of the most error-prone steps in on-prem deployment.
-    - **Resume Anywhere** — Step away from setup or hit a reboot? The Launcher remembers exactly where you left off, so you can pick up right where you stopped.
-    - **Automatic Post-Reboot Verification** — After every reboot, the system automatically validates that your KVM host is healthy and ready.
-    - **Easy VM Creation** — Create virtual machines with automatic resource discovery and a single, persistent view of every VM you've launched.
-
-    **IaaS — Edge & Cluster Infrastructure**
+    **IaaS Layer**
 
     - **Edge Platform Generally Available** — Our Edge variant is now production-ready, purpose-built for distributed and on-prem deployments.
     - **GPU Workloads on Edge** — Run accelerated AI workloads directly at the edge, closer to your data.
@@ -78,33 +50,6 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
     - **Multi-Cluster Domain Management** — Run multiple clusters under dynamically managed domains — ideal for multi-region or multi-environment setups.
     - **Account Security Essentials** — Email verification at signup, license key validation, and full Forgot Password support — all built in.
     - **Standalone AI-Adaptive Cluster Option** — A simpler single-node AI-Adaptive deployment for smaller environments and pilots.
-
-    **PaaS — Seeding & Onboarding**
-
-    - **Flexible Environment Seeding** — Choose default or fully custom seeding to populate your environment exactly the way you want, with full log visibility throughout.
-    - **Pick & Choose What to Seed** — Select exactly which workstations, microservices, agents, and models to seed, with clear status markers showing what's already loaded.
-    - **Pre-Configured Admin Identity** — A single admin identity is provisioned across the platform, with secure credentials delivered straight to your inbox.
-    - **One-Click Seed Initialization** — Kick off seeding directly from the cluster card, with smart enabling that prevents action before your cluster is ready.
-    - **Faster Catalog Browsing** — Smart caching means catalog screens load near-instantly, even with large environments.
-
-    **PaaS — Model Lifecycle & Storage**
-
-    - **Universal Model Downloader** — Pull models from AWS, Azure, or MinIO — the platform automatically detects and uses the right backend.
-    - **Validated for Popular LLMs** — Out-of-the-box compatibility tested with Mistral-7B and Llama 3.x (including 70B variants).
-    - **Latest MLflow Integration** — Updated to MLflow 3.9.0 with a refreshed model-serving flow.
-    - **Refreshed Catalog** — Workstation images and core microservices updated to the latest stable versions.
-
-    **PaaS — Agents & Inference Platform**
-
-    - **Introducing OpenClaw** — A new agent runtime that supports both self-hosted LLMs and external APIs, giving you full flexibility on how you run agents.
-    - **Memory-Offload Inference** — Run larger models on smaller hardware footprints with our new memory-offloading inference mode.
-    - **Smarter Agent Backbone** — Agents now run on Qwen3-Coder-Next FP8 (80B MoE), delivering significantly better instruction-following and reasoning.
-    - **Custom Agent Personas** — Define unique personas and skill permissions per agent — perfect for tailored, role-specific assistants.
-    - **MCP Server Integration** — Plug external tools and services into your agents using the MCP standard.
-    - **API Key Management** — Issue, rotate, and manage API keys for programmatic platform and inference access.
-
-    **Security (Cross-Layer)**
-
     - **Hardened Kubernetes Control Plane** — Stronger security baselines applied across master and worker nodes for production-grade protection.
     - **Encrypted Cluster State** — All cluster state in ETCD is now encrypted at rest, protecting sensitive configuration and secrets.
     - **Built-In Audit Trails** — Comprehensive auditing and logging for compliance, traceability, and incident response.
@@ -113,6 +58,24 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
     - **Three-Tier Role-Based Access Control** — New Admin, User, and Superadmin roles give you precise control over who can do what.
     - **AES-256 Encryption at the Backend** — Sensitive data is now encrypted at the backend with AES-256, the industry standard.
     - **Strong Password Policies** — Enforced password strength rules across every user account.
+
+    **PaaS Layer**
+
+    - **Flexible Environment Seeding** — Choose default or fully custom seeding to populate your environment exactly the way you want, with full log visibility throughout.
+    - **Pick & Choose What to Seed** — Select exactly which workstations, microservices, agents, and models to seed, with clear status markers showing what's already loaded.
+    - **Pre-Configured Admin Identity** — A single admin identity is provisioned across the platform, with secure credentials delivered straight to your inbox.
+    - **One-Click Seed Initialization** — Kick off seeding directly from the cluster card, with smart enabling that prevents action before your cluster is ready.
+    - **Faster Catalog Browsing** — Smart caching means catalog screens load near-instantly, even with large environments.
+    - **Universal Model Downloader** — Pull models from AWS, Azure, or MinIO — the platform automatically detects and uses the right backend.
+    - **Validated for Popular LLMs** — Out-of-the-box compatibility tested with Mistral-7B and Llama 3.x (including 70B variants).
+    - **Latest MLflow Integration** — Updated to MLflow 3.9.0 with a refreshed model-serving flow.
+    - **Refreshed Catalog** — Workstation images and core microservices updated to the latest stable versions.
+    - **Introducing OpenClaw** — A new agent runtime that supports both self-hosted LLMs and external APIs, giving you full flexibility on how you run agents.
+    - **Memory-Offload Inference** — Run larger models on smaller hardware footprints with our new memory-offloading inference mode.
+    - **Smarter Agent Backbone** — Agents now run on Qwen3-Coder-Next FP8 (80B MoE), delivering significantly better instruction-following and reasoning.
+    - **Custom Agent Personas** — Define unique personas and skill permissions per agent — perfect for tailored, role-specific assistants.
+    - **MCP Server Integration** — Plug external tools and services into your agents using the MCP standard.
+    - **API Key Management** — Issue, rotate, and manage API keys for programmatic platform and inference access.
 
     **Documentation**
 
