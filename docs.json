@@ -79,6 +79,9 @@
           ]
           },
           {
+            "group": "API Keys & Secrets"
+          },
+          {
             "group": "SDK & Integrations",
             "pages": [
               "sdk/overview"
