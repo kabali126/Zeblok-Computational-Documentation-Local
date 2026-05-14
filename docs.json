@@ -75,13 +75,11 @@
                "platform/iam/organisations",
                "platform/iam/user-groups"
              ]
-            }
-          ]
-          },
-          {
-            "group": "API Keys & Secrets"
-          },
-          {
+            },
+            "platform/api-keys-and-secrets"
+           ]
+         },  
+         {
             "group": "SDK & Integrations",
             "pages": [
               "sdk/overview"
