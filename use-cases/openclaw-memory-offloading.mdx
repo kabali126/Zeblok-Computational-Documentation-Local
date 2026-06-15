@@ -1,0 +1,554 @@
+---
+title: "OpenClaw with Memory Offloading"
+description: "Deploy a memory-offloaded Llama 3.1 70B inference with NVMe KV cache offloading, then connect it to OpenClaw — a self-hosted AI gateway — running as a microservice on the Ai-MicroCloud platform."
+---
+
+
+
+## Overview
+
+This use case walks through an end-to-end workflow in two stages. First, you deploy a large language model as an **Ai-Inference** service with **memory offloading** enabled, so that its key-value (KV) cache spills out of GPU memory onto fast local NVMe storage and host DRAM. Then you deploy **OpenClaw** — a self-hosted AI gateway — as an **Ai-MicroService** and point it at that inference as its model backend. The result is an agentic chat gateway powered by a 70B model that would otherwise not fit comfortably on a single GPU.
+
+Memory offloading here is the same **NVMe / High Bandwidth Flash Memory** capability introduced on the [Spawn Ai-WorkStations](https://zeblokcomputationalprivatelimited.mintlify.app/workstation-and-services/spawn-workstation) page, and the inference itself follows the standard [Spawn Ai-Inference](https://zeblokcomputationalprivatelimited.mintlify.app/workstation-and-services/spawn-inference) flow. This page focuses only on the offloading-specific choices and the OpenClaw connection, so it assumes you are already comfortable with those two pages.
+
+By the end you will have:
+
+- An offloading-enabled **Meta Llama 3.1 70B Instruct FP8** inference, with KV cache offloaded to NVMe and DRAM.
+- A **Gen AI API key** to authenticate against the inference endpoint.
+- An **OpenClaw** microservice configured to use that inference as its LLM provider, reachable from a browser dashboard.
+
+The pieces connect like this: **you (and any chat channels) → OpenClaw gateway → the offloading inference (vLLM, OpenAI-compatible) on Ai-MicroCloud.**
+
+<Note>
+  **Before you start**, make sure you have:
+
+  - An aiDAPTIV™ offloading-capable image tag (such as `offloading-image`) available for your model.
+  - A data centre with available **NVMe / High Bandwidth Flash Memory** devices (for example, **Phison labs**).
+  - A plan with at least one GPU — a 70B FP8 model needs roughly 77 GB of vRAM.
+  - Membership of the namespace you intend to deploy into. If yours is not listed, contact your OrgAdmin.
+</Note>
+
+---
+
+## Part 1 — Deploy the memory-offloaded inference
+
+Navigate to **Workspace → Inference** in the left sidebar. If you have not created any inference services yet, you will see an empty state page. Click the **Start Inference** button in the top-right corner to begin.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/no-inference.png" alt="Inference page showing no inference services created yet" />
+</Frame>
+
+<Steps>
+  <Step title="Configure Model">
+    The **Configure Model** tab defines which model you serve, which runtime image to use, where it runs, and how much memory it can offload.
+
+    ### Model *(required)*
+
+    Use the **Model** dropdown to select the model you want to deploy. For this use case, choose **Meta Llama 3.1 70B Instruct FP8** — a model marked **Public** and **aiDAPTIV™**. The aiDAPTIV™ badge indicates the model is optimised for high-performance inference and can unlock offloading when paired with the right image tag.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/inference-select.png" alt="Model selection dropdown showing Meta Llama 3.1 70B Instruct FP8 and other models, with Public and aiDAPTIV badges" />
+    </Frame>
+
+    ***
+
+    ### Image Tag *(required)*
+
+    After selecting the model, choose the **Image Tag**. Select the tag named **offloading-image**, which carries the **Latest** and **aiDAPTIV™** badges. This is the runtime image that enables KV cache offloading to NVMe and DRAM.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-offloading-inference-image.png" alt="Image Tag dropdown showing the offloading-image tag marked Latest and aiDAPTIV" />
+    </Frame>
+
+    ***
+
+    ### Data Center *(required)*
+
+    Select the **Data Center** where your inference will run. Choose a data centre that has NVMe devices available — in this example, **Phison labs** (Redmond, WA, US), shown as the primary, Pro region.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-datacenter.png" alt="Data Center dropdown showing the Phison labs data centre in Redmond, WA, US" />
+    </Frame>
+
+    ***
+
+    ### NVMe / High Bandwidth Flash Memory
+
+    Once a data centre is selected, the **NVMe / High Bandwidth Flash Memory** toggle appears. Enabling it attaches a high-speed local flash device to your inference, which is where the offloaded KV cache is stored.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/nvme-bandwidth-flash-memory.png" alt="NVMe / High Bandwidth Flash Memory toggle in the off state, with helper text about single replica and autoscaling" />
+    </Frame>
+
+    <Warning>
+      Enabling NVMe / High Bandwidth Flash Memory pins your inference to a **single replica and disables autoscaling**, because the offloaded cache lives on one physical device. The **Min Replicas**, **Max Replicas**, and **GPU Threshold** fields no longer drive scaling while this is on.
+    </Warning>
+
+    ***
+
+    #### Select an NVMe device
+
+    With the toggle on, a list of available devices is displayed. Each entry shows the host node, device path, serial number, model, mount path, host path, and capacity. Select the device you want to attach.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-nvme-device.png" alt="NVMe device list showing available flash devices with device path, serial number, mount path, and capacity" />
+    </Frame>
+
+    <Note>
+      The list shows **only devices that are available in this data centre**. Devices already in use, or on nodes with no free capacity, are hidden. Take note of the device's **mount path** (for example, `/mnt/nvme1`) — it must match the offload path in the arguments later.
+    </Note>
+
+    ***
+
+    ### Plan *(required)*
+
+    Choose a **Plan** with at least one GPU. The form shows a helper line such as *"70B · fp8 needs ~77 GB vRAM. Showing plans with ≥ 1 GPU (this data center has ~96 GB per GPU)."* and filters the list accordingly. Pick a GPU-backed plan such as **g1.Small**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-plan.png" alt="Plan selection dropdown filtered to GPU-backed plans for the 70B FP8 model" />
+    </Frame>
+
+    When the Configure Model tab is complete, click **Next** to move to **Configure Environment**.
+  </Step>
+
+  <Step title="Configure Environment">
+    The **Configure Environment** tab collects the namespace, name, networking, and — most importantly for offloading — the runtime arguments.
+
+    ### Namespace *(required)*
+
+    Select the **Namespace** the inference will be deployed into.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-namespace.png" alt="Namespace dropdown showing the available namespaces for the inference" />
+    </Frame>
+
+    <Note>
+      You must be a member of a namespace to deploy into it. If the namespace you need is not listed, contact your OrgAdmin to be added.
+    </Note>
+
+    ***
+
+    ### Inference Name *(required)*
+
+    Enter a unique **Inference Name** to identify the service — for example, `Meta llama 3.1 70b`.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/inference-name.png" alt="Inference Name field with the namespace selected" />
+    </Frame>
+
+    ***
+
+    ### Protocol & Ports *(required)*
+
+    A single port is pre-configured by default — **TCP / 8080 / UI-default** — which is the standard vLLM port. Leave it as-is unless you have a reason to change it.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/port-number.png" alt="Protocol and Ports section showing the default TCP port 8080" />
+    </Frame>
+
+    ***
+
+    ### Environment Variables *(optional)*
+
+    Add any key-value pairs you need injected into the container at startup. For this use case none are required.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/environment-variable.png" alt="Environment Variables key and value fields, left empty" />
+    </Frame>
+
+    ***
+
+    ### Arguments
+
+    This is where offloading is actually configured. When the **offloading-image** is selected, the **Arguments** section arrives pre-filled with the vLLM flags that drive the offloaded run. Review them and adjust only the values you understand.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/add-arguments.png" alt="Arguments list pre-filled with the offloading vLLM flags, including nvme_path and the SSD and DRAM KV offload sizes" />
+    </Frame>
+
+    | Argument | Example value | What it controls |
+    | --- | --- | --- |
+    | `--model` | `RedHatAI/Meta-Llama-3.1-70B-Instruct-FP8` | The model identifier. Derived from your Model selection and locked. |
+    | `--nvme_path` | `/mnt/nvme1/inference0` | The path on the attached NVMe device used for offloaded cache. The prefix matches the device's mount path. |
+    | `--gpu-memory-utilization` | `0.95` | Fraction of GPU memory vLLM may use before offloading. |
+    | `--tensor-parallel-size` | `1` | Number of GPUs to shard across. Derived from the plan and locked. |
+    | `--enable-chunked-prefill` | *(flag)* | Splits long prefills into chunks to reduce peak memory. |
+    | `--enable-prefix-caching` | *(flag)* | Reuses cached prefixes across requests. |
+    | `--enable-auto-tool-choice` | *(flag)* | Enables automatic tool/function calling. |
+    | `--tool-call-parser` | `llama3_json` | Parser used for Llama 3 JSON-formatted tool calls. |
+    | `--ssd-kv-offload-gb` | `1200` | Amount of KV cache (GB) to offload to the attached NVMe/SSD device. |
+    | `--dram-kv-offload-gb` | `64` | Amount of KV cache (GB) to offload to host DRAM (CPU memory). |
+    | `--max-model-len` | `40000` | Maximum context length the model will serve. |
+    | `--max-num-seqs` | `64` | Maximum number of concurrent sequences. |
+    | `--max-num-batched-tokens` | `8192` | Maximum tokens batched per scheduler step. |
+    | `--disable-log-requests` | *(flag)* | Suppresses per-request logging. |
+    | `--disable-custom-all-reduce` | *(flag)* | Disables the custom all-reduce kernel for compatibility. |
+
+    <Note>
+      The three offload-specific flags are `--nvme_path`, `--ssd-kv-offload-gb`, and `--dram-kv-offload-gb`. Together they let the model keep a much larger KV cache than GPU memory alone allows, which is what makes the long `--max-model-len` value practical on a single GPU.
+    </Note>
+
+    Once the required fields are filled in, click **Spawn Inference**.
+  </Step>
+
+  <Step title="Spawn and open the inference">
+    The platform provisions your container and redirects you to the Inference list. Your new service appears with its current status; once it shows **Running**, it is ready.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/spawned-inference.png" alt="Inference list showing the newly created Meta llama 3.1 70b service in a Running state" />
+    </Frame>
+
+    Click **View Details** to open the full panel. It shows the endpoints (a public HTTPS URL and a cluster-local URL on port 8080), runtime status, placement, and the configuration — including the **offloading-image** tag and the requested resources.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/inference-details.png" alt="Inference details panel showing endpoints, runtime, placement, and configuration including the offloading-image tag" />
+    </Frame>
+
+    <Note>
+      A 70B model can take a few minutes to load before it will answer. The details panel and chat will indicate when it is online.
+    </Note>
+  </Step>
+</Steps>
+
+---
+
+## Part 2 — Create a Gen AI API key
+
+Chatting with the inference — and, later, connecting OpenClaw to it — requires a **Gen AI API key**.
+
+<Steps>
+  <Step title="Trigger the key requirement">
+    From the inference details panel, click **Open Chat**. Because no key is attached yet, an **API key required** dialog appears, offering **Create New** or **Use Existing**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/open-chat-inference.png" alt="Chat view with the API key required dialog offering Create New or Use Existing" />
+    </Frame>
+  </Step>
+
+  <Step title="Open API Keys & Secrets">
+    Go to **API Keys & Secrets** in the left sidebar. The page has **Microcloud**, **Object Store**, and **Gen AI** tabs.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/api-keys-secrets.png" alt="API Keys and Secrets page on the Microcloud tab" />
+    </Frame>
+
+    Switch to the **Gen AI** tab. Here you can see your key usage and existing keys, and create new ones with the **Create Key** button.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/gen-ai-key.png" alt="Gen AI Credentials tab showing key counts, token usage, and the list of existing keys" />
+    </Frame>
+  </Step>
+
+  <Step title="Create the key">
+    Click **Create Key**. Give the key a **Name**, choose a **Type** (for example, **User — personal API key**), set an **Expiry**, and click **Create Key**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/create-key.png" alt="Create Gen AI Key dialog with name, type, and expiry fields" />
+    </Frame>
+
+    The raw key is then displayed.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/key-created.png" alt="Gen AI Key Created dialog with the key value hidden, an expiry date, and a Download button" />
+    </Frame>
+
+    <Warning>
+      The secret is shown **only once**. Copy it now (or use **Download**) and store it somewhere secure — if you lose it you will have to create a new one. **Redact this value before sharing any screenshot.**
+    </Warning>
+  </Step>
+
+  <Step title="Use the key in chat">
+    Return to the inference chat, choose **Use Existing**, and paste the key you just copied (Gen AI keys start with `eyJ…`). The key is validated when you send your first message.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/paste-key-in-existing.png" alt="API key required dialog on the Use Existing tab with a field to paste the saved Gen AI key" />
+    </Frame>
+
+    Send a message. The model responds, the chat shows a **Pasted key** indicator, and the status reads **Online**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/inference-chat-happening.png" alt="Working inference chat with a greeting and reply, showing the Pasted key and Online status" />
+    </Frame>
+  </Step>
+</Steps>
+
+---
+
+## Part 3 — Confirm offloading is working
+
+Before wiring up OpenClaw, it is worth confirming the offloaded cache is doing its job. Open the inference details panel and use the tabs across the top.
+
+The **Utilization** tab shows latency (TTFT and TPOT), the request pipeline, and a **KV Cache** section.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/inference-utilization-tab.png" alt="Inference Utilization tab showing TTFT and TPOT latency, request pipeline, and KV cache metrics" />
+</Frame>
+
+The **Sessions** tab lists each chat session with its configuration and per-session CPU, memory, and GPU monitoring.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/inference-sessions-tab.png" alt="Inference Sessions tab showing session configuration and resource monitoring" />
+</Frame>
+
+The **Logs** tab is the clearest confirmation. Look for lines that store the KV cache and report **aiDAPTIVCache** hits alongside the GPU cache — this is the offloaded cache being written and re-read.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/inference-logs-tab.png" alt="Inference Logs tab showing KV cache being stored and aiDAPTIVCache hits in the vLLM output" />
+</Frame>
+
+---
+
+## Part 4 — Deploy OpenClaw as a microservice
+
+OpenClaw is deployed from the standard microservice flow. Navigate to **Workspace → Microservices** and click **Start Microservice**.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/head-to-microservice-section.png" alt="Microservices list page with the Start Microservice button" />
+</Frame>
+
+<Steps>
+  <Step title="Configure">
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/start-microservice.png" alt="New Microservice Configure tab with empty fields" />
+    </Frame>
+
+    ### Microservice *(required)*
+
+    From the **Microservice** dropdown, select **Openclaw Dev** (marked **Public**).
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-openclaw.png" alt="Microservice dropdown with Openclaw Dev selected among the available public microservices" />
+    </Frame>
+
+    ***
+
+    ### Image Tag *(required)*
+
+    Choose the image tag **`zeblokseed/ms-openclaw-dev:v18.02`** (marked **Latest**).
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-image-tag.png" alt="Image Tag dropdown showing the zeblokseed ms-openclaw-dev v18.02 tag" />
+    </Frame>
+
+    ***
+
+    ### Data Center *(required)*
+
+    Select the same data centre family you used for the inference — **Phison labs**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-datacenter-ms.png" alt="Data Center dropdown showing Phison labs for the microservice" />
+    </Frame>
+
+    ***
+
+    ### Plan *(required)*
+
+    OpenClaw is the gateway, not the model, so it does not need a GPU. A CPU plan such as **Standard** (0 GPU · 4 vCPU · 8 GB RAM · 50 GB Storage) is sufficient.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-ms-plan.png" alt="Plan dropdown showing the Standard CPU plan selected for OpenClaw" />
+    </Frame>
+
+    Leave **Replicas** at `1` and click **Next**.
+  </Step>
+
+  <Step title="Environment">
+    ### Namespace *(required)*
+
+    Select the namespace for OpenClaw.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-namespace-for-ms.png" alt="Namespace dropdown on the microservice Environment tab" />
+    </Frame>
+
+    ***
+
+    ### Service Name *(required)*
+
+    Enter a name such as `OpenClaw`.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/ms-name.png" alt="Service Name field set to OpenClaw with the default port row" />
+    </Frame>
+
+    ***
+
+    ### Protocol & Ports *(required)*
+
+    OpenClaw serves three separate interfaces, so configure three ports. Set the default row to port **18789**, then click **Add Port** twice to add the other two.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/ms-port-number.png" alt="Protocol and Ports section with three rows for ports 18789, 8081, and 8090" />
+    </Frame>
+
+    | Port | Protocol | Label | What it is |
+    | --- | --- | --- | --- |
+    | `18789` | HTTPS | `UI-default` | The OpenClaw control dashboard — chat, sessions, agents, and skills. |
+    | `8081` | HTTP | `cli` | A web terminal / CLI into the container. |
+    | `8090` | HTTP | `ui` | The one-time OpenClaw setup wizard. |
+
+    Leave the remaining fields at their defaults and click **Spawn Microservice**.
+  </Step>
+
+  <Step title="Open the details panel">
+    A confirmation appears and OpenClaw shows as **Running** in the list.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/after-spawning-openclaw.png" alt="Microservices list showing OpenClaw running after a start confirmation" />
+    </Frame>
+
+    Click **View Details**. The **Endpoints** section gives a public HTTPS URL for each of the three ports — you will open these in the next parts.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/openclaw-microservice-details.png" alt="OpenClaw microservice details panel listing the public endpoints for ports 18789, 8081, and 8090" />
+    </Frame>
+  </Step>
+</Steps>
+
+---
+
+## Part 5 — Configure OpenClaw (one-time setup)
+
+From the details panel, open the endpoint for **port 8090**. This launches the **OpenClaw Setup** wizard, used once to configure the gateway.
+
+<Steps>
+  <Step title="LLM Provider">
+    Step 1 of the wizard is the **LLM Provider**. Open the **Provider** dropdown — it lists both self-hosted (private) providers such as **vLLM**, **SGLang**, and **Ollama**, and public providers such as **OpenAI**, **Anthropic**, and **Google Gemini**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/select-provider.png" alt="OpenClaw Setup LLM Provider dropdown listing private and public providers" />
+    </Frame>
+
+    The provider you choose changes which fields you fill in:
+
+    - A **private / self-hosted** provider (such as **vLLM**) asks for a **Base URL**, **Model ID**, **API Compatibility**, and **API Key**.
+    - A **public** provider (such as **OpenAI**) asks only for a **Model ID** and **API Key**.
+
+    Because you are connecting to the inference you just spawned, select **vLLM**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/base-url.png" alt="OpenClaw Setup with vLLM selected, showing Base URL, Model ID, API Compatibility, and API Key fields" />
+    </Frame>
+
+    For reference, this is what the public-provider form looks like instead — only a Model ID and API Key:
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/if-selected-public.png" alt="OpenClaw Setup with OpenAI selected, showing only Model ID and API Key fields" />
+    </Frame>
+
+    ***
+
+    #### Base URL and Model ID
+
+    In **Base URL**, paste your inference's **public HTTPS endpoint** (from the inference details panel) with `/v1` appended — for example, `https://your-inference-public-endpoint/v1`. In **Model ID**, enter the source model identifier, `RedHatAI/Meta-Llama-3.1-70B-Instruct-FP8`, and leave **API Compatibility** on **OpenAI**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/model-id-inference.png" alt="OpenClaw Setup with the vLLM Base URL and Model ID filled in" />
+    </Frame>
+
+    <Warning>
+      Use the **public HTTPS endpoint**, not the cluster-local URL. The cluster-local address is only reachable from inside the cluster and will not work as an external gateway target.
+    </Warning>
+
+    ***
+
+    #### API Key
+
+    In **API Key**, paste the **Gen AI key** you created in Part 2.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/api-key.png" alt="OpenClaw Setup with the API Key field filled in for the vLLM provider" />
+    </Frame>
+
+    Click **Next**.
+  </Step>
+
+  <Step title="Channels (optional)">
+    Step 2 lets you connect messaging apps — Telegram, Discord, Slack, WhatsApp, and others — so the agent can chat on them. You can add channels now or **Skip** this step and use only the web dashboard.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/channels.png" alt="OpenClaw Setup Channels step listing messaging apps that can be connected" />
+    </Frame>
+  </Step>
+
+  <Step title="Web Search (optional)">
+    Step 3 lets the agent look things up online. Pick a search provider from the dropdown — some are free (such as **DuckDuckGo**), others need an API key — or leave it on **Skip for now (free)**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/web-search-provider.png" alt="OpenClaw Setup Web Search step with the search provider dropdown open" />
+    </Frame>
+  </Step>
+
+  <Step title="Advanced">
+    Step 4 covers gateway security and behaviour: an optional **Gateway Token** and **Dashboard Password**, the **Setup Flow** (for example, **Quickstart**), the **Package Manager** for skills, and the **Workspace Directory**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/advanced-settings.png" alt="OpenClaw Setup Advanced step showing gateway security and setup options" />
+    </Frame>
+
+    <Warning>
+      Leaving **Gateway Token** and **Dashboard Password** blank means the dashboard has no authentication — only acceptable if something else (such as an ingress proxy) protects it. If you set them, treat them as sensitive credentials and redact them in screenshots.
+    </Warning>
+
+    Click **Review & Launch**.
+  </Step>
+
+  <Step title="Review & Launch">
+    Step 5 summarises everything — provider, URL, model, key, channels, search, security, flow, and package manager. Confirm the details, then click **Launch OpenClaw**.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/review-and-launch.png" alt="OpenClaw Setup Review and Launch summary of the chosen configuration" />
+    </Frame>
+  </Step>
+</Steps>
+
+---
+
+## Part 6 — Use OpenClaw
+
+Return to the OpenClaw microservice details panel.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/openclaw-microservice-details.png" alt="OpenClaw microservice details panel with the endpoint URLs" />
+</Frame>
+
+Open the endpoint for **port 18789** to reach the OpenClaw control dashboard. It opens ready to chat, with the model you configured selected.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/openclaw-control-ui.png" alt="OpenClaw control dashboard showing the chat interface ready to use" />
+</Frame>
+
+Send a message. Requests are served by your offloaded inference; if you enabled web search, the agent can call it as a tool and incorporate the results.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/openclaw-chat.png" alt="OpenClaw chat answering a question using a web search tool call and the offloaded model" />
+</Frame>
+
+If you need shell access to the container — for example, to inspect the workspace or run the OpenClaw CLI — open the endpoint for **port 8081**.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/open-port-8081-cli.png" alt="Web terminal opened on port 8081 showing a root shell inside the OpenClaw container" />
+</Frame>
+
+---
+
+## Important Rules
+
+<Warning>
+  Read these before running this workflow in a shared or production environment.
+</Warning>
+
+- **Gen AI keys are shown only once.** Copy or download the key the moment it is created and store it securely. A lost key cannot be recovered — you must create a new one.
+- **Redact everything sensitive in screenshots:** API keys, NVMe device serial numbers, public endpoints, gateway tokens, dashboard passwords, namespaces, and Kubernetes names.
+- **Offloading means a single replica.** Enabling NVMe / High Bandwidth Flash Memory disables autoscaling for the inference, because the offloaded cache is tied to one physical device.
+- **NVMe devices are data-centre-specific.** Only available devices in the selected data centre are shown; in-use devices and full nodes are hidden. The device's mount path must match the `--nvme_path` prefix in the arguments.
+- **Treat the offloading arguments with care.** `--model` and `--tensor-parallel-size` are derived and locked. The offload sizes (`--ssd-kv-offload-gb`, `--dram-kv-offload-gb`) and `--max-model-len` are what let the model serve long contexts — change them only if you understand the memory trade-offs.
+- **Always use the public HTTPS endpoint** (suffixed with `/v1`) as the OpenClaw Base URL. The cluster-local URL will not work as an external gateway target.
+- **The setup port (8090) is for one-time configuration.** Once OpenClaw is launched, day-to-day use happens on the control dashboard (port 18789).
+
+---
+
+## What's next
+
+You now have an offloaded model serving a self-hosted gateway, fronted by a Gen AI key. To manage, monitor, or rotate that key — and keep an eye on token usage — head to [API Keys & Secrets](https://zeblokcomputationalprivatelimited.mintlify.app/platform/api-keys-and-secrets).
