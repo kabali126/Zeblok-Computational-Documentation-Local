@@ -4,7 +4,6 @@ description: "Deploy a memory-offloaded Llama 3.1 70B inference with NVMe KV cac
 ---
 
 
-
 ## Overview
 
 This use case walks through an end-to-end workflow in two stages. First, you deploy a large language model as an **Ai-Inference** service with **memory offloading** enabled, so that its key-value (KV) cache spills out of GPU memory onto fast local NVMe storage and host DRAM. Then you deploy **OpenClaw** — a self-hosted AI gateway — as an **Ai-MicroService** and point it at that inference as its model backend. The result is an agentic chat gateway powered by a 70B model that would otherwise not fit comfortably on a single GPU.
