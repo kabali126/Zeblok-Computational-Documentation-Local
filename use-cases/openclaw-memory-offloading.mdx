@@ -274,31 +274,7 @@ Chatting with the inference — and, later, connecting OpenClaw to it — requir
 
 ---
 
-## Part 3 — Confirm offloading is working
-
-Before wiring up OpenClaw, it is worth confirming the offloaded cache is doing its job. Open the inference details panel and use the tabs across the top.
-
-The **Utilization** tab shows latency (TTFT and TPOT), the request pipeline, and a **KV Cache** section.
-
-<Frame>
-  <img src="/images/use-cases/openclaw-memory-offloading/inference-utilization-tab.png" alt="Inference Utilization tab showing TTFT and TPOT latency, request pipeline, and KV cache metrics" />
-</Frame>
-
-The **Sessions** tab lists each chat session with its configuration and per-session CPU, memory, and GPU monitoring.
-
-<Frame>
-  <img src="/images/use-cases/openclaw-memory-offloading/inference-sessions-tab.png" alt="Inference Sessions tab showing session configuration and resource monitoring" />
-</Frame>
-
-The **Logs** tab is the clearest confirmation. Look for lines that store the KV cache and report **aiDAPTIVCache** hits alongside the GPU cache — this is the offloaded cache being written and re-read.
-
-<Frame>
-  <img src="/images/use-cases/openclaw-memory-offloading/inference-logs-tab.png" alt="Inference Logs tab showing KV cache being stored and aiDAPTIVCache hits in the vLLM output" />
-</Frame>
-
----
-
-## Part 4 — Deploy OpenClaw as a microservice
+## Part 3 — Deploy OpenClaw as a microservice
 
 OpenClaw is deployed from the standard microservice flow. Navigate to **Workspace → Microservices** and click **Start Microservice**.
 
@@ -408,7 +384,7 @@ OpenClaw is deployed from the standard microservice flow. Navigate to **Workspac
 
 ---
 
-## Part 5 — Configure OpenClaw (one-time setup)
+## Part 4 — Configure OpenClaw (one-time setup)
 
 From the details panel, open the endpoint for **port 8090**. This launches the **OpenClaw Setup** wizard, used once to configure the gateway.
 
@@ -472,11 +448,11 @@ From the details panel, open the endpoint for **port 8090**. This launches the *
     </Frame>
   </Step>
 
-  <Step title="Web Search (optional)">
-    Step 3 lets the agent look things up online. Pick a search provider from the dropdown — some are free (such as **DuckDuckGo**), others need an API key — or leave it on **Skip for now (free)**.
+  <Step title="Web Search">
+    Step 3 lets the agent look things up online. Open the **Search Provider** dropdown and select **DuckDuckGo (experimental) — Recommended (free)**, which needs no API key. Other providers such as Brave, Exa, Perplexity, and Tavily are available if you have keys for them.
 
     <Frame>
-      <img src="/images/use-cases/openclaw-memory-offloading/web-search-provider.png" alt="OpenClaw Setup Web Search step with the search provider dropdown open" />
+      <img src="/images/use-cases/openclaw-memory-offloading/web-search-provider.png" alt="OpenClaw Setup Web Search step with the search provider dropdown open, including the recommended free DuckDuckGo option" />
     </Frame>
   </Step>
 
@@ -505,7 +481,7 @@ From the details panel, open the endpoint for **port 8090**. This launches the *
 
 ---
 
-## Part 6 — Use OpenClaw
+## Part 5 — Use OpenClaw
 
 Return to the OpenClaw microservice details panel.
 
@@ -519,10 +495,30 @@ Open the endpoint for **port 18789** to reach the OpenClaw control dashboard. It
   <img src="/images/use-cases/openclaw-memory-offloading/openclaw-control-ui.png" alt="OpenClaw control dashboard showing the chat interface ready to use" />
 </Frame>
 
-Send a message. Requests are served by your offloaded inference; if you enabled web search, the agent can call it as a tool and incorporate the results.
+Send a message. Requests are served by your offloaded inference, and because web search is configured, the agent can call it as a tool and fold the results into its answer — as in this example, where it looks up a location before responding.
 
 <Frame>
   <img src="/images/use-cases/openclaw-memory-offloading/openclaw-chat.png" alt="OpenClaw chat answering a question using a web search tool call and the offloaded model" />
+</Frame>
+
+Now switch back to the inference to confirm the traffic is landing on the offloaded model. Go to **Workspace → Inference**, open your inference, and click **View Details**.
+
+The **Utilization** tab reflects the requests you just sent through OpenClaw — time-to-first-token (TTFT) and time-per-output-token (TPOT), the request pipeline, token counts, and a **KV Cache** section.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/inference-utilization-tab.png" alt="Inference Utilization tab showing TTFT and TPOT latency, request pipeline, token counts, and KV cache metrics after chatting through OpenClaw" />
+</Frame>
+
+The **Sessions** tab lists each session with its configuration and per-session CPU, memory, and GPU monitoring.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/inference-sessions-tab.png" alt="Inference Sessions tab showing session configuration and resource monitoring" />
+</Frame>
+
+The **Logs** tab is the clearest confirmation that offloading is working — look for lines that store the KV cache and report **aiDAPTIVCache** hits alongside the GPU cache, which is the offloaded cache being written and re-read.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/inference-logs-tab.png" alt="Inference Logs tab showing KV cache being stored and aiDAPTIVCache hits in the vLLM output" />
 </Frame>
 
 If you need shell access to the container — for example, to inspect the workspace or run the OpenClaw CLI — open the endpoint for **port 8081**.
