@@ -1,11 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json", 
+  "$schema": "https://mintlify.com/docs.json",
   "theme": "luma",
   "name": "Zeblok Computational",
   "logo": {
     "light": "/images/logo-black.png",
     "dark": "/images/logo-white.png",
-    "width": 800  
+    "width": 800
   },
   "favicon": "https://icons.duckduckgo.com/ip3/computationaldocs.zeblok.com.ico",
   "colors": {
@@ -42,7 +42,7 @@
               "workstation-and-services/spawn-workstation",
               "workstation-and-services/spawn-microservice",
               "workstation-and-services/spawn-orchestration-addon",
-               "workstation-and-services/spawn-inference"
+              "workstation-and-services/spawn-inference"
             ]
           },
           {
@@ -65,21 +65,21 @@
                   "platform/configurations/plans",
                   "platform/configurations/namespaces"
                 ]
-             },
-            {
-             "group": "IAM",
-             "pages": [
-               "platform/iam/users",
-               "platform/iam/roles",
-               "platform/iam/policies",
-               "platform/iam/organisations",
-               "platform/iam/user-groups"
-             ]
-            },
-            "platform/api-keys-and-secrets"
-           ]
-         },  
-         {
+              },
+              {
+                "group": "IAM",
+                "pages": [
+                  "platform/iam/users",
+                  "platform/iam/roles",
+                  "platform/iam/policies",
+                  "platform/iam/organisations",
+                  "platform/iam/user-groups"
+                ]
+              },
+              "platform/api-keys-and-secrets"
+            ]
+          },
+          {
             "group": "SDK & Integrations",
             "pages": [
               "sdk/overview"
@@ -90,6 +90,12 @@
             "pages": [
               "releases/release-notes",
               "support"
+            ]
+          },
+          {
+            "group": "Use Cases",
+            "pages": [
+              "use-cases/openclaw-memory-offloading"
             ]
           }
         ]
