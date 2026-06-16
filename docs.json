@@ -55,6 +55,7 @@
                   "platform/imports/microservices",
                   "platform/imports/orchestration-addons",
                   "platform/imports/ai-model-hub",
+                  "platform/imports/agent-hub",
                   "platform/imports/datasets"
                 ]
               },
