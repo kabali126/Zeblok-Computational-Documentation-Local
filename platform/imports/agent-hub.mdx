@@ -5,7 +5,6 @@ description: "Learn how to register and manage reusable MCP server templates in 
 
 
 
-
 ## Overview
 
 The **Agent Hub** (under **Platform → Imports**) is a catalogue of reusable **MCP (Model Context Protocol) server** templates that your **Agents** *(beta)* can deploy as tools. Each entry packages an image, its protocol, ports, parameters, and the compute plans it is allowed to run on — the panel describes it as *"a reusable MCP server entry for agent deployments."* Once an entry exists here, it can be deployed repeatedly without re-entering its configuration.
@@ -16,7 +15,7 @@ The hub ships with several entries already in place (marked **Added by SuperAdmi
 - **External URL** — register an MCP server hosted elsewhere.
 - **Microservice** *(beta)* — back the entry with a platform microservice.
 
-This page documents the **Docker Image** and **External URL** sources. The **Microservice** source is covered in its own section.
+This page documents all three sources — **Docker Image**, **External URL**, and **Microservice** *(beta)*.
 
 <Note>
   **Before you start:**
@@ -75,7 +74,7 @@ Click **Add to Hub** in the top-right corner. The **Add to Agent Hub** panel ope
 
     ### Source
 
-    Agent Hub can source an entry three ways — **Docker Image**, **External URL**, and **Microservice** *(beta)*. This section covers the **Docker Image** source; the **External URL** source is covered in the next section, and the **Microservice** source is documented separately. Select **Docker Image** — the panel notes it will *"Spawn a Kubernetes pod from a Docker image. Use this for self-hosted MCP servers."*
+    Agent Hub can source an entry three ways — **Docker Image**, **External URL**, and **Microservice** *(beta)*. This section covers the **Docker Image** source; the **External URL** and **Microservice** *(beta)* sources follow in their own sections below. Select **Docker Image** — the panel notes it will *"Spawn a Kubernetes pod from a Docker image. Use this for self-hosted MCP servers."*
 
     ***
 
@@ -279,6 +278,96 @@ Use the **External URL** source when the MCP server is already hosted somewhere 
 
 ---
 
+## Add an MCP server (Microservice source)
+
+Use the **Microservice** *(beta)* source to turn a microservice already running in your AI MicroCloud into an agent tool. As the panel explains, the chat-runtime addresses it as an MCP server, so *"the microservice image must speak MCP (e.g. chroma-mcp, mcp-postgres)."* Services that already speak MCP are marked **MCP-ready**; ones that don't are marked **Untested** and need a small adapter (covered below). As with the External URL source, you only complete the **Details** tab — the **Parameters** and **Registry** tabs aren't needed.
+
+<Note>
+  Microservice-backed MCP servers are in **beta**. The seeded `*-mcp` images give the smoothest path; a service that isn't MCP-aware needs a wrapper.
+</Note>
+
+<Steps>
+  <Step title="Open the panel and enter the basics">
+    Click **Add to Hub**, and on the **Details** tab enter a **Name** and **Description**, exactly as in the Docker image method above.
+  </Step>
+
+  <Step title="Choose Microservice as the source">
+    Under **Source**, select **Microservice** *(beta)*.
+
+    <Frame>
+      <img src="/images/import-agent-hub/import-agent-microservice.png" alt="Add to Agent Hub panel with Microservice selected as the source" />
+    </Frame>
+  </Step>
+
+  <Step title="Select a running microservice">
+    Open the **Microservice** dropdown and pick a service. Only running services appear — if yours isn't listed, start it in your MicroCloud first. Each service carries a badge: **MCP-ready** if it already speaks MCP, or **Untested** if it doesn't.
+
+    <Frame>
+      <img src="/images/import-agent-hub/select-running-microservice.png" alt="Microservice dropdown listing running services with Untested badges" />
+    </Frame>
+
+    <Note>
+      If the service you pick is already **MCP-ready**, skip the wrapping steps below — set the transport and path, then continue to **Fill the remaining details**.
+    </Note>
+  </Step>
+
+  <Step title="Set the transport and path">
+    Choose the **Transport** — **SSE** or **Streamable HTTP**.
+
+    <Frame>
+      <img src="/images/import-agent-hub/select-ms-transport.png" alt="Transport dropdown showing Streamable HTTP and SSE for a microservice" />
+    </Frame>
+
+    **MCP Path** is optional — it defaults to `/mcp` for Streamable HTTP and `/sse` for SSE. The panel shows the **Resolved URL** the runtime will call, combining the service address with this path.
+
+    <Frame>
+      <img src="/images/import-agent-hub/mcp-path.png" alt="MCP Path field with the resolved URL shown below" />
+    </Frame>
+  </Step>
+
+  <Step title="Wrap an untested service with the MCP adapter">
+    If the service is **Untested**, a warning explains it must speak MCP at the resolved path and offers three options: save anyway (only if you know it already speaks MCP), pick a pre-seeded MCP-aware service instead, or build a wrapper image. For recognised services such as postgres, an **Auto-wrap available** box appears — click **Wrap with MCP adapter**.
+
+    <Frame>
+      <img src="/images/import-agent-hub/wrap-with-mcp-adapter.png" alt="Untested image warning with the Wrap with MCP adapter option" />
+    </Frame>
+  </Step>
+
+  <Step title="Spawn the adapter">
+    In the **Wrap with MCP adapter** dialog, the **Adapter type** is auto-detected from the image (change it if it's wrong). Leave **Allow writes** off to expose read-only tools, or enable it to allow writes. Keep or edit the **Adapter name**, then click **Spawn adapter**. The adapter runs on the same plan, data center, and namespace as the upstream service by default.
+
+    <Frame>
+      <img src="/images/import-agent-hub/spawn-adapter.png" alt="Wrap with MCP adapter dialog showing adapter type, allow writes toggle, and adapter name" />
+    </Frame>
+
+    <Warning>
+      **Allow writes** is off by default, so the adapter only exposes read tools. Enable it only when the agent genuinely needs to write through the service.
+    </Warning>
+  </Step>
+
+  <Step title="Select the spawned adapter">
+    Reopen the **Microservice** dropdown. The new adapter appears as `<service>-mcp-adapter`, now marked **MCP-ready**. Select it as the microservice for this entry.
+
+    <Frame>
+      <img src="/images/import-agent-hub/select-spawned-adapter.png" alt="Microservice dropdown showing the spawned adapter marked MCP-ready" />
+    </Frame>
+  </Step>
+
+  <Step title="Fill the remaining details">
+    Set **Protocol**, **Subscription Category**, **Provider Info**, **License Type**, and **Visibility** the same way as in the Docker image method.
+  </Step>
+
+  <Step title="Create the template">
+    Click **Create Template**. A success message confirms the entry was created, and it appears in the catalogue marked with a **microservice** tag.
+
+    <Frame>
+      <img src="/images/import-agent-hub/after-create-template-via-ms.png" alt="Agent Hub catalogue showing the new microservice-backed entry with a success message" />
+    </Frame>
+  </Step>
+</Steps>
+
+---
+
 ## View an entry
 
 Click **View Details** on any card to open its details panel. It shows the entry's **Type**, **Protocol**, **Visibility**, number of **Plans**, **Image Tag**, and configured **Ports**.
@@ -315,7 +404,7 @@ Click **Delete** to remove the entry from the hub.
 - **Private registries mean credentials.** Only enable **Private Registry** when the image truly needs it, and keep those credentials — and any secret environment variables — out of shared screenshots.
 - **Plans must exist first.** You can only attach compute plans that already exist under [Configurations → Plans](https://zeblokcomputationalprivatelimited.mintlify.app/platform/configurations/plans).
 - **SuperAdmin entries are shared defaults.** Entries marked **Added by SuperAdmin** are provided with the platform; the ones you create are yours to edit and delete.
-- **This page covers the Docker image and External URL sources.** Registering an entry from a **Microservice** is documented in its own section.
+- **Microservice entries must speak MCP.** If the chosen service is marked **Untested**, either wrap it with the MCP adapter, pick a pre-seeded MCP-ready service, or save only if you know it already speaks MCP.
 - **Agent Hub is in beta.** Behaviour may change.
 
 ---
