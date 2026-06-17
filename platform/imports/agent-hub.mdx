@@ -1,125 +1,229 @@
 ---
-title: Agent Hub
-description: Browse, add, and manage reusable MCP server templates that your agents deploy from a central catalogue.
+title: "Agent Hub"
+description: "Learn how to register and manage reusable MCP server templates in the Agent Hub so your agents can deploy them, starting with the Docker image source."
 ---
+
 
 
 ## Overview
 
-**Agent Hub** is a catalogue of reusable **MCP (Model Context Protocol)** server templates that your Agents *(beta)* deploy. Each entry is a reusable MCP server configuration — a deployable building block your agents connect to — so you define a server once and reuse it across agent deployments instead of rebuilding it each time.
+The **Agent Hub** (under **Platform → Imports**) is a catalogue of reusable **MCP (Model Context Protocol) server** templates that your **Agents** *(beta)* can deploy as tools. Each entry packages an image, its protocol, ports, parameters, and the compute plans it is allowed to run on — the panel describes it as *"a reusable MCP server entry for agent deployments."* Once an entry exists here, it can be deployed repeatedly without re-entering its configuration.
 
-You'll find Agent Hub under **Platform → Imports → Agent Hub**.
+The hub ships with several entries already in place (marked **Added by SuperAdmin**), and you can register your own. An entry can be sourced three ways:
+
+- **Docker Image** — spawn a Kubernetes pod from a Docker image. Use this for self-hosted MCP servers.
+- **External URL** — register an MCP server hosted elsewhere.
+- **Microservice** *(beta)* — back the entry with a platform microservice.
 
 This page documents the **Docker Image** and **External URL** sources. The **Microservice** source is covered in its own section.
 
 <Note>
-  Agent Hub and Agents are in **beta**. The exact fields and layout may change as the feature evolves.
+  **Before you start:**
+
+  - You need to be a member of the organisation the entry will belong to.
+  - The compute plans you want to attach must already exist under [Configurations → Plans](https://zeblokcomputationalprivatelimited.mintlify.app/platform/configurations/plans).
+  - If your Docker image lives in a private registry, have its registry credentials ready for the **Registry** tab.
+  - Agent Hub is currently in **beta**.
 </Note>
 
-***
+---
 
 ## The Agent Hub catalogue
 
-The catalogue lists every MCP server template available to your organisation. Each card shows the entry's name, protocol, image tag (or `external` tag), and a quick count of its ports and environment variables.
+Open **Platform → Imports → Agent Hub** to see every entry. The **All** tab lists all entries; the **MCP Server** tab filters to MCP server entries. Use **Search the hub** to find an entry by name, and **Filters** to narrow the list.
 
 <Frame>
-  <img src="/images/import-agent-hub/agent-hub-catalogue.png" alt="The Agent Hub catalogue showing MCP server template cards" />
+  <img src="/images/import-agent-hub/before-importing-agent.png" alt="Agent Hub catalogue showing pre-seeded MCP server entries on the All tab" />
 </Frame>
 
-Use the tabs at the top to switch between **All** and **MCP Server** views. **Search the hub** filters by name, and **Filters** narrows the list further. Entries seeded by the platform are marked **Added by SuperAdmin**; the ones you add show under your own account.
+Each card shows the entry's name, its protocol (and where relevant the backing service, e.g. MCP · ChromaDB), the image tag, the number of ports and environment variables, a **Server** status badge, who added it, and a **View Details** link. Entries provided with the platform are labelled **Added by SuperAdmin**; entries you create show no such label.
 
-***
+---
 
 ## Add an MCP server (Docker image source)
 
-Use the **Docker Image** source to spawn a Kubernetes pod from a container image — this is the option for self-hosted MCP servers. Open the **Add to Hub** panel from the top-right of the catalogue and work through the three tabs: **Details**, **Parameters**, and **Registry**.
+Click **Add to Hub** in the top-right corner. The **Add to Agent Hub** panel opens on the right with three tabs — **Details**, **Parameters**, and **Registry** — and a **Create Template** button at the bottom.
+
+<Frame>
+  <img src="/images/import-agent-hub/add-to-hub.png" alt="Add to Agent Hub panel open on the Details tab" />
+</Frame>
 
 <Steps>
-  <Step title="Open the Add to Hub panel">
-    Click **Add to Hub** in the top-right of the catalogue. A side panel titled **Add to Agent Hub** opens on the **Details** tab.
+  <Step title="Details">
+    The **Details** tab describes the entry and where its image comes from.
+
+    ### Name *(required)*
+
+    Enter a unique **Name** for the entry — for example, `htmlscrapper`.
 
     <Frame>
-      <img src="/images/import-agent-hub/add-to-hub-button.png" alt="The Add to Hub button in the top-right of the Agent Hub catalogue" />
+      <img src="/images/import-agent-hub/import-agent-name.png" alt="Name field filled in on the Details tab" />
     </Frame>
-  </Step>
 
-  <Step title="Name and describe the entry">
-    Enter a **Name** *(required)* — this is what shows on the card — and a **Description** *(required)* explaining what the server does.
+    ***
+
+    ### Description *(required)*
+
+    Add a short **Description** of what the MCP server does.
 
     <Frame>
-      <img src="/images/import-agent-hub/details-name-description.png" alt="The Name and Description fields on the Details tab" />
+      <img src="/images/import-agent-hub/import-agent-description.png" alt="Description field filled in on the Details tab" />
     </Frame>
-  </Step>
 
-  <Step title="Choose the source">
+    ***
+
+    ### Source
+
     Agent Hub can source an entry three ways — **Docker Image**, **External URL**, and **Microservice** *(beta)*. This section covers the **Docker Image** source; the **External URL** source is covered in the next section, and the **Microservice** source is documented separately. Select **Docker Image** — the panel notes it will *"Spawn a Kubernetes pod from a Docker image. Use this for self-hosted MCP servers."*
 
+    ***
+
+    ### Docker Image *(required)*
+
+    Enter the full registry path the platform will pull from — for example, `hub.docker.zeblok.com/zeblok/mcp/...`.
+
     <Frame>
-      <img src="/images/import-agent-hub/source-docker-image.png" alt="Docker Image selected as the source on the Details tab" />
+      <img src="/images/import-agent-hub/import-agent-image.png" alt="Docker Image field with the full registry path" />
+    </Frame>
+
+    ***
+
+    ### Image Display Name *(required)*
+
+    Enter the short tag to show on the catalogue card (this appears as the entry's **Image Tag**) — for example, `mcp/fetch:stateful`.
+
+    <Frame>
+      <img src="/images/import-agent-hub/import-agent-image-display-name.png" alt="Image Display Name field filled in" />
+    </Frame>
+
+    ***
+
+    ### Protocol
+
+    Leave **Protocol** on **MCP**.
+
+    ***
+
+    ### Subscription Category
+
+    Choose a **Subscription Category** — **Default**, **Rover**, **Copilot**, or **Developer**.
+
+    <Frame>
+      <img src="/images/import-agent-hub/import-agent-category.png" alt="Subscription Category dropdown showing Default, Rover, Copilot, and Developer" />
+    </Frame>
+
+    ***
+
+    ### Provider Info
+
+    Enter the vendor or source of the image in **Provider Info** — for example, `zeblok`.
+
+    <Frame>
+      <img src="/images/import-agent-hub/import-agent-provider-info.png" alt="Provider Info field filled in" />
+    </Frame>
+
+    ***
+
+    ### License Type
+
+    Set the **License Type** to **Open Source** or **Third Party**.
+
+    <Frame>
+      <img src="/images/import-agent-hub/import-agent-license-type.png" alt="License Type dropdown showing Open Source and Third Party" />
+    </Frame>
+
+    ***
+
+    ### Visibility
+
+    Choose the **Visibility** — **Organization** makes the entry available to your whole organisation; **Private** keeps it to you.
+
+    <Frame>
+      <img src="/images/import-agent-hub/import-agent-visibility.png" alt="Visibility dropdown showing Organization and Private" />
     </Frame>
   </Step>
 
-  <Step title="Enter the image details">
-    Provide the **Docker Image** *(required)* as a full registry path, for example `hub.docker.zeblok.com/zeblok/mcp/fetch:stateful`. Then set an **Image Display Name** *(required)* — the short tag shown on the card, such as `mcp/fetch:stateful`.
+  <Step title="Parameters">
+    The **Parameters** tab defines how the MCP server runs.
+
+    ### Ports
+
+    Click **Add Port**, then set the protocol (e.g. **HTTP**), the port number (e.g. `8000`), and an identifier.
 
     <Frame>
-      <img src="/images/import-agent-hub/docker-image-fields.png" alt="The Docker Image and Image Display Name fields" />
+      <img src="/images/import-agent-hub/import-agent-parameters.png" alt="Parameters tab with empty ports, environment variables, and arguments sections" />
     </Frame>
+
+    <Frame>
+      <img src="/images/import-agent-hub/import-agent-port.png" alt="A port row with the port number being entered" />
+    </Frame>
+
+    Give the port an identifier (for example, `ui`).
+
+    <Frame>
+      <img src="/images/import-agent-hub/import-agent-port-identifier.png" alt="Port row with an identifier set and the environment variable Key field ready" />
+    </Frame>
+
+    ***
+
+    ### Environment Variables *(optional)*
+
+    Use **Add Variable** to add any key-value pairs the server needs at startup.
+
+    ***
+
+    ### Arguments *(optional)*
+
+    Use **Add Argument** to pass startup arguments to the container.
+
+    ***
+
+    ### Volume Path
+
+    Set the **Volume Path** for persistent storage — the default is `/data`.
   </Step>
 
-  <Step title="Set protocol, category, and provider">
-    Leave **Protocol** on **MCP**. Choose a **Subscription Category** — **Default**, **Rover**, **Copilot**, or **Developer** — and add **Provider Info** to record the vendor or source, for example `zeblok`.
+  <Step title="Registry">
+    The **Registry** tab controls credentials and the plans the entry can run on.
+
+    ### Private Registry
+
+    Leave **Private Registry** off for a public image. Enable it when the Docker image requires registry credentials.
 
     <Frame>
-      <img src="/images/import-agent-hub/protocol-category-provider.png" alt="The Protocol, Subscription Category, and Provider Info fields" />
+      <img src="/images/import-agent-hub/import-agent-registry.png" alt="Registry tab showing the Private Registry toggle and the Plans search" />
     </Frame>
-  </Step>
 
-  <Step title="Set licence and visibility">
-    Pick a **License Type** — **Open Source** or **Third Party** — and a **Visibility**. **Organization** makes the entry available across your organisation; **Private** keeps it to you.
+    <Warning>
+      Enabling **Private Registry** means supplying registry credentials. Treat them as secrets, and redact them — along with any sensitive environment variables — before sharing screenshots.
+    </Warning>
+
+    ***
+
+    ### Plans
+
+    Use **Search and add plans** to attach one or more compute plans the entry is allowed to run on. Selected plans appear as chips.
 
     <Frame>
-      <img src="/images/import-agent-hub/license-visibility.png" alt="The License Type and Visibility fields" />
+      <img src="/images/import-agent-hub/import-agent-plan.png" alt="Plans search showing available compute plans to add" />
     </Frame>
-  </Step>
 
-  <Step title="Add ports on the Parameters tab">
-    Switch to the **Parameters** tab. Under **Ports**, set the **Protocol** (such as HTTP), the **port** number (for example `8000`), and an **Identifier** (for example `ui`).
+    ***
 
-    <Frame>
-      <img src="/images/import-agent-hub/parameters-ports.png" alt="The Ports section on the Parameters tab" />
-    </Frame>
-  </Step>
+    ### Default Plan
 
-  <Step title="Add environment variables and arguments (optional)">
-    Still on **Parameters**, add any **Environment Variables** as **Key** / **Value** pairs, and any **Arguments** the server needs. Both are optional — add them only if your image requires them.
+    Once plans are added, choose the **Default Plan** used when the entry is deployed.
 
     <Frame>
-      <img src="/images/import-agent-hub/parameters-env-args.png" alt="The Environment Variables and Arguments sections" />
-    </Frame>
-  </Step>
-
-  <Step title="Set the volume path">
-    Set the **Volume Path** where the server persists data. The default is `/data`.
-
-    <Frame>
-      <img src="/images/import-agent-hub/parameters-volume.png" alt="The Volume Path field on the Parameters tab" />
-    </Frame>
-  </Step>
-
-  <Step title="Configure the registry and plans">
-    Switch to the **Registry** tab. If the image lives in a credentialed registry, enable **Private Registry** and supply the credentials. Then select the **Plans** the template can run on — the field is searchable and accepts multiple plans — and set a **Default Plan**.
-
-    <Frame>
-      <img src="/images/import-agent-hub/registry-plans.png" alt="The Private Registry toggle, Plans selector, and Default Plan on the Registry tab" />
+      <img src="/images/import-agent-hub/import-agent-default-plan.png" alt="Selected plan chips with a Default Plan dropdown" />
     </Frame>
   </Step>
 
   <Step title="Create the template">
-    Click **Create Template**. A success message confirms the entry was created, and the new card appears in the catalogue with its image tag and port count.
+    Click **Create Template**. A success message confirms the entry was created, and it appears in the catalogue with the image tag and port count you configured.
 
     <Frame>
-      <img src="/images/import-agent-hub/after-agent-imported.png" alt="The newly created MCP server template in the Agent Hub catalogue" />
+      <img src="/images/import-agent-hub/after-agent-imported.png" alt="Agent Hub catalogue showing the newly created entry with a success message" />
     </Frame>
   </Step>
 </Steps>
@@ -179,40 +283,42 @@ Use the **External URL** source when the MCP server is already hosted somewhere 
 Click **View Details** on any card to open its details panel. It shows the entry's **Type**, **Protocol**, **Visibility**, number of **Plans**, **Image Tag**, and configured **Ports**.
 
 <Frame>
-  <img src="/images/import-agent-hub/view-details.png" alt="The View Details panel for an Agent Hub entry" />
+  <img src="/images/import-agent-hub/imported-agent-details.png" alt="Details panel for an entry showing type, protocol, visibility, plans, image tag, and ports" />
 </Frame>
 
-***
+---
 
 ## Edit or delete an entry
 
-From an entry's details panel, use **Edit** to change its configuration or **Delete** to remove it from the catalogue.
-
-Clicking **Edit** opens the **Edit hub entry** panel with the same fields you filled when creating it. Make your changes and click **Save Changes**.
+From the details panel, click **Edit** to reopen the configuration as the **Edit hub entry** panel — the same Details, Parameters, and Registry tabs, pre-filled. Make your changes and click **Save Changes**.
 
 <Frame>
-  <img src="/images/import-agent-hub/edit-hub-entry.png" alt="The Edit hub entry panel" />
+  <img src="/images/import-agent-hub/imported-agent-edit.png" alt="Edit hub entry panel with the entry's existing values pre-filled" />
 </Frame>
 
+Click **Delete** to remove the entry from the hub.
+
 <Warning>
-  **Delete** permanently removes the template from the catalogue. Agents that rely on it will no longer be able to deploy it. Delete an entry only when you're sure nothing depends on it.
+  Before deleting an entry, make sure no agent depends on it. Removing it takes it out of the hub for future deployments.
 </Warning>
 
-***
+---
 
 ## Important Rules
 
 <Warning>
-  - **MCP servers are deployable infrastructure.** A Docker-image entry spawns a pod on the plan you select, so choose **Plans** and a **Default Plan** that your organisation is provisioned for.
-  - **Private images need registry credentials.** If you don't enable **Private Registry** and supply credentials for a credentialed image, the deployment will fail to pull.
-  - **Redact screenshots and values.** Registry credentials, environment-variable values, and provider details can be sensitive — keep them out of anything you share.
-  - **This page covers the Docker image and External URL sources.** Registering an entry from a **Microservice** is documented in its own section.
+  Read these before registering entries in a shared organisation.
 </Warning>
 
-***
+- **Visibility controls reach.** **Organization** exposes the entry to everyone in your organisation; **Private** keeps it to you. Choose deliberately.
+- **Private registries mean credentials.** Only enable **Private Registry** when the image truly needs it, and keep those credentials — and any secret environment variables — out of shared screenshots.
+- **Plans must exist first.** You can only attach compute plans that already exist under [Configurations → Plans](https://zeblokcomputationalprivatelimited.mintlify.app/platform/configurations/plans).
+- **SuperAdmin entries are shared defaults.** Entries marked **Added by SuperAdmin** are provided with the platform; the ones you create are yours to edit and delete.
+- **This page covers the Docker image and External URL sources.** Registering an entry from a **Microservice** is documented in its own section.
+- **Agent Hub is in beta.** Behaviour may change.
+
+---
 
 ## What's next
 
-<Card title="Datasets" icon="database" href="https://zeblokcomputationalprivatelimited.mintlify.app/platform/imports/datasets">
-  Import and manage the datasets your workloads and agents draw on.
-</Card>
+With an MCP server template in the hub, continue through the Imports section to set up the data your agents and services will use — see [Datasets](https://zeblokcomputationalprivatelimited.mintlify.app/platform/imports/datasets).
