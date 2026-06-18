@@ -1,0 +1,435 @@
+---
+title: "Spawn Agents"
+description: "Configure and deploy an AI agent on the Ai-MicroCloud platform — choose a persona, connect a running inference and MCP tools, tune guardrails, then chat with it from a built-in interface."
+---
+
+
+## Overview
+
+An **agent** on the Ai-MicroCloud platform is an LLM-driven worker that reasons, calls tools, and acts on your behalf. Each agent combines a persona (its **Agent Type**), an inference model to reason with, and an optional set of **MCP Servers** whose tools it can call — for example a Postgres server that lets a data-analysis agent run read-only SQL.
+
+The tools an agent uses are imported beforehand from [Agent Hub](/platform/imports/agent-hub) (**Imports → Agent Hub**), which supports three sources: a Docker image, an external URL, and a microservice. This walkthrough spawns an agent whose tools come from a server imported as a **Docker image** — a Postgres MCP server — and the steps are the same whichever source you used.
+
+To begin, open **Workspace → Agents** in the left sidebar. The page lists any agents you already have and can be filtered by **All**, **Active**, or **Inactive**. Click **Start Agent** in the top-right corner to open the **New Agent** form.
+
+<Frame>
+  <img src="/images/agents/before-spawn-agent.png" alt="Agents page in the Workspace section showing existing agents and the Start Agent button" />
+</Frame>
+
+The **New Agent** form is organised into four tabs — **Configure**, **Environment**, **Sub-Agent**, and **Guardrails** — that you complete in order before creating the agent.
+
+<Steps>
+  <Step title="Configure the agent">
+    The **Configure** tab defines the agent's persona, the model it reasons with, the tools it can call, and where it runs.
+
+    ### Agent Type *(required)*
+
+    The **Agent Type** sets the agent's persona — its system prompt and default behaviour. Pick one card to start from:
+
+    * **General Assistant** — default tool-using chat with concise replies; uses tools only when they help. Any chat-tuned model works.
+    * **Reasoning** — a deliberate, plan-first problem solver that states a numbered plan and works step by step. A strong reasoning model is recommended.
+    * **RAG / Research** — a retrieval-first agent that searches knowledge sources before answering and cites where each fact came from. Prefers long-context models.
+    * **Web Researcher** — pulls live web, RSS, and documentation sources before answering, and cites everything. Pairs with fetch / DeepWiki.
+    * **Data Analyst** — explores files and datasets, computes summaries, and explains findings clearly. Pairs with filesystem / data tools.
+    * **Code Agent** — file-aware code generation that reads existing layout, plans changes, and makes minimal edits. A code-tuned model is recommended.
+
+    This walkthrough selects **Data Analyst**.
+
+    <Frame>
+      <img src="/images/agents/agent-type.png" alt="Configure tab showing the six Agent Type cards with the Data Analyst persona selected" />
+    </Frame>
+
+    ***
+
+    ### Inference Model *(required)*
+
+    The **Inference Model** is the LLM the agent reasons with. Use the **AI Microcloud** toggle to select an inference already running on the platform, or **Public Provider** to use an external provider with your own API key. With **AI Microcloud** selected, choose from the **Select a running inference** dropdown.
+
+    <Frame>
+      <img src="/images/agents/select-running-inference.png" alt="Inference Model section with the AI Microcloud and Public Provider toggle and the running inference dropdown open" />
+    </Frame>
+
+    <Note>
+      An agent needs a **running inference** to reason with, so make sure one is online before you continue — a 70B-class instruction model is recommended for this agent. If you do not have a running inference yet, spawn one first by following [Spawn Ai-Inference](/workstation-and-services/spawn-inference), then come back and select it here. You can also create one without leaving this form using **+ Create inference**.
+    </Note>
+
+    ***
+
+    ### MCP Servers *(optional)*
+
+    Select the **MCP Servers** whose tools this agent is allowed to call. This is optional — leave it empty for an orchestrator (sub-agents only) or a plain chat assistant. This walkthrough selects **Postgres**, which exposes a read-only SQL tool.
+
+    <Frame>
+      <img src="/images/agents/select-mcp-server.png" alt="MCP Servers dropdown open showing imported servers including Postgres" />
+    </Frame>
+
+    <Note>
+      The servers in this dropdown are the ones you have already imported through **Imports → Agent Hub**, and a server behaves the same here regardless of how it was imported. The **Postgres** server selected here was imported as a **Docker image** (shown in the list as `mcp/postgres:stateful`); the External URL and microservice sources appear in this same dropdown once imported.
+    </Note>
+
+    ***
+
+    ### Data Center *(required)*
+
+    Select the **Data Center** where the agent will be deployed. Each entry shows the data centre's name, location, whether it is the primary region, and its tier — for example **Phison labs**, in Redmond, WA, US.
+
+    <Frame>
+      <img src="/images/agents/select-data-center.png" alt="Data Center dropdown showing the Phison labs data centre in Redmond, WA, US" />
+    </Frame>
+
+    ***
+
+    ### Plan *(required)*
+
+    Choose a **Plan** to define the compute resources allocated to the agent. Each plan lists the number of GPUs, vCPUs, RAM, and disk it provides, across named tiers such as **Micro**, **Basic**, **Standard**, **Large**, and **xLarge**. If none of the existing plans fit, click **+ New Dynamic Plan** to define a custom configuration. This walkthrough uses **Standard**.
+
+    <Frame>
+      <img src="/images/agents/select-plan-agent.png" alt="Plan dropdown listing compute tiers with GPU, vCPU, RAM, and disk details" />
+    </Frame>
+
+    When the **Configure** tab is complete, click **Next** to move to the **Environment** tab.
+  </Step>
+
+  <Step title="Configure the environment">
+    The **Environment** tab collects deployment-level settings: where the agent lives, who can use it, how it manages context, and its server configuration.
+
+    ### Namespace *(required)*
+
+    Select the **Namespace** in which the agent will be deployed. Namespaces organise and isolate workloads within your organisation.
+
+    <Frame>
+      <img src="/images/agents/select-namespace-agent.png" alt="Namespace dropdown open showing the available namespaces" />
+    </Frame>
+
+    <Note>
+      You must be a member of a namespace to deploy into it. If the namespace you need is not listed, ask your OrgAdmin to add you — OrgAdmins manage namespace membership from the **IAM** section.
+    </Note>
+
+    ***
+
+    ### Agent Name *(required)*
+
+    Enter a unique **Agent Name** to identify the agent. This walkthrough uses `Data Analyst Agent`.
+
+    <Frame>
+      <img src="/images/agents/enter-agent-name.png" alt="Agent Name field on the Environment tab" />
+    </Frame>
+
+    ***
+
+    ### Visibility *(required)*
+
+    Set who can see and use the agent. Per-user shares from the **Share** dialog stack on top of this base policy.
+
+    * **Private** — only you can see and use this agent. This is the default.
+    * **Organization** — anyone in your organisation can use it.
+    * **Public** — any user in any organisation can use it.
+
+    <Frame>
+      <img src="/images/agents/select-visibility.png" alt="Visibility section showing the Private, Organization, and Public options with Private selected" />
+    </Frame>
+
+    ***
+
+    ### Context window *(optional)*
+
+    The **Context window** controls how much conversation history (in approximate tokens) the agent keeps, and what happens when that history overflows. It has two controls:
+
+    * **Context Length** — a slider from 4k to 128k tokens. The default is 16k; this walkthrough sets it to 32k.
+    * **Context Optimization** — what to do when the conversation exceeds the context length. The default is **Summarize — condense old messages via the model (default)**.
+
+    <Frame>
+      <img src="/images/agents/select-context-length.png" alt="Context window section with the Context Length slider and Context Optimization dropdown" />
+    </Frame>
+
+    ***
+
+    ### System prompt *(optional)*
+
+    The **System prompt** is an optional override. Leave it empty to inherit the prompt from the chosen **Agent Type**, or use it when the persona is close but you need specific rules — tool-call etiquette, output formatting, refusal policies, and so on. When you enter text, the form notes that the override is active and replaces the Agent Type's prompt at runtime, and shows a character count against the 8192-character limit.
+
+    <Frame>
+      <img src="/images/agents/enter-system-prompt.png" alt="System prompt section with an optional override text area" />
+    </Frame>
+
+    ***
+
+    ### Server Ports *(optional)*
+
+    Define how the agent's server exposes its endpoint. A single row is pre-configured with **Protocol** HTTP, **Port** 8000, and **Label** ui. Click **Add Server Port** to expose additional ports.
+
+    <Frame>
+      <img src="/images/agents/port-number-agent.png" alt="Server Ports section showing the default HTTP port 8000 with the ui label" />
+    </Frame>
+
+    ***
+
+    ### Server Environment Variables *(optional)*
+
+    Add key-value pairs that are injected into the server at startup. For this agent the **DATABASE_URL** variable holds the connection string for the Postgres server. Click **Add Server Env Variable** to add more rows.
+
+    <Frame>
+      <img src="/images/agents/agent-env-variable.png" alt="Server Environment Variables section showing the DATABASE_URL variable" />
+    </Frame>
+
+    ***
+
+    ### Server Arguments *(optional)*
+
+    Pass runtime arguments to the agent's server. Click **Add Server Argument** to add a row, or leave this empty to use the server's defaults.
+
+    When the **Environment** tab is complete, click **Next** to move to the **Sub-Agent** tab.
+  </Step>
+
+  <Step title="Wire sub-agents (optional)">
+    The **Sub-Agent** tab lets one agent delegate work to others. It is optional — this walkthrough leaves it unconfigured and clicks **Next**.
+
+    <Note>
+      Sub-agents are in beta. Wiring and dispatch work end to end; some polish — parallel calls, reconfigure-rebuild, and full cross-org sharing — is still in progress.
+    </Note>
+
+    ### Callable as sub-agent *(optional)*
+
+    Turn this toggle on to allow other agents to delegate tasks to this one via their synthetic Agent tool. It is off by default.
+
+    ***
+
+    ### Sub-agents this agent can call *(optional)*
+
+    Click **+ Add** to wire delegates that this agent's orchestrator LLM may hand work to. Each delegate runs with its own inference, tools, and context. When none are configured, the panel shows an empty state prompting you to add delegates. The current supported maximum depth is 1 — an agent can call any sub-agent you wire here.
+
+    <Frame>
+      <img src="/images/agents/sub-agent.png" alt="Sub-Agent tab showing the Callable as sub-agent toggle and the empty sub-agents list" />
+    </Frame>
+
+    <Frame>
+      <img src="/images/agents/collab-as-agent-or-not.png" alt="Sub-Agent tab with the Callable as sub-agent toggle off and no delegates configured" />
+    </Frame>
+
+    ***
+
+    ### Advanced dispatch guards *(optional)*
+
+    Expand **Advanced dispatch guards** to set the maximum depth, timeout, and per-invocation iteration cap for delegation. Server defaults apply when these are left blank.
+  </Step>
+
+  <Step title="Set runtime guardrails (optional)">
+    The **Guardrails** tab applies per-agent runtime defences. Every toggle is off by default, and changes take effect on the next chat turn — no pod restart. The controls are grouped into four collapsible sections.
+
+    ### Input controls
+
+    Cap and clean what reaches the model. **Maximum input length** refuses user messages longer than a set size (0 = no limit). **Turns per minute** and **Turns per day** rate-limit each user (0 = no limit). Under **Mask sensitive data in user messages**, **Redact PII** masks emails, phone numbers, SSNs, and credit-card numbers, and **Redact secrets** masks API keys, JWTs, AWS keys, and GitHub tokens — the agent and any tool calls only see the masked version, while the user still sees what they typed.
+
+    <Frame>
+      <img src="/images/agents/input-controls.png" alt="Guardrails Input controls section showing input length, rate limits, and masking toggles" />
+    </Frame>
+
+    ***
+
+    ### Output redaction
+
+    Mask PII or secrets in the agent's replies. **Redact PII** covers emails, phone numbers, SSNs, and credit-card numbers; **Redact secrets** covers AWS keys, JWTs, GitHub tokens, and OpenAI-style keys. The **Replacement text** field sets what each match is replaced with, defaulting to `[REDACTED]`.
+
+    <Frame>
+      <img src="/images/agents/output-redaction.png" alt="Guardrails Output redaction section showing PII and secret toggles and the replacement text field" />
+    </Frame>
+
+    ***
+
+    ### Tool controls
+
+    Restrict and log tool use. **Allowed tools** takes one tool per line; leaving it empty lets the model see every discovered tool, otherwise the model is told about only the listed ones. **Log every tool call** writes a row to the **Audit** tab for each call, capturing the tool name, an arguments hash, the duration, and whether it succeeded.
+
+    <Frame>
+      <img src="/images/agents/tool-controls.png" alt="Guardrails Tool controls section showing the allowed tools list and the log toggle" />
+    </Frame>
+
+    ***
+
+    ### Security
+
+    Govern the agent's outbound calls and defend against indirect prompt injection. Under **Outbound (fetch / http / mail) calls**, the **Domain allowlist** restricts which domains the agent may reach (one per line, wildcards such as `*.example.com` allowed), **Maximum outbound payload** refuses calls whose body or URL exceeds a byte limit (0 = no limit), **Block outbound payloads containing PII or secrets** scans every call for sensitive patterns, and **Block exfiltration of data read this turn** refuses calls whose body includes strings the agent just read from its tools. Under **Indirect prompt-injection defense**, **Wrap tool results in untrusted-data tags** marks tool output as data rather than instructions, **Inject system reminder** adds a short reminder that tool results are inert data, and **Neutralize injection signatures (advanced)** screens tool output for known injection patterns.
+
+    <Frame>
+      <img src="/images/agents/security.png" alt="Guardrails Security section showing outbound call controls and indirect prompt-injection defences" />
+    </Frame>
+
+    When you are satisfied with the guardrails, click **Create Agent**.
+  </Step>
+
+  <Step title="Create the agent">
+    After you click **Create Agent**, the platform provisions the agent and returns you to the **Agents** list. The new agent appears with its current status; once it shows **Running**, it is ready to use.
+
+    <Frame>
+      <img src="/images/agents/after-agent-spawn-docker-image.png" alt="Agents list showing the newly created Data Analyst Agent in a Running state" />
+    </Frame>
+  </Step>
+</Steps>
+
+## Inspecting your agent
+
+From the agent's card, click **View Details** to open the full detail panel. Across the top are the actions **Chat**, **Playground**, **Open**, **Stop**, **Reconfigure**, and **Share** — **Open** opens the agent in a new browser tab and **Stop** stops the running instance, while the others are covered below. The panel has eight tabs: **Details**, **Configuration**, **Tools**, **Resources**, **Utilization**, **Sessions**, **Logs**, and **Audit**. The **Resources** tab is covered after the chat example, since its content is clearest once the agent is active.
+
+### Details
+
+The **Details** tab shows the agent's endpoints (a public URL and a cluster URL), runtime status and replica count, placement (data centre, plan, Kubernetes name, category, and namespace), the configuration summary (servers, requested resources, ports, and environment variables), and an overview with the owner and creation time.
+
+<Frame>
+  <img src="/images/agents/agent-details.png" alt="Details tab showing endpoints, runtime, placement, configuration, and overview for the agent" />
+</Frame>
+
+### Configuration
+
+The **Configuration** tab lists the agent's clients, servers, environment variables, arguments, and ports.
+
+<Frame>
+  <img src="/images/agents/agent-configurations.png" alt="Configuration tab showing servers, environment variables, arguments, and ports" />
+</Frame>
+
+### Tools
+
+The **Tools** tab lists the tools the agent's MCP server exposes. For this agent that is a single **query** tool that runs a read-only SQL query, with a **Test** button to invoke it.
+
+<Frame>
+  <img src="/images/agents/agent-tools.png" alt="Tools tab showing the query tool exposed by the Postgres server with a Test button" />
+</Frame>
+
+### Utilization
+
+The **Utilization** tab shows per-turn usage captured at chat time for the agent and its sub-agents, and you can filter by time range. Before the agent has been used it is empty, prompting you to chat with the agent to start capturing metrics.
+
+<Frame>
+  <img src="/images/agents/agent-utilization-before-chat.png" alt="Utilization tab showing zeroed metrics before the agent has been chatted with" />
+</Frame>
+
+### Sessions
+
+The **Sessions** tab lists the agent's chat sessions. It is empty until the first session is recorded.
+
+<Frame>
+  <img src="/images/agents/agent-chat-session.png" alt="Sessions tab showing no sessions recorded yet" />
+</Frame>
+
+### Logs
+
+The **Logs** tab streams the agent's real-time container output, which is useful for monitoring startup and diagnosing runtime issues.
+
+<Frame>
+  <img src="/images/agents/agent-logs.png" alt="Logs tab showing real-time container output for the agent" />
+</Frame>
+
+### Audit
+
+The **Audit** tab records guardrail activity — every guardrail that fires writes one row — and you can filter by guardrail type. Events are recorded only when a guardrail acts, so for a fuller trail enable **Log every tool call** or a rate limit under **Reconfigure → Guardrails**.
+
+<Frame>
+  <img src="/images/agents/agent-audit.png" alt="Audit tab showing the guardrail audit with filter chips and no events yet" />
+</Frame>
+
+## Chatting with your agent
+
+Click **Chat** to open the built-in chat interface. Chatting with an agent requires a **Gen AI** API key; if none is set up, the **API key required** dialog appears with **Create New** and **Use Existing** options.
+
+<Frame>
+  <img src="/images/agents/click-on-chat.png" alt="API key required dialog shown after clicking Chat, with Create New and Use Existing options" />
+</Frame>
+
+### Create a Gen AI key
+
+Gen AI keys are created and managed under **Platform → API Keys & Secrets**, on the **Gen AI** tab. The **Microcloud** tab holds keys for programmatic access to the platform and is separate from Gen AI keys.
+
+<Frame>
+  <img src="/images/agents/api-key-secret.png" alt="API Keys and Secrets page on the Microcloud tab" />
+</Frame>
+
+On the **Gen AI** tab, click **+ Create Key** to open the **Create Gen AI Key** dialog, then set a **Name**, a **Type**, and an **Expiry**.
+
+<Frame>
+  <img src="/images/agents/gen-ai-key.png" alt="Gen AI tab of API Keys and Secrets showing existing keys and usage" />
+</Frame>
+
+<Frame>
+  <img src="/images/agents/create-key.png" alt="Create Gen AI Key dialog showing the name, type, and expiry fields" />
+</Frame>
+
+<Note>
+  The raw key is shown only once, at creation. Copy or download it straight away — if you lose it you will need to create a new key.
+</Note>
+
+<Frame>
+  <img src="/images/agents/copy-created-key.png" alt="Gen AI Key Created dialog with the key value and a Download option" />
+</Frame>
+
+### Use an existing key
+
+Back in the **API key required** dialog, choose **Use Existing** and paste your Gen AI key, then click **Use this key**. The key is validated when you send your first message, and revoked or expired keys are rejected.
+
+<Frame>
+  <img src="/images/agents/use-existing-key.png" alt="API key required dialog on the Use Existing tab with a Gen AI key pasted in" />
+</Frame>
+
+### Chat
+
+With a valid key in place, the chat input is enabled and you can talk to the agent directly in the browser. When a request needs the agent's tools, it calls them inline — here the **Data Analyst** agent runs its **query** tool against Postgres and returns the results.
+
+<Frame>
+  <img src="/images/agents/chat-with-agent.png" alt="Chat interface showing the Data Analyst agent answering questions and running a query tool" />
+</Frame>
+
+## Reviewing activity after a chat
+
+### Utilization
+
+Once the agent has handled some turns, the **Utilization** tab fills in with per-turn metrics — turns, input and output tokens, average context, response, latency, time to first token, iterations, tool calls, sub-agent calls, and error rate — along with tokens-over-time and turns-over-time charts.
+
+<Frame>
+  <img src="/images/agents/agent-utilization-after-chat.png" alt="Utilization tab showing populated metrics and charts after the agent has been used" />
+</Frame>
+
+### Resources
+
+The **Resources** tab lists the resources the agent's MCP server exposes. For the Postgres server these are the database schemas the agent can read — here the **customers**, **subscriptions**, **invoices**, and **events** schemas.
+
+<Frame>
+  <img src="/images/agents/resources-agent.png" alt="Resources tab showing the customers, subscriptions, invoices, and events database schemas" />
+</Frame>
+
+## More actions
+
+### Playground
+
+The **Playground** lets you invoke a tool directly, outside a chat. Select a tool, supply its **Arguments (JSON)** against the shown **Input Schema**, and click **Invoke** to run it.
+
+<Frame>
+  <img src="/images/agents/agent-playground.png" alt="Playground showing the query tool with an arguments editor and an Invoke button" />
+</Frame>
+
+### Reconfigure
+
+Click **Reconfigure** to edit a running agent's instance name, plan, ports, environment variables, and arguments. Saving these changes restarts the instance.
+
+<Frame>
+  <img src="/images/agents/reconfigure-edit-agent.png" alt="Reconfigure Agent dialog showing editable instance name, plan, ports, and environment variables" />
+</Frame>
+
+### Share
+
+Click **Share** to grant access to the agent within your organisation. Search for teammates by name or email and click **Save Changes** to share. This is in addition to the base **Visibility** policy set when the agent was created.
+
+<Frame>
+  <img src="/images/agents/share-agent-access.png" alt="Share Access dialog showing the organisation and a teammate search field" />
+</Frame>
+
+## Important Rules
+
+* A **running inference** is required before you spawn an agent. If none is online, spawn one first by following [Spawn Ai-Inference](/workstation-and-services/spawn-inference). A 70B-class model is recommended for this agent.
+* The agent's tools must be **imported first** through **Imports → Agent Hub**; they then appear in the **MCP Servers** dropdown regardless of whether they were imported from a Docker image, an external URL, or a microservice.
+* You must be a **member of the namespace** you deploy into. If it is not listed, ask your OrgAdmin to add you from the **IAM** section.
+* **Guardrails** are off by default and take effect on the next chat turn — no restart is needed.
+* **Chatting requires a Gen AI API key**, and the raw key is shown only once at creation, so copy it immediately.
+* **Sub-agents** are in beta, with a current maximum delegation depth of 1.
+* **Reconfiguring** a running agent restarts the instance.
+
+## What's next
+
+With an agent running, see it applied end to end in [OpenClaw with Memory Offloading](/use-cases/openclaw-with-memory-offloading), which walks through a complete agent use case on the platform.
