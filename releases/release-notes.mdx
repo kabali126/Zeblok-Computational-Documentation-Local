@@ -7,6 +7,91 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
 <AccordionGroup>
 
+  <Accordion title="v2.0.1 — May 2026 (Patch Release)">
+    A focused follow-up to v2.0.0 that introduces a powerful new AI-Assistant, centralised logging, smarter Kubernetes failure handling, and a wide set of stability and UX improvements.
+
+    **🌟 Highlights**
+
+    * 🤖 **AI Assistant:** spawn, reconfigure, and manage inferences through chat
+    * 🔍 **Centralised Logging:** searchable logs across the platform, even for deleted resources
+    * ⚠️ **Smarter Failure Notifications:** immediate alerts for Kubernetes scheduling issues
+    * 🔐 **Encrypted Launcher:** production-hardened source protection
+    * ⚙️ **Independent Image Tag Configuration:** per-tag ports, envs, args, and volumes
+
+    **IaaS**
+
+    * **Centralised Logging:** Logs across the platform are now centralised in a single, searchable view, enabling real-time analysis and faster root-cause investigation. Historical logs are retained even after a pod is deleted, so failed or terminated resources stay debuggable.
+    * **Smarter Kubernetes Failure Notifications:** Critical issues like missing PVCs, taints, and scheduling mismatches are now immediately flagged as Failed with clear, descriptive errors, while transient issues continue as soft warnings.
+    * **Real-Time Failure Alerts:** Removed the ~90-second delay between a failure event and its notification. Permanent failures are now reported instantly across spawn, reconfigure, image-pull, missing PVC, and node-taint scenarios.
+    * **Accurate Resource Status:** Resources no longer flicker into a misleading "Stopped" state during normal startup.
+    * **Ray Cluster Reliability:** Ray cluster reconfiguration and deletion now work end-to-end, eliminating stuck states and false-failure events.
+    * **Support Ticket Creation Restored:** Customers can now successfully raise support tickets directly from the platform UI.
+
+    **PaaS**
+
+    **🤖 AI-Assistant (Major New Capability)**
+
+    The AI-Assistant is now a fully production-ready, chat-driven control plane for your AI workloads:
+
+    * **Inference Spawning via Chat:** Spawn inferences directly through chat with custom vLLM arguments, no forms required.
+    * **Hot Reconfigure:** Update args, plan, replicas, or ports on a running inference, with no redeploy or downtime.
+    * **NVMe Attachment:** Attach local NVMe storage to inferences with automatic correct-node placement.
+    * **Auto-Refreshing Lists:** AI-spawned resources now appear in list pages instantly without manual refresh.
+    * **Persistent Chat History:** Rename, search, switch, delete sessions, and a ⌘K shortcut, comparable to Claude.ai or ChatGPT.
+    * **Per-Account Isolation:** Strict isolation across users, even on shared machines, with full state cleared on logout.
+    * **Voice Restored:** Voice interface migrated to OpenAI's GA realtime model.
+    * **Self-Healing Reliability:** Stuck resources auto-recover, and start commands are idempotent.
+    * **Full IAM Enforcement:** Respects all platform permissions, with no privileged bypass.
+    * **Built-In Observability:** Structured telemetry for AI usage, latency, and failure rates.
+    * **Polished UI:** Gradient branding, smoother animations, and friendlier amber validation in place of harsh red.
+
+    **Other PaaS Improvements**
+
+    * **Independent Image Tag Configuration:** Each image tag now maintains its own ports, environment variables, arguments, and volume paths, persisted and inherited automatically.
+    * **Auto-Download Models from HuggingFace:** Seeded inferences now automatically trigger their model download as soon as they are provisioned.
+    * **Private Container Registry Support:** Connect your own private registries directly from the UI; Zeblok's default registry continues to be configured automatically.
+    * **Webhook Notifications in Harbor:** Image lifecycle events now flow through real-time webhooks, with seed project structure created automatically during cluster setup.
+    * **Resource-Aware Plan Selection:** Plan dropdowns now filter against real-time cluster capacity (CPU, GPU, memory, storage), preventing oversized plan selection and provisioning failures.
+    * **Launcher Signup Restored:** Signup emails now contain the correct cluster URL, allowing new accounts to complete signup successfully.
+    * **MLflow Microservice Restored:** Resolved an "upstream connect error" preventing MLflow from opening.
+    * **Improved Non-Offloading Inference Image:** Added browser-client CORS support, streamed metrics, public-scraping-friendly metrics endpoints, and fixed SQLite VACUUM behaviour, critical for OpenWebUI and Prometheus integrations.
+    * **License-Gated Platform Activation:** User logins are blocked until the Superadmin enters a valid license key, with the activation page sign-in link restored.
+    * **Deployment Form Validation:** Customers can no longer advance through the deployment request flow with required fields missing.
+    * **Standardised KVM Host VM Naming:** VM names auto-generate from the Deployment Request using a structured customer-prefix + ISO country code + environment + sequence format, validated for uniqueness.
+    * **Encrypted Launcher:** Production source is now hardened with full JavaScript obfuscation, with .env files moved outside the project directory.
+
+    **SaaS**
+
+    * **Smart Inference Port Detection:** Every serving image now ships with its own arguments, env vars, and ports. Selecting a model and serving image (standard vLLM, AI-Adaptive vLLM, or llama.cpp) loads the correct configuration automatically.
+    * **Improved Default Model Plan Logic in Inference:** Plans are filtered by GPU requirement instead of transient free capacity. A vRAM estimator computes required GPU count from model parameters, and --tensor-parallel-size auto-binds to the selected plan.
+    * **Cleaner Offloading Configuration in ModelHub:** Adding an image tag now auto-populates a complete, model-family-aware set of vLLM launch arguments and the right default port.
+    * **Tiered Notebook Spawning Quotas:** Role-based limits: Superadmin (10), Admin (5), other users (2).
+    * **Namespace Naming Standards:** Names validated for max length and allowed characters, with consistent rules across all import and edit screens.
+    * **Cleaner User Management:** Removed obsolete Beta and Inactive User options from the user edit panel.
+    * **Cleaner Inference Editing:** Removed unused Model Logo and Provider Logo fields from the Inference edit screen.
+    * **Centred Notification UI:** Platform notifications are now properly aligned and consistent across the interface.
+    * **Smarter Card Navigation:** The Configurations card now redirects directly to the Namespaces page.
+    * **Decimal-Free Plan Validation:** Plan creation now rejects decimal values in resource fields with clear inline feedback.
+    * **Friendlier Form Feedback:** Validation has shifted from harsh red errors to soft amber guidance, matching the tone of modern enterprise platforms.
+
+    **Bug Fixes**
+
+    * Bucket name and mount path now persist correctly when reconfiguring an attached bucket on a spawned workstation.
+    * Duplicating an inference now correctly autofills the NVMe path and plan (previously left blank in offloading scenarios).
+    * Weekly usage reports now pull counts directly from source collections, restoring accurate weekly summaries.
+    * Sidebar logo now displays the full AI-Microcloud Pludo logo in collapsed state.
+    * Password reset links are no longer sent to email addresses not registered in the database.
+    * Resolved a build conflict caused by a duplicate file in the plan section.
+
+    **Documentation**
+
+    * **Seeding Workflow Guide:** Step-by-step coverage of the end-to-end seeding process.
+    * **Harbor Image Notification Flow:** Setup and consumption guide for webhook-based image notifications.
+    * **ELK Log Flow Guide:** How Kubernetes and ELK logs are handled across resource states.
+    * **Launcher Deployment Guide:** New DEPLOY.md covering deployment setup, environment configuration, logs, and troubleshooting.
+    * **In-Launcher Service Descriptions:** Service-level descriptions added throughout the Launcher.
+  </Accordion>
+
   <Accordion title="🚀 v2.0.0 — May 2026 (Major Release)">
     **Our biggest release yet.** A complete platform evolution — rebuilt from the ground up. This release introduces AI-Adaptive Cache acceleration and strengthens authentication and security across the platform.
 
