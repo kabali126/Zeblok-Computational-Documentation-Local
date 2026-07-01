@@ -7,6 +7,67 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
 <AccordionGroup>
 
+  <Accordion title="v2.1.0 — June 2026 (Minor Release)">
+    A feature release centred on the Launcher, expanded monitoring and alerting, MCP agents and AI-Assistant enhancements, and platform security — plus a lighter Longhorn storage layer and a set of reliability fixes.
+
+    **🌟 Highlights**
+
+    * 🤖 **MCP Agents:** MCP-based agents integrated into AI-MicroCloud
+    * 🚀 **Dynamic Launcher Model Hub:** models fetched live from Hugging Face, with search and secure tokens
+    * 🔔 **Expanded Monitoring & Alerting:** Longhorn, CPU, memory, and GPU-memory coverage
+    * 🔐 **Platform Security:** licence-key activation and code scanning across every module
+    * 💾 **Longhorn Storage:** a lighter, more manageable replacement for OpenEBS
+
+    **IaaS**
+
+    * **Longhorn Storage:** Longhorn replaces OpenEBS as a lighter, more manageable persistent-storage layer.
+    * **High-Availability Istio:** Istio now runs with multiple replicas on Production (Pro) environments for high availability.
+    * **Expanded Alerting Coverage:** Alerts now cover Longhorn, CPU, memory, and other critical platform components.
+    * **GPU Memory Utilization:** GPU memory utilization metrics are now tracked and exposed across the IaaS and SaaS layers.
+    * **Launcher Update Mechanism:** The Launcher now notifies you of new AI-MicroCloud versions, with upgrade and rollback options.
+    * **Agentic Launcher:** Agentic, AI-Assistant-style capabilities are now built directly into the Launcher.
+    * **ZBL Binary Image via Launcher:** The ZBL binary image can now be added through the Launcher.
+    * **Inference Seeding from the Launcher:** Inferences can be seeded directly from the Launcher into AI-MicroCloud.
+    * **Dynamic Launcher Model Hub:** The Launcher's Inference Model Hub now fetches models dynamically from Hugging Face, with recommended models, search, secure token handling, and a common AIMC default configuration.
+    * **Cluster-Deletion Confirmation:** A confirmation tooltip now makes clear that deleting a cluster is destructive, permanent, and cannot be undone.
+    * **Scheduled Daily Health Checks:** Health checks now run automatically on a daily schedule.
+    * **Health Check Application:** The end-to-end health check application is now complete.
+    * **DDIL Server-Side Changes (Edge):** Server-side DDIL support has been extended for the Edge version.
+
+    **Security**
+
+    * **Licence-Key Activation:** A licence-key feature now gates activation across AI-MicroCloud and the Launcher.
+    * **Code Scanning Across All Modules:** Code scanning now extends to every AI-MicroCloud module, with results exposed.
+    * **Access Control in the Launcher:** Access-control has been integrated into the Launcher.
+
+    **PaaS**
+
+    * **MCP Agents:** MCP-based agents can now be integrated and configured within AI-MicroCloud.
+    * **Recommended Prompts in the AI-Assistant:** Curated recommended prompts now guide users on platform capabilities.
+    * **Documentation in the AI-Assistant:** Zeblok documentation is now integrated directly into the AI-Assistant.
+    * **Downtime Notification Hierarchy:** A defined hierarchy now controls who is notified — Superadmin, Admin, and User — when an environment goes fully down.
+    * **Harbor Image-Push Alerts:** Users are now alerted when a new image is pushed into Harbor.
+    * **Inference Improvements:** User-vs-agent hit tracking in inference utilization, improved plan selection during inference creation, and NVMe device filtering (aiDAPTIV / Phison).
+
+    **SaaS**
+
+    * **Offloading SSD Utilization:** Offloading SSD utilization is now surfaced for cache-accelerated workloads.
+    * **Authenticated Non-Offloading Inference Image:** A vLLM-auth build of the non-offloading inference image is now available.
+
+    **Bug Fixes**
+
+    * Fixed a 401 INVALID_AI_KEY error during Gen AI key validation.
+    * Multiple replicas are now created correctly for microservices; the second pod no longer gets stuck in the creating state.
+    * Model Hub model import now downloads reliably, and duplicate queued/ready status emails are no longer sent.
+
+    **Documentation**
+
+    * **Zeblok & IAM Documentation:** Added and updated documentation for the Zeblok platform and IAM.
+    * **AI-MicroCloud Videos:** New video walkthroughs for AI-MicroCloud.
+    * **OpenClaw with Memory Offloading:** Added an OpenClaw with Memory Offloading guide to the documentation.
+    * **Edge & Pro Architecture Diagrams:** Reference diagrams for the Edge and Pro deployment scenarios.
+  </Accordion>
+
   <Accordion title="v2.0.1 — May 2026 (Patch Release)">
     A focused follow-up to v2.0.0 that introduces a powerful new AI-Assistant, centralised logging, smarter Kubernetes failure handling, and a wide set of stability and UX improvements.
 
