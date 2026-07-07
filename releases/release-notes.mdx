@@ -3,154 +3,175 @@ title: "Release notes"
 description: "What's new in each version of Zeblok Computational."
 ---
 
-This page documents what changed in each release of Zeblok AI-MicroCloud. Updates from intermediate releases are folded into the next major release version.
+This page documents what changed in each release of Zeblok Ai-MicroCloud®. Updates from intermediate releases are folded into the next major release version.
 
 <AccordionGroup>
 
   <Accordion title="v2.1.0 — June 2026 (Minor Release)">
-    A feature release centred on the Launcher, expanded monitoring and alerting, MCP agents and AI-Assistant enhancements, and platform security — plus a lighter Longhorn storage layer and a set of reliability fixes.
+    A feature release delivering major Launcher upgrades, expanded monitoring and alerting, smarter MCP agents and Ai-Assistant, stronger platform security, a lighter Longhorn storage layer, and key reliability fixes.
 
     **🌟 Highlights**
 
-    * 🤖 **MCP Agents:** MCP-based agents integrated into AI-MicroCloud
-    * 🚀 **Dynamic Launcher Model Hub:** models fetched live from Hugging Face, with search and secure tokens
-    * 🔔 **Expanded Monitoring & Alerting:** Longhorn, CPU, memory, and GPU-memory coverage
-    * 🔐 **Platform Security:** licence-key activation and code scanning across every module
-    * 💾 **Longhorn Storage:** a lighter, more manageable replacement for OpenEBS
+    - 🤖 **MCP Agents:** Plug external tools and services into your agents through the MCP standard.
+    - 🚨 **Expanded Alerting Coverage:** Alerts now span storage, CPU, memory, and every critical platform component.
+    - 🌐 **DDIL Support Enhanced:** Extended server-side DDIL (Denied, Degraded, Intermittent, Limited) keeps edge workloads accessible even when HUB connectivity breaks.
+    - 📣 **Downtime Notification Hierarchy:** Superadmin, Admin, and User are now notified in a defined order when an environment goes fully down.
+    - ⚡ **Context Offloading SSD Monitoring:** SSD utilization is now fully observable across cache-accelerated inference workloads.
+    - 🎯 **Dynamic Launcher Model Hub & Inference Seeding:** Seed inferences directly from the Launcher, with models pulled dynamically from Hugging Face.
+    - 🚀 **ZBL Binary & Launcher Updates:** Add the ZBL binary and receive one-click Ai-MicroCloud® version upgrades directly from the Launcher.
+    - 💾 **Longhorn Storage:** A lighter, more manageable persistent-storage layer, replacing OpenEBS.
+
+    ---
+
+    ## Ai-MicroCloud®
 
     **IaaS**
 
-    * **Longhorn Storage:** Longhorn replaces OpenEBS as a lighter, more manageable persistent-storage layer.
-    * **High-Availability Istio:** Istio now runs with multiple replicas on Production (Pro) environments for high availability.
-    * **Expanded Alerting Coverage:** Alerts now cover Longhorn, CPU, memory, and other critical platform components.
-    * **GPU Memory Utilization:** GPU memory utilization metrics are now tracked and exposed across the IaaS and SaaS layers.
-    * **Launcher Update Mechanism:** The Launcher now notifies you of new AI-MicroCloud versions, with upgrade and rollback options.
-    * **Agentic Launcher:** Agentic, AI-Assistant-style capabilities are now built directly into the Launcher.
-    * **ZBL Binary Image via Launcher:** The ZBL binary image can now be added through the Launcher.
-    * **Inference Seeding from the Launcher:** Inferences can be seeded directly from the Launcher into AI-MicroCloud.
-    * **Dynamic Launcher Model Hub:** The Launcher's Inference Model Hub now fetches models dynamically from Hugging Face, with recommended models, search, secure token handling, and a common AIMC default configuration.
-    * **Cluster-Deletion Confirmation:** A confirmation tooltip now makes clear that deleting a cluster is destructive, permanent, and cannot be undone.
-    * **Scheduled Daily Health Checks:** Health checks now run automatically on a daily schedule.
-    * **Health Check Application:** The end-to-end health check application is now complete.
-    * **DDIL Server-Side Changes (Edge):** Server-side DDIL support has been extended for the Edge version.
+    - **Longhorn Storage:** Longhorn replaces OpenEBS as a lighter, easier-to-manage persistent-storage layer.
+    - **High-Availability Istio:** Istio now runs with multiple replicas on Production (Pro) environments for high availability.
+    - **Expanded Alerting Coverage:** Alerts now span storage, CPU, memory, and other critical platform components.
+    - **GPU Memory Utilization Tracking:** GPU memory usage is now tracked and surfaced across the IaaS and SaaS layers.
+    - **Scheduled Daily Health Checks:** Platform health checks now run automatically every day.
+    - **Health Check & Regression Application:** The end-to-end Health Check and Regression Application is now complete, with full coverage across workstations, microservices, agents, and more.
+    - **DDIL Server-Side Changes (Edge):** Server-side DDIL support has been extended for the Edge variant.
+
+    **PaaS**
+
+    - **MCP Agents:** MCP-based agents can now be integrated and configured directly within Ai-MicroCloud®.
+    - **Documentation in the Ai-Assistant:** Zeblok's official documentation is now built directly into the Ai-Assistant for instant, in-context help.
+    - **Downtime Notification Hierarchy:** A defined notification hierarchy — Superadmin, Admin, User — now controls who gets alerted when an environment goes fully down.
+    - **Harbor Image-Push Alerts:** Users are now instantly notified whenever a new image is pushed into Harbor.
+    - **Smarter Inference Experience:** Improved user-vs-agent hit tracking in inference utilization, refined plan selection during inference creation, and smarter NVMe device filtering for AI-Adaptive workloads.
+
+    **SaaS**
+
+    - **Context Offloading SSD Monitoring:** SSD utilization for context offloading is now fully observable across cache-accelerated workloads.
+    - **Authenticated Non-Offloading Inference Image:** A new vLLM-auth build of the non-offloading inference image is now available for secure inference deployments.
 
     **Security**
 
-    * **Licence-Key Activation:** A licence-key feature now gates activation across AI-MicroCloud and the Launcher.
-    * **Code Scanning Across All Modules:** Code scanning now extends to every AI-MicroCloud module, with results exposed.
-    * **Access Control in the Launcher:** Access-control has been integrated into the Launcher.
-
-    **PaaS**
-
-    * **MCP Agents:** MCP-based agents can now be integrated and configured within AI-MicroCloud.
-    * **Recommended Prompts in the AI-Assistant:** Curated recommended prompts now guide users on platform capabilities.
-    * **Documentation in the AI-Assistant:** Zeblok documentation is now integrated directly into the AI-Assistant.
-    * **Downtime Notification Hierarchy:** A defined hierarchy now controls who is notified — Superadmin, Admin, and User — when an environment goes fully down.
-    * **Harbor Image-Push Alerts:** Users are now alerted when a new image is pushed into Harbor.
-    * **Inference Improvements:** User-vs-agent hit tracking in inference utilization, improved plan selection during inference creation, and NVMe device filtering (aiDAPTIV / Phison).
-
-    **SaaS**
-
-    * **Offloading SSD Utilization:** Offloading SSD utilization is now surfaced for cache-accelerated workloads.
-    * **Authenticated Non-Offloading Inference Image:** A vLLM-auth build of the non-offloading inference image is now available.
+    - **Code Scanning for Customer-Imported Assets:** Static code scanning now extends to every customer-imported workstation and microservice, with results surfaced directly in the interface.
 
     **Bug Fixes**
 
-    * Fixed a 401 INVALID_AI_KEY error during Gen AI key validation.
-    * Multiple replicas are now created correctly for microservices; the second pod no longer gets stuck in the creating state.
-    * Model Hub model import now downloads reliably, and duplicate queued/ready status emails are no longer sent.
+    - Resolved a Gen-AI key validation error that surfaced as `401 INVALID_AI_KEY`.
+    - Multi-replica microservices now provision reliably — the second pod no longer gets stuck in the *Creating* state.
+    - Model Hub imports now download reliably, with duplicate emails for queued and ready states eliminated.
 
     **Documentation**
 
-    * **Zeblok & IAM Documentation:** Added and updated documentation for the Zeblok platform and IAM.
-    * **AI-MicroCloud Videos:** New video walkthroughs for AI-MicroCloud.
-    * **OpenClaw with Memory Offloading:** Added an OpenClaw with Memory Offloading guide to the documentation.
-    * **Edge & Pro Architecture Diagrams:** Reference diagrams for the Edge and Pro deployment scenarios.
-  </Accordion>
+    - **Zeblok & IAM Documentation:** New and updated guides covering the Zeblok platform and IAM.
+    - **Ai-MicroCloud® Video Walkthroughs:** Fresh video walkthroughs showcasing key Ai-MicroCloud® workflows.
+    - **OpenClaw with Memory Offloading:** A dedicated OpenClaw with Memory Offloading guide added to the documentation.
+    - **Edge & Pro Architecture Diagrams:** Reference architecture diagrams now available for both Edge and Pro deployment scenarios.
 
-  <Accordion title="v2.0.1 — May 2026 (Patch Release)">
-    A focused follow-up to v2.0.0 that introduces a powerful new AI-Assistant, centralised logging, smarter Kubernetes failure handling, and a wide set of stability and UX improvements.
+    ---
 
-    **🌟 Highlights**
-
-    * 🤖 **AI Assistant:** spawn, reconfigure, and manage inferences through chat
-    * 🔍 **Centralised Logging:** searchable logs across the platform, even for deleted resources
-    * ⚠️ **Smarter Failure Notifications:** immediate alerts for Kubernetes scheduling issues
-    * 🔐 **Encrypted Launcher:** production-hardened source protection
-    * ⚙️ **Independent Image Tag Configuration:** per-tag ports, envs, args, and volumes
+    ## Launcher
 
     **IaaS**
 
-    * **Centralised Logging:** Logs across the platform are now centralised in a single, searchable view, enabling real-time analysis and faster root-cause investigation. Historical logs are retained even after a pod is deleted, so failed or terminated resources stay debuggable.
-    * **Smarter Kubernetes Failure Notifications:** Critical issues like missing PVCs, taints, and scheduling mismatches are now immediately flagged as Failed with clear, descriptive errors, while transient issues continue as soft warnings.
-    * **Real-Time Failure Alerts:** Removed the ~90-second delay between a failure event and its notification. Permanent failures are now reported instantly across spawn, reconfigure, image-pull, missing PVC, and node-taint scenarios.
-    * **Accurate Resource Status:** Resources no longer flicker into a misleading "Stopped" state during normal startup.
-    * **Ray Cluster Reliability:** Ray cluster reconfiguration and deletion now work end-to-end, eliminating stuck states and false-failure events.
-    * **Support Ticket Creation Restored:** Customers can now successfully raise support tickets directly from the platform UI.
+    - **Launcher Update Mechanism:** The Launcher now proactively notifies you of new Ai-MicroCloud® versions, with one-click upgrade and rollback options.
+    - **ZBL Binary Image via Launcher:** The ZBL binary image can now be added directly through the Launcher — no manual setup required.
 
     **PaaS**
 
-    **🤖 AI-Assistant (Major New Capability)**
-
-    The AI-Assistant is now a fully production-ready, chat-driven control plane for your AI workloads:
-
-    * **Inference Spawning via Chat:** Spawn inferences directly through chat with custom vLLM arguments, no forms required.
-    * **Hot Reconfigure:** Update args, plan, replicas, or ports on a running inference, with no redeploy or downtime.
-    * **NVMe Attachment:** Attach local NVMe storage to inferences with automatic correct-node placement.
-    * **Auto-Refreshing Lists:** AI-spawned resources now appear in list pages instantly without manual refresh.
-    * **Persistent Chat History:** Rename, search, switch, delete sessions, and a ⌘K shortcut, comparable to Claude.ai or ChatGPT.
-    * **Per-Account Isolation:** Strict isolation across users, even on shared machines, with full state cleared on logout.
-    * **Voice Restored:** Voice interface migrated to OpenAI's GA realtime model.
-    * **Self-Healing Reliability:** Stuck resources auto-recover, and start commands are idempotent.
-    * **Full IAM Enforcement:** Respects all platform permissions, with no privileged bypass.
-    * **Built-In Observability:** Structured telemetry for AI usage, latency, and failure rates.
-    * **Polished UI:** Gradient branding, smoother animations, and friendlier amber validation in place of harsh red.
-
-    **Other PaaS Improvements**
-
-    * **Independent Image Tag Configuration:** Each image tag now maintains its own ports, environment variables, arguments, and volume paths, persisted and inherited automatically.
-    * **Auto-Download Models from HuggingFace:** Seeded inferences now automatically trigger their model download as soon as they are provisioned.
-    * **Private Container Registry Support:** Connect your own private registries directly from the UI; Zeblok's default registry continues to be configured automatically.
-    * **Webhook Notifications in Harbor:** Image lifecycle events now flow through real-time webhooks, with seed project structure created automatically during cluster setup.
-    * **Resource-Aware Plan Selection:** Plan dropdowns now filter against real-time cluster capacity (CPU, GPU, memory, storage), preventing oversized plan selection and provisioning failures.
-    * **Launcher Signup Restored:** Signup emails now contain the correct cluster URL, allowing new accounts to complete signup successfully.
-    * **MLflow Microservice Restored:** Resolved an "upstream connect error" preventing MLflow from opening.
-    * **Improved Non-Offloading Inference Image:** Added browser-client CORS support, streamed metrics, public-scraping-friendly metrics endpoints, and fixed SQLite VACUUM behaviour, critical for OpenWebUI and Prometheus integrations.
-    * **License-Gated Platform Activation:** User logins are blocked until the Superadmin enters a valid license key, with the activation page sign-in link restored.
-    * **Deployment Form Validation:** Customers can no longer advance through the deployment request flow with required fields missing.
-    * **Standardised KVM Host VM Naming:** VM names auto-generate from the Deployment Request using a structured customer-prefix + ISO country code + environment + sequence format, validated for uniqueness.
-    * **Encrypted Launcher:** Production source is now hardened with full JavaScript obfuscation, with .env files moved outside the project directory.
+    - **Agentic Launcher:** Ai-Assistant-style capabilities are now built directly into the Launcher itself.
+    - **Recommended Prompts in the Ai-Assistant:** Curated prompts now guide users toward the platform's most powerful capabilities.
+    - **Inference Seeding from the Launcher:** Inferences can now be seeded directly from the Launcher into Ai-MicroCloud®, streamlining first-time environment setup.
 
     **SaaS**
 
-    * **Smart Inference Port Detection:** Every serving image now ships with its own arguments, env vars, and ports. Selecting a model and serving image (standard vLLM, AI-Adaptive vLLM, or llama.cpp) loads the correct configuration automatically.
-    * **Improved Default Model Plan Logic in Inference:** Plans are filtered by GPU requirement instead of transient free capacity. A vRAM estimator computes required GPU count from model parameters, and --tensor-parallel-size auto-binds to the selected plan.
-    * **Cleaner Offloading Configuration in ModelHub:** Adding an image tag now auto-populates a complete, model-family-aware set of vLLM launch arguments and the right default port.
-    * **Tiered Notebook Spawning Quotas:** Role-based limits: Superadmin (10), Admin (5), other users (2).
-    * **Namespace Naming Standards:** Names validated for max length and allowed characters, with consistent rules across all import and edit screens.
-    * **Cleaner User Management:** Removed obsolete Beta and Inactive User options from the user edit panel.
-    * **Cleaner Inference Editing:** Removed unused Model Logo and Provider Logo fields from the Inference edit screen.
-    * **Centred Notification UI:** Platform notifications are now properly aligned and consistent across the interface.
-    * **Smarter Card Navigation:** The Configurations card now redirects directly to the Namespaces page.
-    * **Decimal-Free Plan Validation:** Plan creation now rejects decimal values in resource fields with clear inline feedback.
-    * **Friendlier Form Feedback:** Validation has shifted from harsh red errors to soft amber guidance, matching the tone of modern enterprise platforms.
+    - **Dynamic Launcher Model Hub:** The Launcher's Inference Model Hub now pulls models dynamically from Hugging Face, with recommended models, built-in search, secure token handling, and a common AIMC default configuration ready out of the box.
+
+    **Security**
+
+    - **License-Key Activation:** A valid license key is now required for the first-time activation of both Ai-MicroCloud® and the Launcher, ensuring proper platform governance from day one.
+  </Accordion>
+
+  <Accordion title="v2.0.1 — May 2026 (Patch Release)">
+    A focused follow-up to v2.0.0 that introduces a powerful new Ai-Assistant, centralised logging, smarter Kubernetes failure handling, and a wide set of stability and UX improvements.
+
+    **🌟 Highlights**
+
+    - 🤖 **Ai-Assistant:** spawn, reconfigure, and manage inferences through chat
+    - 🔍 **Centralised Logging:** searchable logs across the platform, even for deleted resources
+    - ⚠️ **Smarter Failure Notifications:** immediate alerts for Kubernetes scheduling issues
+    - 🔐 **Encrypted Launcher:** production-hardened source protection
+    - ⚙️ **Independent Image Tag Configuration:** per-tag ports, envs, args, and volumes
+
+    **IaaS**
+
+    - **Centralised Logging:** Logs across the platform are now centralised in a single, searchable view, enabling real-time analysis and faster root-cause investigation. Historical logs are retained even after a pod is deleted, so failed or terminated resources stay debuggable.
+    - **Smarter Kubernetes Failure Notifications:** Critical issues like missing PVCs, taints, and scheduling mismatches are now immediately flagged as Failed with clear, descriptive errors, while transient issues continue as soft warnings.
+    - **Real-Time Failure Alerts:** Removed the ~90-second delay between a failure event and its notification. Permanent failures are now reported instantly across spawn, reconfigure, image-pull, missing PVC, and node-taint scenarios.
+    - **Accurate Resource Status:** Resources no longer flicker into a misleading "Stopped" state during normal startup.
+    - **Ray Cluster Reliability:** Ray cluster reconfiguration and deletion now work end-to-end, eliminating stuck states and false-failure events.
+    - **Support Ticket Creation Restored:** Customers can now successfully raise support tickets directly from the platform UI.
+
+    **PaaS**
+
+    **🤖 Ai-Assistant (Major New Capability)**
+
+    The Ai-Assistant is now a fully production-ready, chat-driven control plane for your AI workloads:
+
+    - **Inference Spawning via Chat:** Spawn inferences directly through chat with custom vLLM arguments, no forms required.
+    - **Hot Reconfigure:** Update args, plan, replicas, or ports on a running inference, with no redeploy or downtime.
+    - **NVMe Attachment:** Attach local NVMe storage to inferences with automatic correct-node placement.
+    - **Auto-Refreshing Lists:** AI-spawned resources now appear in list pages instantly without manual refresh.
+    - **Persistent Chat History:** Rename, search, switch, delete sessions, and a ⌘K shortcut, comparable to Claude.ai or ChatGPT.
+    - **Per-Account Isolation:** Strict isolation across users, even on shared machines, with full state cleared on logout.
+    - **Voice Restored:** Voice interface migrated to OpenAI's GA realtime model.
+    - **Self-Healing Reliability:** Stuck resources auto-recover, and start commands are idempotent.
+    - **Full IAM Enforcement:** Respects all platform permissions, with no privileged bypass.
+    - **Built-In Observability:** Structured telemetry for AI usage, latency, and failure rates.
+    - **Polished UI:** Gradient branding, smoother animations, and friendlier amber validation in place of harsh red.
+
+    **Other PaaS Improvements**
+
+    - **Independent Image Tag Configuration:** Each image tag now maintains its own ports, environment variables, arguments, and volume paths, persisted and inherited automatically.
+    - **Auto-Download Models from HuggingFace:** Seeded inferences now automatically trigger their model download as soon as they are provisioned.
+    - **Private Container Registry Support:** Connect your own private registries directly from the UI; Zeblok's default registry continues to be configured automatically.
+    - **Webhook Notifications in Harbor:** Image lifecycle events now flow through real-time webhooks, with seed project structure created automatically during cluster setup.
+    - **Resource-Aware Plan Selection:** Plan dropdowns now filter against real-time cluster capacity (CPU, GPU, memory, storage), preventing oversized plan selection and provisioning failures.
+    - **Launcher Signup Restored:** Signup emails now contain the correct cluster URL, allowing new accounts to complete signup successfully.
+    - **MLflow Microservice Restored:** Resolved an "upstream connect error" preventing MLflow from opening.
+    - **Improved Non-Offloading Inference Image:** Added browser-client CORS support, streamed metrics, public-scraping-friendly metrics endpoints, and fixed SQLite VACUUM behaviour, critical for OpenWebUI and Prometheus integrations.
+    - **License-Gated Platform Activation:** User logins are blocked until the Superadmin enters a valid license key, with the activation page sign-in link restored.
+    - **Deployment Form Validation:** Customers can no longer advance through the deployment request flow with required fields missing.
+    - **Standardised KVM Host VM Naming:** VM names auto-generate from the Deployment Request using a structured customer-prefix + ISO country code + environment + sequence format, validated for uniqueness.
+    - **Encrypted Launcher:** Production source is now hardened with full JavaScript obfuscation, with .env files moved outside the project directory.
+
+    **SaaS**
+
+    - **Smart Inference Port Detection:** Every serving image now ships with its own arguments, env vars, and ports. Selecting a model and serving image (standard vLLM, AI-Adaptive vLLM, or llama.cpp) loads the correct configuration automatically.
+    - **Improved Default Model Plan Logic in Inference:** Plans are filtered by GPU requirement instead of transient free capacity. A vRAM estimator computes required GPU count from model parameters, and --tensor-parallel-size auto-binds to the selected plan.
+    - **Cleaner Offloading Configuration in ModelHub:** Adding an image tag now auto-populates a complete, model-family-aware set of vLLM launch arguments and the right default port.
+    - **Tiered Notebook Spawning Quotas:** Role-based limits: Superadmin (10), Admin (5), other users (2).
+    - **Namespace Naming Standards:** Names validated for max length and allowed characters, with consistent rules across all import and edit screens.
+    - **Cleaner User Management:** Removed obsolete Beta and Inactive User options from the user edit panel.
+    - **Cleaner Inference Editing:** Removed unused Model Logo and Provider Logo fields from the Inference edit screen.
+    - **Centred Notification UI:** Platform notifications are now properly aligned and consistent across the interface.
+    - **Smarter Card Navigation:** The Configurations card now redirects directly to the Namespaces page.
+    - **Decimal-Free Plan Validation:** Plan creation now rejects decimal values in resource fields with clear inline feedback.
+    - **Friendlier Form Feedback:** Validation has shifted from harsh red errors to soft amber guidance, matching the tone of modern enterprise platforms.
 
     **Bug Fixes**
 
-    * Bucket name and mount path now persist correctly when reconfiguring an attached bucket on a spawned workstation.
-    * Duplicating an inference now correctly autofills the NVMe path and plan (previously left blank in offloading scenarios).
-    * Weekly usage reports now pull counts directly from source collections, restoring accurate weekly summaries.
-    * Sidebar logo now displays the full AI-Microcloud Pludo logo in collapsed state.
-    * Password reset links are no longer sent to email addresses not registered in the database.
-    * Resolved a build conflict caused by a duplicate file in the plan section.
+    - Bucket name and mount path now persist correctly when reconfiguring an attached bucket on a spawned workstation.
+    - Duplicating an inference now correctly autofills the NVMe path and plan (previously left blank in offloading scenarios).
+    - Weekly usage reports now pull counts directly from source collections, restoring accurate weekly summaries.
+    - Sidebar logo now displays the full Ai-MicroCloud® Pludo logo in collapsed state.
+    - Password reset links are no longer sent to email addresses not registered in the database.
+    - Resolved a build conflict caused by a duplicate file in the plan section.
 
     **Documentation**
 
-    * **Seeding Workflow Guide:** Step-by-step coverage of the end-to-end seeding process.
-    * **Harbor Image Notification Flow:** Setup and consumption guide for webhook-based image notifications.
-    * **ELK Log Flow Guide:** How Kubernetes and ELK logs are handled across resource states.
-    * **Launcher Deployment Guide:** New DEPLOY.md covering deployment setup, environment configuration, logs, and troubleshooting.
-    * **In-Launcher Service Descriptions:** Service-level descriptions added throughout the Launcher.
+    - **Seeding Workflow Guide:** Step-by-step coverage of the end-to-end seeding process.
+    - **Harbor Image Notification Flow:** Setup and consumption guide for webhook-based image notifications.
+    - **ELK Log Flow Guide:** How Kubernetes and ELK logs are handled across resource states.
+    - **Launcher Deployment Guide:** New DEPLOY.md covering deployment setup, environment configuration, logs, and troubleshooting.
+    - **In-Launcher Service Descriptions:** Service-level descriptions added throughout the Launcher.
   </Accordion>
 
   <Accordion title="🚀 v2.0.0 — May 2026 (Major Release)">
@@ -158,7 +179,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
     **🌟 Top things in v2.0.0**
 
-    - 🚀 Brand-new AI-MicroCloud® platform experience
+    - 🚀 Brand-new Ai-MicroCloud® platform experience
     - ⚡ AI-Adaptive Cache acceleration
     - 🔐 Stronger security across every layer
     - 🤖 Smarter agents with OpenClaw
@@ -274,7 +295,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
     **PaaS — DevOps**
 
     - **CI/CD Merge-Based Deployments:** CI/CD pipelines now trigger deployments only after successful merges.
-    - **Generic AI-MicroCloud Image:** Introduced a generic AI-MicroCloud image compatible with Basic editions.
+    - **Generic Ai-MicroCloud® Image:** Introduced a generic Ai-MicroCloud® image compatible with Basic editions.
     - **Terraform & Shell Reliability:** Enhanced Terraform modules and shell scripts for better automation and reliability.
     - **Grafana Email Alerts:** Enabled Grafana email alerts for Workstations, Microservices, Agents, Inference, and KD Pipelines.
 
@@ -308,11 +329,11 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
     **Documentation**
 
-    - Updated AI-MicroCloud documentation on the Zeblok website.
+    - Updated Ai-MicroCloud® documentation on the Zeblok website.
   </Accordion>
 
   <Accordion title="v1.3.7 — October 2025">
-    This release focuses on enhancing the entire AI-MicroCloud — from infrastructure to the end-user application layer — with a strong emphasis on integrating advanced Generative AI capabilities and improving administrative control.
+    This release focuses on enhancing the entire Ai-MicroCloud® — from infrastructure to the end-user application layer — with a strong emphasis on integrating advanced Generative AI capabilities and improving administrative control.
 
     **SaaS — Gen-AI Agentic Chat**
 
@@ -322,7 +343,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
     - **Model Transparency:** The active model's name is now visible in the chat interface, improving transparency and trust.
     - **Agent Notifications:** Notifications added for each pod, triggered by key lifecycle events.
 
-    **PaaS — AI-MicroCloud (AIMC)**
+    **PaaS — Ai-MicroCloud® (AIMC)**
 
     - **AI-Inference Sharing:** Seamless and secure AI inference output sharing among authorized users or teams within the platform.
     - **Simplified Plan Creation Flow:** The Type field has been removed from plan creation for a more streamlined and intuitive experience.
@@ -501,7 +522,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
     **PaaS**
 
-    - **Microservice and workstation update feature:** You can now update a spawned microservice or workstation directly from AI-MicroCloud. Changes include adjusting attached resources (CPU/memory), environment variables, and ports.
+    - **Microservice and workstation update feature:** You can now update a spawned microservice or workstation directly from Ai-MicroCloud®. Changes include adjusting attached resources (CPU/memory), environment variables, and ports.
     - **Notification improvements:** The notification count resets once you have reviewed all notifications and marked them as read. New notifications pop up on your workspace briefly before being stored in the notifications tab.
 
     **Bug fixes**
@@ -581,7 +602,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
     - Ai-Pipeline auto-deploy and non-auto-deploy features added.
     - `get_all` Ai-Pipelines and validate Ai-Pipeline interfaces added.
     - Dataset management added with support for S3 (AWS), Blob (Azure), and MinIO object storage.
-    - Upload and download files of any size to object storage from local or Ai-MicroCloud environments.
+    - Upload and download files of any size to object storage from local or Ai-MicroCloud® environments.
 
     **SaaS — Basic Launcher (AWS, Azure, bare-metal)**
 
@@ -608,7 +629,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
     **PaaS — UI improvements**
 
-    - Support button added: you can raise support tickets directly from within AI-MicroCloud.
+    - Support button added: you can raise support tickets directly from within Ai-MicroCloud®.
     - Secret keys remain available in the session after generation; copy button added for keys.
     - Microservice and workstation card alignment improved.
     - User role displayed on the Manage Account page.
@@ -626,7 +647,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
     **IaaS — Basic Baremetal Launcher**
 
-    - Create an AI platform in a bare-metal environment automatically in minutes. The launcher accepts access credentials as encrypted data and deploys AI-MicroCloud in the background, providing a URL when ready.
+    - Create an AI platform in a bare-metal environment automatically in minutes. The launcher accepts access credentials as encrypted data and deploys Ai-MicroCloud® in the background, providing a URL when ready.
 
     **IaaS — Enterprise Azure Launcher**
 
@@ -634,13 +655,13 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
     **Website**
 
-    - Playground button added at zeblok.com: try AI-MicroCloud free for 21 days by clicking "Playground" and completing the registration form.
+    - Playground button added at zeblok.com: try Ai-MicroCloud® free for 21 days by clicking "Playground" and completing the registration form.
   </Accordion>
 
   <Accordion title="v1.2.5 — September 2023">
     **IaaS**
 
-    - AI-MicroCloud now runs on Intel Sapphire-Rapid processors.
+    - Ai-MicroCloud® now runs on Intel Sapphire-Rapid processors.
     - Multi-master cluster on bare-metal servers supported.
 
     **PaaS — Basic**
@@ -665,7 +686,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
     **AWS Marketplace**
 
-    - Zeblok AI-MicroCloud is available on AWS Marketplace with customer onboarding, metering, billing, and vendor-metered tagging.
+    - Zeblok Ai-MicroCloud® is available on AWS Marketplace with customer onboarding, metering, billing, and vendor-metered tagging.
   </Accordion>
 
   <Accordion title="v1.2.4 — June 2023">
@@ -680,7 +701,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
     **Basic version**
 
     - Auto-scaling plans on AWS: define plans that scale infrastructure automatically as AI workload resource needs increase.
-    - Ai-MicroCloud DataLake uses S3 as backend in AWS environments.
+    - Ai-MicroCloud® DataLake uses S3 as backend in AWS environments.
     - Encryption layer added to the Basic Launcher for sensitive input data.
     - Ray cluster spawning via the orchestration add-on is now available from the GUI.
     - Dataset deletion from the GUI added.
@@ -688,7 +709,7 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
     - Pre-defined IAM roles provided on microcloud spawn, distributable by admin to user groups.
     - Logs now include login details for workstations, microservices, and AI-APIs, retained for 30 days.
     - MLflow integration added to the CLI for model upload and serving.
-    - Basic Launcher now deploys AI-MicroCloud on AWS automatically in minutes.
+    - Basic Launcher now deploys Ai-MicroCloud® on AWS automatically in minutes.
 
     **Bug fixes**
 
@@ -743,8 +764,8 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 
     **v1.0.0 (December 2021)**
 
-    - AI-MicroCloud available on Azure Cloud.
-    - AI-MicroCloud deployed for Advantech Labs and Intel Dev Cloud bare-metal environments.
+    - Ai-MicroCloud® available on Azure Cloud.
+    - Ai-MicroCloud® deployed for Advantech Labs and Intel Dev Cloud bare-metal environments.
     - Notebook post-creation lifecycle run commands added.
     - Kiosk selection for on-premise datacenter deployments of microservices and Ai-API.
     - Datacenter Monitoring page added with per-node performance graphs and logs.
@@ -756,4 +777,4 @@ This page documents what changed in each release of Zeblok AI-MicroCloud. Update
 ---
 
 <sub>© 2026 Zeblok Computational Pvt. Ltd. All rights reserved.</sub>
-<sub>AI-MicroCloud® is a registered trademark of Zeblok Computational Pvt. Ltd. All other product names, logos, and brands are property of their respective owners.</sub>
+<sub>Ai-MicroCloud® is a registered trademark of Zeblok Computational Pvt. Ltd. All other product names, logos, and brands are property of their respective owners.</sub>
