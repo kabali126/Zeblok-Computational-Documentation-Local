@@ -1,0 +1,76 @@
+---
+title: "Bulk operations"
+description: "Create many things at once without half-finished runs."
+---
+
+Creating several things in a plain loop breaks in two ways. The platform **rejects a name
+that already exists**, so a second run fails on the first item. And **one failure stops the
+loop**, leaving you half-finished with no record of what worked.
+
+`zeblok.batch` solves both, and works with every component.
+
+## Safe names
+
+```python
+from zeblok.batch import unique_names, unique_name, safe_name
+
+names = unique_names("my-plan", 3, existing=lambda: client.plans.get_all(print_stdout=False))
+print(names)                              # ['my-plan', 'my-plan-2', 'my-plan-3']
+
+unique_name("my-plan", random_suffix=True)    # 'my-plan-k3x9'
+safe_name("My Test Service!")                 # 'my-test-service'
+```
+
+<Note>
+  `existing` accepts a list of names, a list of records, or a lister function such as
+  `client.plans.get_all`. A lister that raises because nothing exists yet is treated as empty.
+
+  Workload names become Kubernetes object names — lowercase, dashes only, and capped at
+  50 characters. The helpers enforce both.
+</Note>
+
+## Create many, and keep going when one fails
+
+```python
+from zeblok.batch import batch, delete_many
+
+result = batch(names, lambda n: client.plans.create(
+    n, DATACENTER_ID, {"GPU": 0, "CPU": 1, "memory": 2, "storage": 5},
+    price=0, currency="USD", visibility="private"))
+
+print(result.summary())    # "3 succeeded, 0 failed"
+print(result.ids)          # ids of everything created
+
+result.ok                  # [(item, result), ...]
+result.failed              # [(item, exception), ...]
+
+delete_many(result, lambda i: client.plans.delete(i))
+```
+
+<Tip>
+  **All-or-nothing runs:** pass `stop_on_error=True` to halt at the first failure, with
+  `cleanup=…` to roll back what was already created. `result.raise_if_any_failed()` raises a
+  single error listing every failure.
+</Tip>
+
+## The same pattern everywhere
+
+```python
+# workstations
+batch(unique_names("my-ws", 3, existing=client.workstations.spawned),
+      lambda n: client.workstations.spawn(
+          display_name=tag, workstation_id=WS_ID, plan_id=PLAN_ID,
+          workstation_name=n, namespace_id=NAMESPACE_ID))
+
+# namespaces
+batch(unique_names("team", 3, existing=client.namespaces.get_all),
+      lambda n: client.namespaces.create(n))
+
+# updating many
+batch(ids, lambda i: client.plans.update(i, price=1))
+```
+
+<Warning>
+  Spawn batches start **real, billable workloads**. Keep the count small while testing, and
+  clean up with `delete_many()` afterwards.
+</Warning>

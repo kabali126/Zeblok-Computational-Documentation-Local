@@ -1,0 +1,153 @@
+---
+title: "Agents"
+description: "Run AI assistants with tools, and delegate between them."
+---
+
+Agents come in two parts. The **Agent Hub** holds templates describing what an agent is;
+**spawning** creates a running agent you can talk to.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Browse the Hub | `client.agents.get_all()` | `GET /api/v1/agents` |
+| Public templates | `client.agents.public()` | `GET /api/v1/agents/public` |
+| Agent types | `client.agents.types()` | `GET /api/v1/agent-types` |
+| Add a template | `client.agents.create(...)` | `POST /api/v1/agents` |
+| Update a template | `client.agents.update(id, ...)` | `PUT /api/v1/agents/:id` |
+| Remove a template | `client.agents.delete(id)` | `DELETE /api/v1/agents/:id` |
+| Spawn an agent | `client.agents.spawn(...)` | `POST /api/v1/spawned-agents` |
+| List running agents | `client.agents.spawned()` | `GET /api/v1/spawned-agents` |
+| Callable sub-agents | `client.agents.callable_sub_agents()` | `GET /api/v1/spawned-agents/callable-sub-agents` |
+| Status, usage, sessions | `sa.status()` · `sa.usage()` · `sa.sessions()` | `GET /api/v1/spawned-agents/:id[...]` |
+| Its tools | `sa.mcp().tools()` | `GET /api/v1/mcp-discovery/:id/tools` |
+| Call a tool directly | `sa.mcp().call_tool(name, args)` | `POST /api/v1/mcp-discovery/:id/tools/call` |
+| Chat | `sa.chat(message, ai_key=...)` | `POST /api/v1/spawned-agents/:id/chat` |
+| Stop / start | `sa.stop()` · `sa.start()` | `PUT /api/v1/spawned-agents/:id/stop\|start` |
+| Delete | `sa.delete(stop_first=True)` | `DELETE /api/v1/spawned-agents/:id` |
+
+## Register a template
+
+```python
+entry = client.agents.create(
+    "my-agent",                              # name, 1-50 characters
+    "Answers questions about our docs",      # description
+    "server",                                # "client" or "server"
+    "open source",                           # "open source" or "third party"
+
+    image_tags=[{"displayName": "my-agent:1.0", "dockerImage": "myorg/my-agent:1.0"}],
+    protocol="mcp",
+    plans=[PLAN_ID], default_plan=PLAN_ID,
+    ports=[{"protocol": "HTTP", "number": 8080, "portIdentifier": "mcp"}],
+    visibility="private",
+)
+```
+
+An agent that already runs elsewhere needs no image or ports — just a URL:
+
+```python
+client.agents.create(
+    "deepwiki", "External MCP server", "server", "open source",
+    external_url="https://mcp.example.com/mcp",
+    external_transport="streamable-http",     # prefer this over "sse"
+    protocol="mcp",
+)
+```
+
+<Note>
+  Ports are declared **at import time**, on the template. Passing `ports=` or `plans=` in an
+  update **replaces** the whole list, so include everything you want to keep.
+</Note>
+
+## Give it a brain, then spawn
+
+An agent needs **exactly one** model to think with — a model running on the platform, or an
+external provider.
+
+```python
+infs = client.inferences.get_all_spawned_inferences(print_stdout=False) or []
+running_models = [i for i in infs if str(i.get("status", "")).lower() == "running"]
+AGENT_BRAIN_ID = running_models[0]["_id"]
+
+created = client.agents.spawn(
+    "my-running-agent",
+    namespace_id=NAMESPACE_ID,
+    datacenter_id=DATACENTER_ID,
+    plan_id=PLAN_ID,
+    servers=[MCP_SERVER_TEMPLATE_ID],        # its tools; empty = orchestrator agent
+    system_prompt="You are a helpful assistant.",
+
+    spawned_inference_model_id=AGENT_BRAIN_ID,
+    # external_inference={"provider": "anthropic", "model": "...", "apiKey": "..."},
+)
+AGENT_ID = created["_id"]
+```
+
+<Warning>
+  **Exactly one brain, no more and no less.** Passing neither `spawned_inference_model_id` nor
+  `external_inference` — or both — is rejected. The model must also be **running**; a stopped
+  one is refused with `INFERENCE_NOT_RUNNING`.
+</Warning>
+
+## Chat, and watch it use its tools
+
+```python
+sa = client.spawned_agent(AGENT_ID)
+
+print(sa.mcp().tools())
+print(sa.chat("Hello! What can you do?", ai_key=AI_KEY))
+```
+
+Agent chat **streams**. Pass `on_event` to watch it arrive, including tool calls:
+
+```python
+def show(event, data):
+    if event == "tool_call":
+        print("-> calls", data["name"], data.get("arguments"))
+    elif event == "tool_result":
+        print("<- answered in", data.get("durationMs"), "ms")
+    elif event == "text":
+        print(data.get("text", ""), end="")
+
+sa.chat("Use your tools to answer this", ai_key=AI_KEY, on_event=show)
+```
+
+## Sub-agents
+
+An **orchestrator** has no tools of its own — its tools are other agents.
+
+```python
+child = client.agents.spawn(
+    "repo-expert", namespace_id=NS, datacenter_id=DC, plan_id=PLAN,
+    servers=[MCP_SERVER_TEMPLATE_ID],
+    spawned_inference_model_id=AGENT_BRAIN_ID,
+    is_callable_as_sub_agent=True,
+    sub_agent_description="Answers questions about public GitHub repositories.",
+)
+
+parent = client.agents.spawn(
+    "coordinator", namespace_id=NS, datacenter_id=DC, plan_id=PLAN,
+    servers=[],
+    spawned_inference_model_id=AGENT_BRAIN_ID,
+    system_prompt=("Call the sub-agent at most once per question, repeat the question in "
+                   "full when you do, then write the final answer and stop."),
+    available_sub_agents=[child["_id"]],
+    sub_agent_config={"timeoutMs": 120000, "maxIterations": 5},
+)
+```
+
+<Warning>
+  **Tell the parent to stop.** A prompt that only says "delegate" makes the model hand the
+  same question over repeatedly, and the turn fails with *Tool-loop exceeded 10 iterations*.
+  The parent must also repeat the question in full — the child cannot see the conversation.
+
+  Raising `sub_agent_config.maxIterations` does not help; that is the **child's** cap.
+  Delegation depth is capped at one level.
+</Warning>
+
+<Warning>
+  **A running agent cannot be deleted**, and the platform reports that as a `401` — which
+  looks like a credentials problem and is not. Use `sa.delete(stop_first=True)`.
+
+  Agents also have **no restart route**. Stop and start instead.
+</Warning>

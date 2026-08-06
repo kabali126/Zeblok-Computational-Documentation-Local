@@ -1,0 +1,43 @@
+---
+title: "Containerization"
+description: "Watch the image builds the platform runs for you."
+---
+
+Some operations build a container image before they deploy anything. Importing an AI model
+builds its serving image; creating a pipeline or Ai-API builds one from your code folder.
+Each creates a **build job**.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| List build jobs | `client.builds.list()` | `GET /api/v1/caas` |
+| Filter by state | `client.builds.list(state="failed")` | `GET /api/v1/caas?state=…` |
+| Get one build | `client.builds.get(id)` | `GET /api/v1/caas/:id` |
+| Read its log | `client.builds.logs(id)` | `GET /api/v1/caas/:id/logs` |
+| Remove a record | `client.builds.delete(id)` | `DELETE /api/v1/caas/:id` |
+
+## Find out why a build failed
+
+```python
+builds = client.builds.list()
+
+for b in builds[:5]:
+    print(b.get("_id"), b.get("state"), b.get("name"))
+
+if builds:
+    BUILD_ID = builds[0]["_id"]
+    print(client.builds.get(BUILD_ID))
+    print(client.builds.logs(BUILD_ID))     # read this on a failure
+
+print(client.builds.list(state="failed"))
+```
+
+<Tip>
+  This is the answer to *"my model import failed and I do not know why"*. Read the log before
+  retrying — an import that failed for a real reason will fail the same way again.
+</Tip>
+
+<Note>
+  An empty list is normal if nothing has been built on this environment yet.
+</Note>

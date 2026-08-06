@@ -1,0 +1,107 @@
+---
+title: "Plans"
+description: "Define how much CPU, GPU, memory and storage a workload gets."
+---
+
+A plan is a size. Every workload you start must be given one, and the plan decides how big
+it is. In the web interface these live under **Platform → Configurations → Plans**.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| List every plan | `client.plans.get_all()` | `GET /api/v1/plans` |
+| Get one plan | `client.plans.get_by_id(id)` | `GET /api/v1/plans/:id` |
+| Check it exists | `client.plans.validate_id(id)` | `GET /api/v1/plans/:id` |
+| Get only some fields | `client.plans.get_filtered_details(id, fields_req)` | `GET /api/v1/plans/:id` |
+| List public plans | `client.plans.get_all_public()` | `GET /api/v1/plans/public` |
+| Check free capacity | `client.plans.capacity(dc_id)` | `GET /api/v1/plans/datacenter/:id/capacity` |
+| Create a plan | `client.plans.create(...)` | `POST /api/v1/plans` |
+| Create a custom-size plan | `client.plans.create_dynamic(...)` | `POST /api/v1/plans/dynamic` |
+| Update a plan | `client.plans.update(id, ...)` | `PUT /api/v1/plans/:id` |
+| Change only storage | `client.plans.update_storage(id, gb)` | `PUT /api/v1/plans/storage/:id` |
+| Delete a plan | `client.plans.delete(id)` | `DELETE /api/v1/plans/:id` |
+
+## List plans
+
+```python
+plans = client.plans.get_all(print_stdout=False)
+
+for p in plans:
+    r = p["resources"]
+    print(p["id"], p["name"], r.get("CPU"), "CPU,", r.get("GPU"), "GPU,", r.get("memory"), "GB")
+
+PLAN_ID = plans[0]["id"]
+```
+
+## Check capacity before you create
+
+```python
+capacity = client.plans.capacity(DATACENTER_ID)
+
+print("largest plan that fits on one machine:", capacity["max"])
+for node in capacity["nodes"]:
+    print(node["name"], node["CPU"], "CPU free,", node["memory"], "GB free")
+```
+
+<Warning>
+  You can create a plan bigger than any single machine. The platform accepts it, and no
+  workload will ever schedule onto it. If `max` says 4 CPU, a plan asking for 8 will never run.
+</Warning>
+
+## Create a plan
+
+```python
+plan = client.plans.create(
+    plan_name="my-small-plan",       # required
+    datacenter_id=DATACENTER_ID,     # required
+    resources={                      # required
+        "GPU": 0,
+        "CPU": 1,
+        "memory": 2,                 # GB
+        "storage": 10,               # GB, optional
+    },
+    price=0,
+    currency="USD",                  # "USD" or "INR"
+    visibility="private",            # "private", "organization" or "public"
+)
+
+PLAN_ID = plan["_id"]
+```
+
+The SDK checks these before sending, so you get a readable message rather than a 400:
+
+| Rule | Why |
+|---|---|
+| `resources` must contain `GPU`, `CPU` and `memory` | The platform needs all three; use `0` where you want none |
+| `CPU` **or** `memory` must be above 0 | A plan with nothing in it cannot run anything |
+| `currency` is `USD` or `INR` | Only these two are accepted |
+| `visibility` is `private`, `organization` or `public` | Anything else is rejected |
+| `is_auto_scaling=True` requires `node_group_name` | Autoscaling needs to know which machine group to grow |
+
+### Custom-size plans
+
+When you care about the size but not the name, let the platform name it:
+
+```python
+dyn = client.plans.create_dynamic(
+    datacenter_id=DATACENTER_ID,
+    resources={"GPU": 0, "CPU": 1, "memory": 2, "storage": 5},
+)
+print(dyn["planName"])       # auto-generated
+```
+
+## Update and delete
+
+```python
+client.plans.update(PLAN_ID, plan_name="my-renamed-plan", price=1)
+client.plans.update_storage(PLAN_ID, 25)          # dedicated storage route
+
+client.plans.delete(PLAN_ID)
+print("gone?", not client.plans.validate_id(PLAN_ID))
+```
+
+<Note>
+  Send only the fields you are changing — everything else stays as it was. Passing nothing is
+  refused with `pass at least one field to update`.
+</Note>

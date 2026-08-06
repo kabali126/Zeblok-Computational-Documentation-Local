@@ -1,0 +1,88 @@
+---
+title: "Ai-API & Pipelines"
+description: "Turn a folder of your own code into something running on the platform."
+---
+
+These two work the same way, and they are the only part of the SDK that needs the
+**object-store** credentials. The SDK zips your folder, uploads it, the platform builds a
+container image, then deploys it.
+
+|  | An Ai-Pipeline is… | An Ai-API is… |
+|---|---|---|
+| What it is | a job that processes data | a model served behind an HTTP endpoint |
+| You give it | a folder with a `Dockerfile` | a model folder |
+
+## Set up storage access
+
+```python
+from zeblok import ZeblokClient
+from zeblok.datalake import DataLake
+
+client = ZeblokClient(APP_URL, ACCESS_KEY, ACCESS_SECRET)
+creds  = client.users.object_store_credentials()
+
+dl = DataLake(
+    api_auth=client.auth,
+    access_key=creds["access_key"],     # the SHORT user name, not your API key
+    secret_key=creds["secret_key"],
+    bucket_name=creds["bucket"],
+    blob_url=creds["endpoint"],
+)
+
+pl_client = ZeblokClient(APP_URL, ACCESS_KEY, ACCESS_SECRET, datalake=dl)
+```
+
+<Note>
+  Without a `datalake`, `client.pipelines` and `client.ai_apis` are not available. Datasets do
+  **not** need this — they upload through the platform itself.
+</Note>
+
+## Build and deploy a pipeline
+
+```python
+pl_client.pipelines.create_and_spawn(
+    ai_pipeline_name="my-pipeline",
+    ai_pipeline_folder_path="/home/me/my-pipeline",   # must contain a Dockerfile
+    caas_plan_id=PLAN_ID,           # the plan used to BUILD
+    ai_pipeline_plan_id=PLAN_ID,    # the plan used to RUN
+    namespace_id=NAMESPACE_ID,
+)
+
+print(pl_client.pipelines.get_all(state="ready", print_stdout=False))
+print(pl_client.pipelines.get_all(state="created", print_stdout=False))
+```
+
+<Warning>
+  **Both plans must be in the same data center.** They can be different sizes, but not
+  different places — the SDK stops you before uploading if they are.
+</Warning>
+
+<Tip>
+  Prefer two steps? `create(...)` builds without deploying, then
+  `spawn(ai_pipeline_plan_id, namespace_id, ai_pipeline_image_name)` deploys it later.
+</Tip>
+
+## Build and serve an Ai-API
+
+```python
+pl_client.ai_apis.create_and_spawn(
+    ai_api_name="my-api",
+    model_folder_path="/home/me/my-model",
+    ai_api_plan_id=PLAN_ID,
+    caas_plan_id=PLAN_ID,
+    namespace_id=NAMESPACE_ID,
+    ai_api_type="llm",
+)
+
+deployed = pl_client.ai_apis.get_all(state="deployed", print_stdout=False)
+print(pl_client.ai_apis.access_secret(deployed[0]["id"]))   # what callers must send
+```
+
+## Multi-datacenter pipelines
+
+You can deploy simultaneous Ai-Pipelines across multiple enterprise data centers and collate
+the results (Ai-Runs) at a single endpoint of your choice.
+
+<Note>
+  Empty lists are normal on a fresh environment — nothing has been built yet.
+</Note>

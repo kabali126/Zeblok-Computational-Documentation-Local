@@ -1,0 +1,86 @@
+---
+title: "Namespaces"
+description: "Isolate workloads and control who can reach them."
+---
+
+A namespace is where workloads run, and it also controls who can see what is inside.
+Every spawn needs one.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| List namespaces | `client.namespaces.get_all()` | `GET /api/v1/namespaces` |
+| Get one | `client.namespaces.get_by_id(id)` | `GET /api/v1/namespaces/:id` |
+| Check it exists | `client.namespaces.validate_id(id)` | `GET /api/v1/namespaces/:id` |
+| Full stored record | `client.namespaces.raw(id)` | `GET /api/v1/namespaces/:id` |
+| List by organisation | `client.namespaces.by_organisation(org_id)` | `GET /api/v1/namespaces/organisation/:orgId` |
+| Create | `client.namespaces.create(name, ...)` | `POST /api/v1/namespaces` |
+| Rename / change visibility | `client.namespaces.update(id, ...)` | `PUT /api/v1/namespaces/:id` |
+| See members | `client.namespaces.members(id)` | `PUT /api/v1/namespaces/:id` |
+| Add members | `client.namespaces.add_users(id, users)` | `PUT /api/v1/namespaces/:id` |
+| Remove members | `client.namespaces.remove_users(id, users)` | `PUT /api/v1/namespaces/:id` |
+| Delete | `client.namespaces.delete(id)` | `DELETE /api/v1/namespaces/:id` |
+| Delete by Kubernetes name | `client.namespaces.delete_by_k8s_name(name)` | `DELETE /api/v1/namespaces/k8s/:name` |
+
+## Pick one that resolves
+
+The list can include namespaces from other organisations that the by-id lookup cannot
+return, so pick one that does both:
+
+```python
+NAMESPACE_ID = None
+for ns in client.namespaces.get_all(print_stdout=False):
+    if client.namespaces.validate_id(ns["id"]):
+        NAMESPACE_ID = ns["id"]
+        break
+
+assert NAMESPACE_ID, "no namespace could be resolved by id"
+```
+
+## Create
+
+```python
+created = client.namespaces.create(
+    "my-team-space",
+    is_public=False,
+    users=[],
+)
+NS_ID = created["_id"]
+
+client.namespaces.update(NS_ID, name="my-team-space-v2")
+```
+
+## Add and remove members
+
+```python
+print("members now:", client.namespaces.members(NS_ID))
+
+users = client.users.list()
+client.namespaces.add_users(NS_ID, users[0]["_id"])         # keeps existing members
+client.namespaces.add_users(NS_ID, [id_a, id_b])            # several at once
+
+client.namespaces.remove_users(NS_ID, users[0]["_id"])      # keeps the rest
+```
+
+<Warning>
+  **Use `add_users()`, not `update(users=[...])`.** The platform's update call *replaces* the
+  member list rather than adding to it — so attaching people one at a time with `update()`
+  silently removes everyone attached before. `add_users()` reads the current list, merges
+  yours in, and sends the whole thing.
+
+  To clear everyone deliberately: `client.namespaces.update(NS_ID, users=[])`.
+</Warning>
+
+<Note>
+  Each entry must be a bare 24-character `_id` from `client.users.list()` — not a name or an
+  email. Every member must also belong to the **same organisation** as the namespace, or the
+  call is refused with `CROSS_ORG_USERS`.
+</Note>
+
+## Delete
+
+```python
+client.namespaces.delete(NS_ID)
+print("gone?", not client.namespaces.validate_id(NS_ID))
+```

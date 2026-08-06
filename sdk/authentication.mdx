@@ -1,0 +1,123 @@
+---
+title: "Authentication"
+description: "The three credentials the SDK uses, and how to verify you are connected."
+---
+
+The platform uses **three separate credentials**. They are not interchangeable, and using
+the wrong one is the most common reason a call fails.
+
+| Credential | Where to get it | What it is used for |
+|---|---|---|
+| **Platform key + secret** | API Keys & Secrets → **Microcloud** | Everything on `client.…` |
+| **Gen-AI key** | API Keys & Secrets → **Gen AI** | Chatting with models and agents |
+| **Object-store key + secret** | API Keys & Secrets → **Object Store** | Uploading code for Ai-APIs and pipelines |
+
+## The platform key pair
+
+You hand the key and secret to `ZeblokClient` once. From then on the SDK signs every
+request for you — there is no login step and nothing expires on a timer.
+
+```python
+from zeblok import ZeblokClient
+
+client = ZeblokClient(APP_URL, ACCESS_KEY, ACCESS_SECRET)
+
+client.plans.get_all()      # already authenticated
+```
+
+<Warning>
+  **Never commit credentials.** Read them from environment variables instead:
+
+  ```bash
+  export ZBL_APP_URL="https://app.your-env.zeblok.com"
+  export ZBL_ACCESS_KEY="..."
+  export ZBL_ACCESS_SECRET="..."
+  ```
+</Warning>
+
+### Verify you are connected
+
+Three small calls that tell you exactly how far you got.
+
+```python
+print(client.health())                    # is the platform up?        (no login)
+print(client.config())                    # do my key and secret work? (login)
+print(client.keys.credentials_status())   # which key pair am I using?
+```
+
+| Call | Good answer | If it fails |
+|---|---|---|
+| `health()` | `{'status': 'ok'}` | Wrong address, VPN off, or the platform is down |
+| `config()` | `{'tier': 'pro'}` | Address is fine, but your key or secret is wrong |
+| `keys.credentials_status()` | `hasCredentials: True` | Compare the preview with the key you pasted |
+
+### Rotate the key pair
+
+```python
+new_pair = client.keys.generate()
+
+print(new_pair["apiKey"], new_pair["apiSecret"])    # save both now
+
+client = ZeblokClient(APP_URL, new_pair["apiKey"], new_pair["apiSecret"])
+```
+
+<Warning>
+  Rotating **cancels the old pair immediately**. The client you are holding still has the
+  dead pair, and every script, notebook or colleague using it stops working at once.
+</Warning>
+
+## The Gen-AI key
+
+Chat does not use your platform key pair. It uses a separate bearer token.
+
+```python
+key = client.ai_keys.create(name="my-chat-key", key_type="user", expiry_days=30)
+
+AI_KEY = key["aiKey"]                 # the token — shown ONCE
+KEY_ID = key["credential"]["_id"]     # the id used to revoke it
+
+print(client.ai_keys.list())          # your keys (previews only)
+print(client.ai_keys.usage())         # tokens spent per key
+
+client.ai_keys.revoke(KEY_ID)
+```
+
+<Note>
+  The short `zbl_…` value shown in the web interface is a **preview**, not the token. The
+  full token appears once, at creation.
+</Note>
+
+## The object-store credentials
+
+Only Ai-APIs and pipelines need these. Ask the platform for its own values rather than
+copying them by hand.
+
+```python
+creds = client.users.object_store_credentials()
+print(creds)
+# {'access_key': '<user>', 'secret_key': '…', 'bucket': '<bucket>', 'endpoint': 'https://…'}
+```
+
+<Note>
+  The object-store user name is short — it is **not** your platform API key. Using the API
+  key here produces `InvalidAccessKeyId`.
+</Note>
+
+## What is my key allowed to do?
+
+```python
+me = client.iam.my_permissions()
+
+print(me.allows("plans", "list"))     # True / False
+print(me.raw.get("role"))             # 'admin', 'superadmin', ...
+```
+
+## When authentication goes wrong
+
+| What you see | What it means | Fix |
+|---|---|---|
+| `401 · User not authenticated` | Key or secret is wrong, or was replaced | Re-copy both from the Microcloud tab |
+| `403 · User not authorized` | Credentials are fine; your role may not do this | Ask an administrator |
+| HTML instead of data | Pointed at the web app host, not the API | Let the SDK resolve the URL |
+| `401` when deleting a running workload | Not an auth problem — it refuses to delete something running | Use `delete(stop_first=True)` |
+| `InvalidAccessKeyId` | Platform API key used as the object-store user | Use `object_store_credentials()` |

@@ -8,7 +8,7 @@
     "width": 800
   },
   "favicon": "https://icons.duckduckgo.com/ip3/computationaldocs.zeblok.com.ico",
-  "colors": { 
+  "colors": {
     "primary": "#1A6EFF",
     "light": "#E8F0FF",
     "dark": "#0A3080"
@@ -84,7 +84,55 @@
           {
             "group": "SDK & Integrations",
             "pages": [
-              "sdk/overview"
+              "sdk/overview",
+              "sdk/authentication",
+              "sdk/quickstart",
+              {
+                "group": "Configuration",
+                "pages": [
+                  "sdk/plans",
+                  "sdk/namespaces",
+                  "sdk/datacenters"
+                ]
+              },
+              {
+                "group": "Workloads",
+                "pages": [
+                  "sdk/workstations",
+                  "sdk/microservices",
+                  "sdk/orchestration-addons",
+                  "sdk/lifecycle"
+                ]
+              },
+              {
+                "group": "AI",
+                "pages": [
+                  "sdk/inference",
+                  "sdk/agents",
+                  "sdk/model-hub"
+                ]
+              },
+              {
+                "group": "Data & builds",
+                "pages": [
+                  "sdk/datasets",
+                  "sdk/ai-api-pipelines",
+                  "sdk/containerization"
+                ]
+              },
+              {
+                "group": "Administration",
+                "pages": [
+                  "sdk/iam"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "sdk/bulk-operations",
+                  "sdk/errors"
+                ]
+              }
             ]
           },
           {
@@ -105,5 +153,3 @@
     ]
   }
 }
-
-

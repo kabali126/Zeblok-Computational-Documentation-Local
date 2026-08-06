@@ -1,0 +1,167 @@
+---
+title: "IAM"
+description: "Users, roles, groups, policies and organisations."
+---
+
+Everything here needs an **admin** key, and some parts need **superadmin**. A `403` usually
+means your role is not high enough — not that anything is broken.
+
+```python
+print(client.iam.my_permissions().raw.get("role"))
+```
+
+## What each role can do
+
+| Area | Reading | Creating / changing | Deleting |
+|---|---|---|---|
+| Roles | any key with access | admin | admin |
+| User groups | any key with access | admin | admin |
+| Permissions (grants) | admin | admin | **superadmin** |
+| Policies | admin (including the dry-run) | **superadmin** | **superadmin** |
+| Resource registry | **superadmin** | **superadmin** | **superadmin** |
+| Audit trail | admin | — | — |
+
+## The vocabulary
+
+| Word | What it really is |
+|---|---|
+| **User** | One person |
+| **User group** | A bag of users, so you grant once instead of per person |
+| **Role** | A named job that carries permissions |
+| **Resource** | The *name of a protected area* the platform checks, e.g. `iam.users` |
+| **Permission** | One grant: this role may do these actions on that resource |
+| **Policy** | Allow and deny rules, with priority when two disagree |
+| **Organisation** | The tenant everything belongs to |
+
+## Users
+
+```python
+users = client.users.list()
+USER_ID = users[0]["_id"]
+
+print(client.users.effective_permissions(USER_ID))    # why can they do that?
+print(client.users.filter(search="priya"))
+print(client.users.find(email="priya@yourcompany.com"))
+
+client.users.invite("colleague@yourcompany.com")      # they set their own password
+
+person = client.users.create(
+    "Priya Sharma", "priya@yourcompany.com", "priya.sharma", "Str0ng!pass",
+    iam_role_id=ROLE_ID, usergroups=[GROUP_ID],
+)
+
+client.users.update(person["_id"], allowed_notebooks=5)
+client.users.deactivate(person["_id"])                # reversible, keeps their work
+client.users.delete(person["_id"])
+```
+
+<Note>
+  **Prefer `invite()` over `create()`** — the person sets their own password, so no
+  credentials pass through your script. Passwords need 8+ characters with upper, lower, a
+  digit and a symbol; the SDK checks before sending.
+
+  Deleting a **primary admin** is refused unless you name a replacement with `reassign_to=`.
+</Note>
+
+## Roles and permissions
+
+```python
+role = client.iam.roles.create("data-team", description="read-only for the data team")
+ROLE_ID = role["_id"]
+
+client.iam.permissions.create(role=ROLE_ID, resource="plans", actions=["read"])
+client.iam.permissions.update(GRANT_ID, actions=["read", "update"])
+
+print(client.iam.permissions.available_resources())
+print(client.iam.roles.members(ROLE_ID))
+print(client.iam.roles.impact(ROLE_ID))
+```
+
+Valid actions: `create`, `read`, `update`, `delete`, `start`, `stop`, `share`, `upload`,
+`download`.
+
+<Warning>
+  **Built-in roles cannot be edited by anyone** — not even superadmin. A role is built-in if
+  it came with the platform or is named `admin`, `developer`, `standard-user` or `viewer`.
+  Create your own role and grant on that. The role must also be in **your own organisation**.
+</Warning>
+
+## Groups
+
+```python
+grp = client.iam.groups.create(name="data-team-group", roles=[ROLE_ID])
+client.users.update(USER_ID, usergroups=[grp["_id"]])
+
+print(client.iam.groups.effective_permissions(grp["_id"]).raw)
+```
+
+## Policies
+
+```python
+policies = client.iam.policies.list()
+
+verdict = client.iam.policies.test(
+    policies[0]["_id"],
+    user={"role": "developer", "organisationId": ORG_ID},    # attribute dicts
+    resource={"type": "plans", "visibility": "private"},
+    action="read",
+)
+
+for rule in verdict["ruleResults"]:
+    print(rule["ruleName"], "->", rule["finalEffect"])
+```
+
+<Note>
+  `user` and `resource` must be **dictionaries of attributes**, not names or ids — the
+  policy's conditions are evaluated against them. The dry-run changes nothing and works on an
+  admin key, even though creating a policy needs superadmin.
+</Note>
+
+## Organisations
+
+```python
+mine = client.organisations.me()
+ORG_ID = mine["_id"]
+
+print(client.organisations.list())
+client.organisations.update(ORG_ID, no_of_employees=300)
+```
+
+<Tip>
+  Two rules bite regularly and both are about organisations: namespace members must share the
+  namespace's organisation, and you can only grant permissions on a role in your own.
+</Tip>
+
+## Audit trail
+
+```python
+print(client.iam.audit.stats())
+for entry in client.iam.audit.list()[:10]:
+    print(entry)
+```
+
+## A worked example
+
+<Steps>
+  <Step title="Create a role of your own">
+    ```python
+    role = client.iam.roles.create("data-team")
+    ```
+  </Step>
+  <Step title="Grant it what it needs">
+    ```python
+    client.iam.permissions.create(role=role["_id"], resource="plans", actions=["read"])
+    ```
+  </Step>
+  <Step title="Put people in a group carrying it">
+    ```python
+    grp = client.iam.groups.create(name="data-team-group", roles=[role["_id"]])
+    client.users.update(USER_ID, usergroups=[grp["_id"]])
+    ```
+  </Step>
+  <Step title="Prove it worked">
+    ```python
+    print(client.iam.effective_permissions(USER_ID).allows("plans", "read"))   # True
+    ```
+  </Step>
+</Steps>

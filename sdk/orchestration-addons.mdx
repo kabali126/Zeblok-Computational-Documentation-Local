@@ -1,0 +1,75 @@
+---
+title: "Orchestration add-ons"
+description: "Run cluster tools such as Ray for distributed compute."
+---
+
+An add-on is a cluster tool — a Ray cluster, for example — with a head node and a range of
+workers.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Browse the catalog | `client.orchestrations.get_all()` | `GET /api/v1/k8s-addons` |
+| Get one template | `client.orchestrations.get_by_id(id)` | `GET /api/v1/k8s-addons/:id` |
+| Public add-ons | `client.orchestrations.get_all_public()` | `GET /api/v1/k8s-addons/public` |
+| Add a template | `client.orchestrations.create(...)` | `POST /api/v1/k8s-addons` |
+| Update a template | `client.orchestrations.update(id, ...)` | `PUT /api/v1/k8s-addons/:id` |
+| Remove a template | `client.orchestrations.delete(id)` | `DELETE /api/v1/k8s-addons/:id` |
+| Deploy one | `client.orchestrations.spawn(...)` | `POST /api/v1/spawned-k8s-addons` |
+| List running | `client.orchestrations.spawned()` | `GET /api/v1/spawned-k8s-addons` |
+| Change worker range | `handle.reconfigure(...)` | `PUT /api/v1/spawned-k8s-addons/:id/reconfigure` |
+
+## Deploy a cluster
+
+```python
+catalog  = client.orchestrations.get_all(print_stdout=False)
+ADDON_ID = catalog[0]["id"]
+
+client.orchestrations.spawn(
+    orchestration_id=ADDON_ID,
+    plan_id=PLAN_ID,
+    namespace_id=NAMESPACE_ID,
+    orchestration_name="my-ray-cluster",
+    min_workers=1,
+    max_workers=3,
+)
+
+running = client.orchestrations.spawned()
+handle  = client.spawned("addon", running[0]["_id"])
+
+handle.reconfigure(min_workers=2, max_workers=5)      # grow the cluster
+```
+
+<Warning>
+  **Add-ons take no `plan_id`.** They use `head_plan_id` and `worker_plan_id`, because the
+  head node and the workers can be different sizes. Passing `plan_id` is refused with the
+  allowed list.
+
+  There is also no `edit()` route for add-ons — `reconfigure()` is how you change them.
+</Warning>
+
+## Register a template
+
+```python
+entry = client.orchestrations.create(
+    "my-ray",                      # name, 1-100 characters
+    "rayproject/ray:2.9.0",        # image_tag — a single STRING
+
+    description="Ray cluster for the data team",
+    visibility="private",
+    # head_plans=[PLAN_ID], worker_plans=[PLAN_ID],
+    # is_active=True,
+)
+```
+
+<Warning>
+  This is where add-ons differ from every other catalog. Workstations and microservices take
+  `image_tags=[{"displayName": …, "dockerImage": …}]`. Add-ons take a single
+  `image_tag="org/image:tag"` string.
+</Warning>
+
+<Tip>
+  `is_active=False` takes an add-on out of circulation without deleting it — better than
+  deleting when you are retiring something people may still be using.
+</Tip>

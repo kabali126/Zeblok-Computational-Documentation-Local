@@ -1,0 +1,98 @@
+---
+title: "Workstations"
+description: "Start a JupyterLab development machine in the cloud."
+---
+
+Workstations come in two halves. The **catalog** holds the images; **spawning** starts a real
+machine from one. Both live under `client.workstations`.
+
+## Capabilities
+
+### Catalog
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Browse the catalog | `client.workstations.get_all()` | `GET /api/v1/docker-images` |
+| Get one image | `client.workstations.get_by_id(id)` | `GET /api/v1/docker-images/:id` |
+| Public marketplace | `client.workstations.get_all_public()` | `GET /api/v1/docker-images/public` |
+| Add an image | `client.workstations.create(...)` | `POST /api/v1/docker-images` |
+| Update an image | `client.workstations.update(id, ...)` | `PUT /api/v1/docker-images/:id` |
+| Remove an image | `client.workstations.delete(id)` | `DELETE /api/v1/docker-images/:id` |
+| Accept a licence | `client.workstations.accept_license(...)` | `PUT /api/v1/docker-images/:id/accept-license` |
+
+### Running workstations
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Start one | `client.workstations.spawn(...)` | `POST /api/v1/spawned-images` |
+| List running | `client.workstations.spawned()` | `GET /api/v1/spawned-images` |
+| Pod name → id | `client.workstations.get_spawned_id_by_name(pod)` | `GET /api/v1/spawned-images` |
+| Everything after that | See [Workload lifecycle](/sdk/lifecycle) | — |
+
+## Browse the catalog
+
+```python
+catalog = client.workstations.get_all(print_stdout=False)
+
+WORKSTATION_ID = catalog[0]["id"]
+image = client.workstations.get_by_id(WORKSTATION_ID, print_stdout=False)
+
+print("image tags:", image["display_names"])
+```
+
+<Note>
+  `display_names` is the field that matters — `spawn()` rejects a name that is not in it.
+</Note>
+
+## Start a workstation
+
+```python
+pod_name, url = client.workstations.spawn(
+    display_name=image["display_names"][0],   # which image tag to run
+    workstation_id=WORKSTATION_ID,            # the catalog entry
+    plan_id=PLAN_ID,                          # how big
+    workstation_name="analysis-box",          # unique, lowercase, dashes only
+    namespace_id=NAMESPACE_ID,                # where it runs
+
+    # optional — mount storage into it
+    # bucket_name="<bucket>", bucketmount_path="/data", isbucket_attached=True,
+)
+
+ws_id  = client.workstations.get_spawned_id_by_name(pod_name)
+handle = client.spawned("image", ws_id)
+
+handle.wait_until_ready(timeout=600)
+print("open at:", handle.open_url())
+```
+
+<Tip>
+  `open_url()` appends the notebook token, so the printed link opens JupyterLab already
+  signed in — the same thing the **Open** button does in the web interface.
+</Tip>
+
+## Add your own image to the catalog
+
+```python
+entry = client.workstations.create(
+    "my-lab",                                    # name, 1-50 characters
+    "JupyterLab with my team's tools",           # description, required
+    [{"displayName": "my-lab:1.0",
+      "dockerImage": "myorg/my-lab:1.0"}],       # one or more image tags
+    "open source",                               # "open source" or "third party"
+
+    visibility="private",
+    # is_algorithm=False, is_slurm=False, command="start-notebook.sh",
+    # plans=[PLAN_ID], default_plan=PLAN_ID,
+)
+```
+
+<Note>
+  Using a private registry? Pass `private_repo=True` with `docker_username`,
+  `docker_password`, `docker_email` and `docker_url`.
+</Note>
+
+<Warning>
+  Deleting a catalog image does **not** stop workstations already running from it, and
+  deleting a running workstation loses anything saved only on its local disk. Put work you
+  want to keep in a [dataset](/sdk/datasets) or a mounted bucket.
+</Warning>

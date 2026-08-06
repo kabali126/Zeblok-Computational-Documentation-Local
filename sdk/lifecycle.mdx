@@ -1,0 +1,127 @@
+---
+title: "Workload lifecycle"
+description: "One handle to check, control, resize, share and delete anything you started."
+---
+
+Whatever you start — a workstation, a microservice, a served model or an add-on — you manage
+it the same way: get a **handle**, then call methods on it.
+
+```python
+handle = client.spawned("<type>", "<id>")
+
+sa = client.spawned_agent("<agent-id>")     # agents have their own handle
+```
+
+| You started a… | Type to pass | Find its id with |
+|---|---|---|
+| Workstation | `"image"` | `client.workstations.spawned()` |
+| Microservice | `"service"` | `client.microservices.spawned()` |
+| Served model | `"inference"` | `client.inferences.get_all_spawned_inferences()` |
+| Orchestration add-on | `"addon"` | `client.orchestrations.spawned()` |
+| Agent | `client.spawned_agent(id)` | `client.agents.spawned()` |
+
+<Warning>
+  **The value `spawn()` returns is not the id you manage with.** Starting something gives you
+  the Kubernetes pod name; management endpoints expect the 24-character database id and
+  reject a pod name with `400 Validation failed`.
+
+  ```python
+  svc_id = client.microservices.get_spawned_id_by_name(pod_name)
+  ```
+</Warning>
+
+## Look at it
+
+```python
+handle = client.spawned("service", SVC_ID)
+
+st = handle.status()
+print(st.get("status"), st.get("name"))
+
+print(handle.logs())                  # what the container printed
+print(handle.utilization("5m"))       # CPU / memory / GPU
+print(handle.replica_status())        # microservices only
+```
+
+<Note>
+  On a **stopped** workload, utilization comes back empty and logs may report not found.
+  Start it first. `replica_status()` exists only for microservices.
+</Note>
+
+## Get its links
+
+```python
+print("open in a browser:", handle.open_url())
+print("in-cluster address:", handle.internal_url())
+
+for e in handle.endpoints():
+    print(e.get("label"), e.get("url"), e.get("scope"))
+```
+
+<Tip>
+  For workstations, `open_url()` appends the notebook token, so the link opens JupyterLab
+  already signed in. It returns `None` while a workload is still starting or is stopped —
+  that is an answer, not an error.
+</Tip>
+
+## Control it
+
+```python
+handle.stop()                          # frees resources, keeps everything
+handle.start()
+handle.restart()                       # recreate in place, same id and URL
+
+handle.wait_until_ready(timeout=600)   # block until it reports 'running'
+```
+
+<Warning>
+  **Agents cannot be restarted** — the platform has no restart route for them. Stop and start
+  instead.
+</Warning>
+
+## Change it
+
+**Edit** changes what is inside a workload. **Reconfigure** changes what it runs on.
+
+```python
+handle.edit(updated_replicas=2)                                  # microservice
+handle.edit(resource_details={"CPU": 2, "memory": 4, "GPU": 0})
+handle.edit(docker_image="myorg/app:2.0")
+
+handle.reconfigure(plan_id=BIGGER_PLAN_ID)
+handle.restart()                                                 # apply it
+```
+
+Reconfigure takes a different field set per type. Passing the wrong one fails immediately
+with the allowed list:
+
+| Type | Fields it accepts |
+|---|---|
+| Microservice | `plan_id`, `resource_details`, `parameters`, `updated_replicas`, `name` |
+| Workstation | `plan_id`, `resource_details`, `parameters`, `name` |
+| Served model | `min_replicas`, `max_replicas`, `threshold`, `args`, `ports`, `envs` |
+| Add-on | `min_workers`, `max_workers`, `head_plan_id`, `worker_plan_id` — **no** `plan_id` |
+| Agent | `system_prompt`, `servers`, `context_length`, `available_sub_agents` |
+
+<Note>
+  Add-ons have no `edit()` route at all — resize them with `reconfigure()`.
+</Note>
+
+## Share it
+
+```python
+print([u["email"] for u in (client.users.list() or [])])
+
+handle.share(["colleague@yourcompany.com"])     # emails, usernames or ids
+```
+
+## Delete it
+
+```python
+handle.delete(stop_first=True)     # stop, wait, then delete
+```
+
+<Warning>
+  The platform refuses to delete a **running** workload. `stop_first=True` handles the
+  stop-wait-delete sequence in one call.
+</Warning>

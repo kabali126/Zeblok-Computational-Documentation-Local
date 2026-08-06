@@ -1,0 +1,48 @@
+---
+title: "Data centers"
+description: "Inspect machines and check free capacity before you deploy."
+---
+
+Data centers are managed by the platform team, so the SDK exposes reads only. What you can
+do is look at them, and check how much capacity is free.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| List data centers | `client.datacenters.get_all()` | `GET /api/v1/datacenters` |
+| Get one | `client.datacenters.get_by_id(id)` | `GET /api/v1/datacenters/:id` |
+| Check it exists | `client.datacenters.validate_id(id)` | `GET /api/v1/datacenters/:id` |
+| List public ones | `client.datacenters.get_all_public()` | `GET /api/v1/datacenters/public` |
+| List its machines | `client.datacenters.nodes(id)` | `GET /api/v1/datacenters/:id/nodes` |
+| Capacity metrics | `client.datacenters.metrics(id)` | `GET /api/v1/datacenters/:id/metrics` |
+| Image registry address | `client.datacenters.registry_url()` | `GET /api/v1/datacenters/registry-url` |
+| Resources across all | `client.datacenters.resources()` | `GET /api/v1/datacenters/resources` |
+| Environment flavour | `client.datacenters.microcloud_environment()` | `GET /api/v1/datacenters/microCloudEnvironment` |
+
+## Inspect a data center
+
+```python
+datacenters = client.datacenters.get_all(print_stdout=False)
+DATACENTER_ID = datacenters[0]["id"]
+
+nodes = client.datacenters.nodes(DATACENTER_ID)
+print(f"{len(nodes)} machines")
+
+metrics = client.datacenters.metrics(DATACENTER_ID)
+print("free capacity:", metrics.get("maxAvailable"))
+```
+
+## Platform-wide reads
+
+```python
+print(client.datacenters.get_all_public())            # shared across organisations
+print(client.datacenters.registry_url())              # where built images are pushed
+print(client.datacenters.resources())                 # capacity across all data centers
+print(client.datacenters.microcloud_environment())    # which environment flavour
+```
+
+<Tip>
+  `registry_url()` is the one you are most likely to need — it is the registry your own
+  images must be pushed to before a template can pull them.
+</Tip>

@@ -1,0 +1,70 @@
+---
+title: "Datasets"
+description: "Store files on the platform and get them back."
+---
+
+A dataset is a named folder. Files go in as **versions**: every upload creates a new version,
+so older files stay where they were.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| List datasets | `client.datasets.get_all()` | `GET /api/v1/datasets` |
+| Find one by name | `client.datasets.get_by_name(name)` | `GET /api/v1/datasets` |
+| Get one by id | `client.datasets.get_by_id(id)` | `GET /api/v1/datasets/:id` |
+| Check it exists | `client.datasets.validate_id(id)` | `GET /api/v1/datasets/:id` |
+| Create | `client.datasets.create_dataset(...)` | `POST /api/v1/datasets` |
+| Upload files | `client.datasets.upload_dataset(id, paths)` | `POST /api/v1/dataset-versions` |
+| List versions | `client.datasets.versions(id)` | `GET /api/v1/dataset-versions/:datasetId` |
+| List files | `client.datasets.files(name)` | `GET /api/v1/datasets/files/:name` |
+| Files in one version | `client.datasets.version_files(v, name)` | `GET /api/v1/dataset-versions/files/:v` |
+| Download a file | `client.datasets.download_file(name, dest)` | `GET /api/v1/dataset-versions/download` |
+| Which object store | `client.datasets.object_storage_type()` | `GET /api/v1/datasets/objectStorage/type` |
+| Delete | `client.datasets.delete_dataset(id)` | `DELETE /api/v1/datasets/:id` |
+
+<Note>
+  **There is no rename.** The platform supports create, read and delete only — name and
+  description are fixed once created.
+</Note>
+
+## Create and upload
+
+```python
+ds_id = client.datasets.create_dataset(
+    dataset_name="customer-churn",
+    dataset_description="training data for the churn model",
+    datacenter_id=DATACENTER_ID,
+)
+
+client.datasets.upload_dataset(ds_id, filepaths=["/home/me/churn.csv"])
+```
+
+<Warning>
+  Paths are on the **machine running your code** — the workstation if you are in a Zeblok
+  notebook, your laptop if you are local. A `file:///…` path works; a web address does not.
+</Warning>
+
+## Look inside, and download
+
+```python
+name = client.datasets.get_by_id(ds_id)["name"]
+
+print(client.datasets.versions(ds_id))
+print(client.datasets.files(name))
+
+path = client.datasets.download_file("churn.csv", "/home/me/downloads")
+print("saved to", path)
+```
+
+## Delete
+
+```python
+client.datasets.delete_dataset(ds_id)
+print("gone?", not client.datasets.validate_id(ds_id))
+```
+
+<Note>
+  When no datasets exist, `get_all()` raises `NoResourcesError` rather than returning an empty
+  list. Catch it in any script that must run on a fresh environment.
+</Note>

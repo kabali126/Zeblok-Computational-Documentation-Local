@@ -1,0 +1,95 @@
+---
+title: "Quickstart"
+description: "A read-only first script that proves your setup and prints the ids you need."
+---
+
+Copy this, fill in three values, run it. It only reads — nothing is created or changed.
+
+```python
+import os
+
+from zeblok import ZeblokClient
+
+APP_URL       = os.environ["ZBL_APP_URL"]
+ACCESS_KEY    = os.environ["ZBL_ACCESS_KEY"]
+ACCESS_SECRET = os.environ["ZBL_ACCESS_SECRET"]
+
+client = ZeblokClient(APP_URL, ACCESS_KEY, ACCESS_SECRET)
+
+# 1 — is the platform reachable, and does my key work?
+print("health:", client.health())
+print("config:", client.config())
+
+# 2 — the three ids almost every other call needs
+DATACENTER_ID = client.datacenters.get_all(print_stdout=False)[0]["id"]
+PLAN_ID       = client.plans.get_all(print_stdout=False)[0]["id"]
+NAMESPACE_ID  = client.namespaces.get_all(print_stdout=False)[0]["id"]
+
+print("datacenter:", DATACENTER_ID)
+print("plan      :", PLAN_ID)
+print("namespace :", NAMESPACE_ID)
+
+# 3 — what is already running
+print("workstations :", len(client.workstations.spawned() or []))
+print("microservices:", len(client.microservices.spawned() or []))
+
+# 4 — what am I allowed to do?
+me = client.iam.my_permissions()
+print("role:", me.raw.get("role"), "| can list plans:", me.allows("plans", "list"))
+```
+
+## Start your first workstation
+
+<Steps>
+  <Step title="Pick an image and a plan">
+    ```python
+    catalog = client.workstations.get_all(print_stdout=False)
+    image   = client.workstations.get_by_id(catalog[0]["id"], print_stdout=False)
+
+    print(image["display_names"])     # spawn() needs one of these names
+    ```
+  </Step>
+  <Step title="Start it">
+    ```python
+    pod_name, url = client.workstations.spawn(
+        display_name=image["display_names"][0],
+        workstation_id=image["id"],
+        plan_id=PLAN_ID,
+        workstation_name="analysis-box",
+        namespace_id=NAMESPACE_ID,
+    )
+    ```
+  </Step>
+  <Step title="Wait for it, then open it">
+    ```python
+    ws_id  = client.workstations.get_spawned_id_by_name(pod_name)
+    handle = client.spawned("image", ws_id)
+
+    handle.wait_until_ready(timeout=600)
+    print("JupyterLab is ready at:", handle.open_url())
+    ```
+
+    The link carries the notebook token, so it opens an already-authenticated session.
+  </Step>
+  <Step title="Clean up when you are done">
+    ```python
+    handle.delete(stop_first=True)
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  `spawn()` returns the Kubernetes **pod name**, not the database id. Every management call
+  needs the id — convert it with `get_spawned_id_by_name()`, as above.
+</Warning>
+
+## While you are learning
+
+Put writes behind a flag so a stray run cannot create anything:
+
+```python
+RUN_WRITES = False
+
+if RUN_WRITES:
+    client.plans.create(...)
+```

@@ -1,0 +1,100 @@
+---
+title: "Inference"
+description: "Serve an AI model as a live endpoint and chat with it."
+---
+
+Serving a model has three stages: **spawn** it from the model catalog, **manage** the running
+instance, and **chat** with it.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Browse the model catalog | `client.inferences.get_all()` | `GET /api/v1/inferences` |
+| List served models | `client.inferences.get_all_spawned_inferences()` | `GET /api/v1/spawned-inferences` |
+| Serve a model | `client.inferences.spawn(...)` | `POST /api/v1/spawned-inferences` |
+| Resize | `handle.reconfigure(...)` | `PUT /api/v1/spawned-inferences/:id/reconfigure` |
+| Which names it serves | `chat.served_models()` | `GET <model-host>/v1/models` |
+| Chat with it | `chat.chat(prompt=...)` | `POST /api/v1/spawned-inferences/:id/chat/sdk` |
+| Everything else | See [Workload lifecycle](/sdk/lifecycle) | — |
+
+## Pick a model and a GPU plan
+
+```python
+models = client.inferences.get_all(print_stdout=False)
+
+INFERENCE_ID = models[0]["id"]
+model = client.inferences.get_by_id(INFERENCE_ID, print_stdout=False)
+tag   = model["modelTags"][0]
+
+gpu_plans = [p for p in client.plans.get_all(print_stdout=False)
+             if (p.get("resources") or {}).get("GPU", 0) >= 1]
+
+INFERENCE_PLAN_ID = gpu_plans[0]["id"]
+```
+
+<Warning>
+  **A large language model needs a GPU.** The platform accepts a CPU-only plan and the pod
+  then fails minutes later. The SDK refuses up front — pass `allow_cpu_only=True` to override.
+</Warning>
+
+## Serve it
+
+```python
+pod_name, url = client.inferences.spawn(
+    inference_name="my-llm",
+    inference_id=INFERENCE_ID,
+    plan_id=INFERENCE_PLAN_ID,
+    namespace_id=NAMESPACE_ID,
+    inference_display_name=tag["displayName"],
+    inference_model_image_name=tag["modelImage"],
+    inference_model_tag_id=tag["_id"],
+    model_type="VLLM",
+    num_replicas=1, min_num_replicas=1, max_num_replicas=2,
+)
+
+running = client.inferences.get_all_spawned_inferences(print_stdout=False)
+INF_ID  = running[0]["id"]
+
+handle = client.spawned("inference", INF_ID)
+handle.wait_until_ready(timeout=1800)      # large models load slowly
+```
+
+<Note>
+  Launch arguments — `--model=…`, tensor parallel size and so on — are read from the model tag
+  and sent automatically, the same as the web interface does. Without them the model server
+  starts with nothing to serve.
+</Note>
+
+## Chat with it
+
+```python
+from zeblok.llm import InferenceChat
+
+chat = InferenceChat(client.auth, spawned_inference_id=INF_ID, ai_key=AI_KEY)
+
+print(chat.served_models())                                   # the names it accepts
+print(chat.chat(prompt="Say hello in one short sentence."))
+chat.get_all()                                                # history with token counts
+```
+
+<Warning>
+  **Chat uses the Gen-AI key**, not your platform key pair. See
+  [Authentication](/sdk/authentication).
+
+  Leave `model_name` out and the SDK asks the deployment which name it answers to. The served
+  name is an internal path, not the friendly catalog name — sending the wrong one produces a
+  misleading *503 model is offline*.
+</Warning>
+
+## Resize
+
+```python
+handle.reconfigure(min_replicas=1, max_replicas=2, threshold=80)
+```
+
+<Note>
+  Models take `min_replicas` / `max_replicas` / `threshold` — **not** `updated_replicas`, and
+  not `plan_id`. Stop models you are not using; a served model holds its GPU whether or not
+  anyone is chatting with it.
+</Note>
