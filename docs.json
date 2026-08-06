@@ -8,7 +8,7 @@
     "width": 800
   },
   "favicon": "https://icons.duckduckgo.com/ip3/computationaldocs.zeblok.com.ico",
-  "colors": {
+  "colors": { 
     "primary": "#1A6EFF",
     "light": "#E8F0FF",
     "dark": "#0A3080"
