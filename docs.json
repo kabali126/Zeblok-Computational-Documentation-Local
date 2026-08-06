@@ -37,7 +37,7 @@
             ]
           },
           {
-            "group": "Workspace",
+            "group": "Workspace5",
             "pages": [
               "workstation-and-services/spawn-workstation",
               "workstation-and-services/spawn-microservice",
