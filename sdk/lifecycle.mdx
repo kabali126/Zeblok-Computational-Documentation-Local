@@ -39,13 +39,17 @@ st = handle.status()
 print(st.get("status"), st.get("name"))
 
 print(handle.logs())                  # what the container printed
-print(handle.utilization("5m"))       # CPU / memory / GPU
 print(handle.replica_status())        # microservices only
+
+# usage figures — served models only
+# client.spawned("inference", INF_ID).utilization("5m")
 ```
 
 <Note>
-  On a **stopped** workload, utilization comes back empty and logs may report not found.
-  Start it first. `replica_status()` exists only for microservices.
+  On a **stopped** workload, logs may report not found — start it first.
+
+  Two calls are type-specific: `utilization()` works on **served models** only, and
+  `replica_status()` on **microservices** only. On any other type the SDK raises a clear error.
 </Note>
 
 ## Get its links
