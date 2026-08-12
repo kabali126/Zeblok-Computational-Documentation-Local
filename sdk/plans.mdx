@@ -91,6 +91,53 @@ dyn = client.plans.create_dynamic(
 print(dyn["planName"])       # auto-generated
 ```
 
+## Create many plans, each a different size
+
+`batch()` hands **each item** to your function untouched. Pass a list of dictionaries rather
+than a list of names, and every plan keeps its own resources.
+
+```python
+from zeblok.batch import batch, delete_many, unique_names
+
+PLAN_SPECS = [
+    {"name": "cpu-small",
+     "resources": {"GPU": 0, "CPU": 1, "memory": 2, "storage": 5}},
+
+    {"name": "cpu-large",
+     "resources": {"GPU": 0, "CPU": 8, "memory": 32, "storage": 50}},
+
+    {"name": "gpu-1",
+     "resources": {"GPU": 1, "CPU": 8, "memory": 64, "storage": 100},
+     "price": 5, "visibility": "organization"},
+]
+
+# give every plan a name that is not already taken
+taken = {p["name"] for p in client.plans.get_all(print_stdout=False)}
+for spec in PLAN_SPECS:
+    if spec["name"] in taken:
+        spec["name"] = unique_names(spec["name"], 1, existing=list(taken))[0]
+    taken.add(spec["name"])
+
+result = batch(PLAN_SPECS, lambda s: client.plans.create(
+    s["name"], DATACENTER_ID, s["resources"],
+    price=s.get("price", 0),
+    currency=s.get("currency", "USD"),
+    visibility=s.get("visibility", "private"),
+))
+
+print(result.summary())
+for _spec, made in result.ok:
+    print(made["planName"], made["resources"])
+
+delete_many(result, lambda i: client.plans.delete(i))
+```
+
+<Warning>
+  **The common mistake.** Passing a list of *names* and hard-coding one `resources` dict inside
+  the lambda gives every plan the same size — only the names differ. Put the resources in the
+  item, not in the function.
+</Warning>
+
 ## Update and delete
 
 ```python
@@ -105,3 +152,14 @@ print("gone?", not client.plans.validate_id(PLAN_ID))
   Send only the fields you are changing — everything else stays as it was. Passing nothing is
   refused with `pass at least one field to update`.
 </Note>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Namespaces" icon="folder" href="/sdk/namespaces">
+    Where workloads run.
+  </Card>
+  <Card title="Workstations" icon="laptop-code" href="/sdk/workstations">
+    Use a plan to start one.
+  </Card>
+</CardGroup>

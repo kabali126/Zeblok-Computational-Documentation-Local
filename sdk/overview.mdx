@@ -7,39 +7,62 @@ The Zeblok Python SDK (version 2.0.0) lets you drive the Ai-MicroCloud platform 
 Anything you can do in the web interface — create plans, start workstations, deploy
 microservices, serve AI models, run agents — you can do from a script.
 
-## Install
+<CardGroup cols={3}>
+  <Card title="Every component" icon="grid-2" horizontal />
+  <Card title="One client object" icon="plug" horizontal />
+  <Card title="Python 3.9+" icon="python" horizontal />
+</CardGroup>
 
-```bash
-pip install "zeblok-sdk[all]"
-```
+## Set up
 
-Python 3.9 or newer. The `[all]` extra adds the optional AWS and Azure object-store
-backends and Socket.IO push updates. Plain `pip install zeblok-sdk` covers everything else.
+<Steps>
+  <Step title="Install" icon="download">
+    ```bash
+    pip install "zeblok-sdk"
+    ```
 
-## Connect
+    That covers everything on these pages. Two features need an extra:
 
-Everything hangs off a single client. Create it once, then reach each component from it.
+    | If you want | Install |
+    |---|---|
+    | Live status updates (`wait_until_ready`) | `pip install "zeblok-sdk[realtime]"` |
+    | AWS S3 or Azure storage instead of MinIO | `pip install "zeblok-sdk[s3]"` or `[azure]` |
 
-```python
-import os
+    Or `pip install "zeblok-sdk[all]"` for every extra at once.
+  </Step>
 
-from zeblok import ZeblokClient
+  <Step title="Connect" icon="link">
+    Everything hangs off a single client. Create it once, then reach each component from it.
 
-client = ZeblokClient(
-    os.environ["ZBL_APP_URL"],        # e.g. "https://app.your-env.zeblok.com"
-    os.environ["ZBL_ACCESS_KEY"],
-    os.environ["ZBL_ACCESS_SECRET"],
-)
+    ```python
+    import os
 
-print(client.health())    # {'status': 'ok', ...}  -> platform reachable
-print(client.config())    # {'tier': 'pro', ...}   -> your key works
-```
+    from zeblok import ZeblokClient
 
-<Tip>
-  Paste whatever URL you use in the browser. The web app and the REST API are served from
-  different hosts, and which prefix is correct differs per environment — the client checks
-  and switches for you.
-</Tip>
+    client = ZeblokClient(
+        os.environ["ZBL_APP_URL"],        # e.g. "https://app.your-env.zeblok.com"
+        os.environ["ZBL_ACCESS_KEY"],
+        os.environ["ZBL_ACCESS_SECRET"],
+    )
+    ```
+
+    <Tip>
+      Paste whatever URL you use in the browser. The web app and the REST API are served from
+      different hosts, and which prefix is correct differs per environment — the client checks
+      and switches for you.
+    </Tip>
+  </Step>
+
+  <Step title="Check it works" icon="circle-check">
+    ```python
+    print(client.health())    # {'status': 'ok', ...}  -> platform reachable
+    print(client.config())    # {'tier': 'pro', ...}   -> your key works
+    ```
+
+    Both printing means you are connected and authenticated. If not, see
+    [Authentication](/sdk/authentication).
+  </Step>
+</Steps>
 
 ## How every page here is organised
 
@@ -57,7 +80,7 @@ Each component page follows the same shape, so once you learn one you know them 
   and consume real resources.
 </Warning>
 
-## Components
+## Where to start
 
 <CardGroup cols={2}>
   <Card title="Authentication" icon="key" href="/sdk/authentication">
@@ -66,8 +89,15 @@ Each component page follows the same shape, so once you learn one you know them 
   <Card title="Quickstart" icon="rocket" href="/sdk/quickstart">
     A read-only first script that proves your setup and prints the ids you need.
   </Card>
+</CardGroup>
+
+## Configuration
+
+Set these up first — every workload needs a plan and a namespace.
+
+<CardGroup cols={3}>
   <Card title="Plans" icon="server" href="/sdk/plans">
-    Define how much CPU, GPU, memory and storage a workload gets.
+    How much CPU, GPU, memory and storage a workload gets.
   </Card>
   <Card title="Namespaces" icon="folder" href="/sdk/namespaces">
     Isolate workloads and control who can reach them.
@@ -75,6 +105,13 @@ Each component page follows the same shape, so once you learn one you know them 
   <Card title="Data centers" icon="building" href="/sdk/datacenters">
     Inspect machines and check free capacity before you deploy.
   </Card>
+</CardGroup>
+
+## Workloads
+
+Things you start and keep running.
+
+<CardGroup cols={2}>
   <Card title="Workstations" icon="laptop-code" href="/sdk/workstations">
     Start a JupyterLab development machine in the cloud.
   </Card>
@@ -84,6 +121,14 @@ Each component page follows the same shape, so once you learn one you know them 
   <Card title="Orchestration add-ons" icon="diagram-project" href="/sdk/orchestration-addons">
     Run cluster tools such as Ray for distributed compute.
   </Card>
+  <Card title="Workload lifecycle" icon="rotate" href="/sdk/lifecycle">
+    One handle to stop, start, resize, share and delete anything you started.
+  </Card>
+</CardGroup>
+
+## AI
+
+<CardGroup cols={3}>
   <Card title="Inference" icon="brain" href="/sdk/inference">
     Serve an AI model as a live endpoint and chat with it.
   </Card>
@@ -93,6 +138,11 @@ Each component page follows the same shape, so once you learn one you know them 
   <Card title="AI Model Hub" icon="download" href="/sdk/model-hub">
     Import models from HuggingFace and manage them.
   </Card>
+</CardGroup>
+
+## Data & builds
+
+<CardGroup cols={3}>
   <Card title="Datasets" icon="database" href="/sdk/datasets">
     Store files on the platform and get them back.
   </Card>
@@ -102,9 +152,11 @@ Each component page follows the same shape, so once you learn one you know them 
   <Card title="Containerization" icon="box" href="/sdk/containerization">
     Watch the image builds the platform runs for you.
   </Card>
-  <Card title="Workload lifecycle" icon="rotate" href="/sdk/lifecycle">
-    One handle to stop, start, resize, share and delete anything you started.
-  </Card>
+</CardGroup>
+
+## Administration & reference
+
+<CardGroup cols={3}>
   <Card title="IAM" icon="user-shield" href="/sdk/iam">
     Users, roles, groups, policies and organisations.
   </Card>

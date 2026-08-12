@@ -143,25 +143,36 @@ for entry in client.iam.audit.list()[:10]:
 ## A worked example
 
 <Steps>
-  <Step title="Create a role of your own">
+  <Step title="Create a role of your own" icon="play">
     ```python
     role = client.iam.roles.create("data-team")
     ```
   </Step>
-  <Step title="Grant it what it needs">
+  <Step title="Grant it what it needs" icon="circle-dot">
     ```python
     client.iam.permissions.create(role=role["_id"], resource="plans", actions=["read"])
     ```
   </Step>
-  <Step title="Put people in a group carrying it">
+  <Step title="Put people in a group carrying it" icon="upload">
     ```python
     grp = client.iam.groups.create(name="data-team-group", roles=[role["_id"]])
     client.users.update(USER_ID, usergroups=[grp["_id"]])
     ```
   </Step>
-  <Step title="Prove it worked">
+  <Step title="Prove it worked" icon="circle-dot">
     ```python
     print(client.iam.effective_permissions(USER_ID).allows("plans", "read"))   # True
     ```
   </Step>
 </Steps>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Namespaces" icon="folder" href="/sdk/namespaces">
+    Membership uses these users.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/sdk/errors">
+    Why a call was refused.
+  </Card>
+</CardGroup>

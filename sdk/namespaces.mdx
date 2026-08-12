@@ -84,3 +84,14 @@ client.namespaces.remove_users(NS_ID, users[0]["_id"])      # keeps the rest
 client.namespaces.delete(NS_ID)
 print("gone?", not client.namespaces.validate_id(NS_ID))
 ```
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Plans" icon="server" href="/sdk/plans">
+    How much resource a workload gets.
+  </Card>
+  <Card title="IAM" icon="user-shield" href="/sdk/iam">
+    Users and roles behind membership.
+  </Card>
+</CardGroup>

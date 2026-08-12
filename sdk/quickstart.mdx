@@ -5,43 +5,66 @@ description: "A read-only first script that proves your setup and prints the ids
 
 Copy this, fill in three values, run it. It only reads — nothing is created or changed.
 
-```python
-import os
+<Steps>
+  <Step title="Connect" icon="plug">
+    ```python
+    import os
 
-from zeblok import ZeblokClient
+    from zeblok import ZeblokClient
 
-APP_URL       = os.environ["ZBL_APP_URL"]
-ACCESS_KEY    = os.environ["ZBL_ACCESS_KEY"]
-ACCESS_SECRET = os.environ["ZBL_ACCESS_SECRET"]
+    APP_URL       = os.environ["ZBL_APP_URL"]
+    ACCESS_KEY    = os.environ["ZBL_ACCESS_KEY"]
+    ACCESS_SECRET = os.environ["ZBL_ACCESS_SECRET"]
 
-client = ZeblokClient(APP_URL, ACCESS_KEY, ACCESS_SECRET)
+    client = ZeblokClient(APP_URL, ACCESS_KEY, ACCESS_SECRET)
+    ```
+  </Step>
 
-# 1 — is the platform reachable, and does my key work?
-print("health:", client.health())
-print("config:", client.config())
+  <Step title="Check the platform and your key" icon="heart-pulse">
+    ```python
+    print("health:", client.health())
+    print("config:", client.config())
+    ```
 
-# 2 — the three ids almost every other call needs
-DATACENTER_ID = client.datacenters.get_all(print_stdout=False)[0]["id"]
-PLAN_ID       = client.plans.get_all(print_stdout=False)[0]["id"]
-NAMESPACE_ID  = client.namespaces.get_all(print_stdout=False)[0]["id"]
+    Both printing means the platform is reachable **and** your key works. If not,
+    see [Authentication](/sdk/authentication).
+  </Step>
 
-print("datacenter:", DATACENTER_ID)
-print("plan      :", PLAN_ID)
-print("namespace :", NAMESPACE_ID)
+  <Step title="Collect the three ids you will keep needing" icon="key">
+    ```python
+    DATACENTER_ID = client.datacenters.get_all(print_stdout=False)[0]["id"]
+    PLAN_ID       = client.plans.get_all(print_stdout=False)[0]["id"]
+    NAMESPACE_ID  = client.namespaces.get_all(print_stdout=False)[0]["id"]
 
-# 3 — what is already running
-print("workstations :", len(client.workstations.spawned() or []))
-print("microservices:", len(client.microservices.spawned() or []))
+    print("datacenter:", DATACENTER_ID)
+    print("plan      :", PLAN_ID)
+    print("namespace :", NAMESPACE_ID)
+    ```
 
-# 4 — what am I allowed to do?
-me = client.iam.my_permissions()
-print("role:", me.raw.get("role"), "| can list plans:", me.allows("plans", "list"))
-```
+    Almost every other call takes at least one of these.
+  </Step>
+
+  <Step title="See what is already running" icon="list-check">
+    ```python
+    print("workstations :", len(client.workstations.spawned() or []))
+    print("microservices:", len(client.microservices.spawned() or []))
+    ```
+  </Step>
+
+  <Step title="Check what you are allowed to do" icon="user-shield">
+    ```python
+    me = client.iam.my_permissions()
+    print("role:", me.raw.get("role"), "| can list plans:", me.allows("plans", "list"))
+    ```
+
+    Worth knowing up front — some operations need `admin`, a few need `superadmin`.
+  </Step>
+</Steps>
 
 ## Start your first workstation
 
 <Steps>
-  <Step title="Pick an image and a plan">
+  <Step title="Pick an image and a plan" icon="magnifying-glass">
     ```python
     catalog = client.workstations.get_all(print_stdout=False)
     image   = client.workstations.get_by_id(catalog[0]["id"], print_stdout=False)
@@ -49,7 +72,7 @@ print("role:", me.raw.get("role"), "| can list plans:", me.allows("plans", "list
     print(image["display_names"])     # spawn() needs one of these names
     ```
   </Step>
-  <Step title="Start it">
+  <Step title="Start it" icon="play">
     ```python
     pod_name, url = client.workstations.spawn(
         display_name=image["display_names"][0],
@@ -60,7 +83,7 @@ print("role:", me.raw.get("role"), "| can list plans:", me.allows("plans", "list
     )
     ```
   </Step>
-  <Step title="Wait for it, then open it">
+  <Step title="Wait for it, then open it" icon="hourglass-half">
     ```python
     ws_id  = client.workstations.get_spawned_id_by_name(pod_name)
     handle = client.spawned("image", ws_id)
@@ -71,7 +94,7 @@ print("role:", me.raw.get("role"), "| can list plans:", me.allows("plans", "list
 
     The link carries the notebook token, so it opens an already-authenticated session.
   </Step>
-  <Step title="Clean up when you are done">
+  <Step title="Clean up when you are done" icon="trash">
     ```python
     handle.delete(stop_first=True)
     ```
@@ -85,11 +108,22 @@ print("role:", me.raw.get("role"), "| can list plans:", me.allows("plans", "list
 
 ## While you are learning
 
-Put writes behind a flag so a stray run cannot create anything:
+<Note>
+  Put writes behind a flag so a stray run cannot create anything:
 
-```python
-RUN_WRITES = False
+  ```python
+  RUN_WRITES = False
 
-if RUN_WRITES:
-    client.plans.create(...)
-```
+  if RUN_WRITES:
+      client.plans.create(...)
+  ```
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="Start a workload" icon="laptop-code" href="/sdk/workstations">
+    Workstations, microservices and add-ons.
+  </Card>
+  <Card title="Manage what you started" icon="rotate" href="/sdk/lifecycle">
+    Stop, start, resize, share and delete.
+  </Card>
+</CardGroup>

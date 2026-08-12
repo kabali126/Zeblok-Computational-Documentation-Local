@@ -53,6 +53,26 @@ delete_many(result, lambda i: client.plans.delete(i))
   single error listing every failure.
 </Tip>
 
+## Vary more than the name
+
+`batch()` passes **each item** to your function exactly as given, so items do not have to be
+strings. Hand it dictionaries and every created thing can differ:
+
+```python
+PLAN_SPECS = [
+    {"name": "cpu-small", "resources": {"GPU": 0, "CPU": 1, "memory": 2,  "storage": 5}},
+    {"name": "gpu-1",     "resources": {"GPU": 1, "CPU": 8, "memory": 64, "storage": 100}},
+]
+
+batch(PLAN_SPECS, lambda s: client.plans.create(
+    s["name"], DATACENTER_ID, s["resources"], price=0, currency="USD", visibility="private"))
+```
+
+<Warning>
+  Hard-coding the varying part inside the lambda is the mistake to avoid — it produces a batch
+  where only the names differ. Whatever changes per item belongs **in** the item.
+</Warning>
+
 ## The same pattern everywhere
 
 ```python
@@ -74,3 +94,14 @@ batch(ids, lambda i: client.plans.update(i, price=1))
   Spawn batches start **real, billable workloads**. Keep the count small while testing, and
   clean up with `delete_many()` afterwards.
 </Warning>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Plans" icon="server" href="/sdk/plans">
+    The usual bulk target.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/sdk/errors">
+    Reading a partial run.
+  </Card>
+</CardGroup>
