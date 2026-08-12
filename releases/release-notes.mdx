@@ -7,6 +7,87 @@ This page documents what changed in each release of Zeblok Ai-MicroCloud®. Upda
 
 <AccordionGroup>
 
+  <Accordion title="v2.2.0 — July 2026 (Minor Release)">
+    A feature release headlined by the launch of Ai-MicroCloud® Lite — our simplest, most accessible edition yet — and complemented by an upgraded Python SDK, a unified Lifecycle Manager, a far more capable Ai-Assistant, public-cloud Edge deployments, deeper monitoring and alerting, stronger platform security, and a broad set of reliability improvements.
+
+    **🌟 Highlights**
+
+    - 🚀 **New Ai-MicroCloud® Lite Product Launch:** A streamlined AI-infrastructure edition built for single-machine/laptop deployment at a more accessible cost.
+    - ⚙️ **Superior Automation with a Brand-New SDK:** Simplify deployment and management with a new developer experience designed around automation.
+    - 🤖 **Enhanced Productivity with the Ai-Assistant:** Get more done with intelligent assistance built into the workflow.
+    - ☸️ **Kubernetes v1.36 Support:** The platform now supports the latest Kubernetes release, including live pod resizing without restarts.
+    - 🔐 **Expanded Security Scanning:** Image vulnerability scanning now covers Agent Hub, Model Hub, and Orchestration Add-ons, across both centralized and local registries.
+
+    ---
+
+    ## 🆕 New Product Launch — Ai-MicroCloud® Lite
+
+    - **Built for single-machine and laptop deployment:** Get a complete, self-contained AI environment running on everyday hardware in just a few steps.
+    - **Offered at a more accessible price point:** Lowering the barrier to entry so more teams, pilots, and developers can adopt Ai-MicroCloud® with ease.
+
+    ---
+
+    ## Ai-MicroCloud®
+
+    **IaaS**
+
+    - **Enhanced Edge Deployment Automation (Public Cloud):** Upgraded the end-to-end deployment automation for Edge clusters on AWS, introducing custom edge-server port support, automatic IP handling across setup and recovery, and multiple reliability improvements that make public-cloud Edge provisioning smoother and more resilient.
+    - **Refined Resource Alerting:** Enhanced the existing alerting — CPU, memory, and storage alerts are now delivered as a single summary email. Severity is shown in the subject line, and startup false-positives have been eliminated.
+    - **Accurate Cluster Capacity Reporting:** CPU, GPU, and memory availability now reflect what's actually free in your cluster. KVM-based clusters now show correct capacity in the Data Center view too.
+    - **Improved Edge Monitoring Reliability:** Resolved monitoring and metrics-reporting issues on Edge deployments so dashboards and utilization data display accurately and consistently.
+    - **Kubernetes v1.36 Support:** The platform now runs on the latest Kubernetes release, enabling In-Place Pod Resize — CPU and memory can be adjusted without restarting workloads — and more reliable sidecar lifecycle handling for logging, monitoring, and proxy components.
+
+    **PaaS**
+
+    - **Python SDK v2 (Upgraded):** An upgraded SDK with full programmatic control across the platform — including new support for Inference, Agents, and IAM, plus model management and secure key handling.
+    - **SDK Monitoring & Utilization:** Retrieve monitoring metrics, session details, and utilization data for spawned components directly from the SDK.
+    - **Smarter, More Capable Ai-Assistant:** The Ai-Assistant can now manage every part of the platform — creating, deploying, starting, stopping, and searching across all your resources through simple chat.
+    - **Unified Lifecycle Manager:** A single screen to manage every running resource — Start, Stop, or Delete resources, filter by user or status, search by name, and see each resource's live status.
+    - **Enhanced Weekly Usage Report:** The weekly usage email now covers Inference, Agents, Ai-APIs, and Orchestration Add-ons (previously only Workstations and Microservices), with accurate 7-day runtime calculation, real GPU-usage figures, clear per-resource compute breakdowns, and refreshed Ai-MicroCloud® branding.
+    - **Edge-Optimized Model Import:** The model import workflow now supports Edge environments — models are registered at import time and downloaded only when an inference is deployed, removing the earlier dependency on bucket-based storage that Edge setups couldn't use.
+    - **Model Hub Storage Visibility:** Model Hub now shows the total storage consumed by imported models, calculated directly from the object store.
+    - **Accurate Storage Capacity in Plans:** Dynamic plans now detect the underlying storage backend automatically and report storage and related capacity metrics correctly across supported deployments.
+    - **Platform Version Visibility:** The platform now displays live version details for all core components (Ai-MicroCloud®, CaaS, CLI, SDK, and the underlying OS, orchestrator, and object store), making support and audits faster and clearer.
+    - **Dataset File Management:** Individual files can now be deleted from a dataset version, and each file shows its size and upload date.
+    - **Built-In Documentation Access:** Users can now reach the platform's documentation, help, and release notes directly from within the interface.
+    - **Simplified Signup:** The signup experience has been streamlined into a single, simple form, removing the earlier Individual/Enterprise selection for a faster first-time experience.
+    - **Ai-Assistant Experience Polish:** The Ai-Assistant floating button now features improved animations and visual cues, cleaner layering that no longer overlaps other forms, and a refined sidebar layout.
+
+    **Security**
+
+    - **Expanded Image Vulnerability Scanning:** Security scan results are now available directly in Agent Hub, Model Hub, and Orchestration Add-ons — users can view image scan reports right from the interface.
+    - **Registry-Aware Scanning:** Security scanning is now registry-aware, working seamlessly across both the centralized registry and the local registry deployed with each Ai-MicroCloud®.
+    - **Hardened Inference Logging:** Inference logs have been hardened so that sensitive connection details are never written to deployment logs, with cleaner, level-controlled log output.
+    - **Stronger Name Validation:** Consistent validation across Plans, Namespaces, Datasets, Workstations, and Microservices now prevents duplicate names, single-character names, numeric-only names, and names made up only of special characters.
+    - **Ai-Assistant Response Hardening:** The Ai-Assistant no longer exposes internal tool names in its responses, keeping platform internals private.
+
+    **Bug Fixes**
+
+    - Fixed Edge model-import failures caused by incorrect image references, so models now import and deploy successfully.
+    - Resolved incomplete model imports that previously caused inference startup failures.
+    - Improved storage-mount reliability so systems boot consistently after storage configuration changes.
+    - Resource status now updates correctly after a workload recovers, instead of showing a stale state.
+    - Deleted Ai-APIs are now fully removed from the dashboard instead of lingering as inactive entries.
+    - Fixed a connectivity issue in the video-streaming detection microservice so live streams connect correctly and detections run as expected.
+    - Environment-downtime emails are now sent once when an environment goes down and once when it recovers — the repeating reminder every 30 minutes has been removed.
+    - Invited users can now mark notifications as read without permission errors.
+    - Fixed the signup step indicator and corrected several form-layout and text-overflow issues across the interface.
+
+    **Documentation**
+
+    - **New How-To Videos:** Added guided walkthroughs covering Edge DDIL, Launcher setup via the installer, and Orchestration workflows.
+    - **Refreshed Website:** Updated the Defense page, added new Company and Career pages (fully mobile-responsive), and aligned product terminology to "Elastic Context Offloading" across the site.
+
+    ---
+
+    ## Launcher
+
+    **IaaS**
+
+    - **Native Launcher Desktop Application on Ubuntu:** The Launcher now opens in its own dedicated window as a native desktop application, with configurable launch modes (Desktop App or Browser) — delivering a cleaner, more integrated setup experience.
+    - **Ai-MicroCloud® Lite — Upgraded Setup Script:** An enhanced, integrated setup script now provisions a complete Ai-MicroCloud® Lite environment on a single machine with minimal manual steps, making local deployment faster and easier than ever.
+  </Accordion>
+
   <Accordion title="v2.1.0 — June 2026 (Minor Release)">
     A feature release delivering major Launcher upgrades, expanded monitoring and alerting, smarter MCP agents and Ai-Assistant, stronger platform security, a lighter Longhorn storage layer, and key reliability fixes.
 
