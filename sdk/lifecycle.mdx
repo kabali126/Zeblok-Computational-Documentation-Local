@@ -32,6 +32,11 @@ sa = client.spawned_agent("<agent-id>")     # agents have their own handle
 
 ## Look at it
 
+<Frame caption="One handle manages every type. replica_status is service-only, so it reports N/A on an inference — and logs 404 on a stopped workload.">
+  <img src="/images/sdk/inference/manage-status-stop-start.png" alt="Getting a handle for a running inference, reading status and monitoring probes, then stop, start and restart" />
+</Frame>
+
+
 <Frame caption="spawn() hands back a pod name; every management call needs the database id. get_spawned_id_by_name() converts it — a pod name gives 400 Validation failed.">
   <img src="/images/sdk/microservices/list-resolve-status-open.png" alt="Listing running microservices, resolving the pod name to an id, then reading status, replicas and logs" />
 </Frame>
@@ -155,6 +160,11 @@ handle.share(["colleague@yourcompany.com"])     # emails, usernames or ids
 ```
 
 ## Delete it
+
+<Frame caption="Deleting the LAST spawned inference makes the list endpoint raise NoResourcesError rather than return [] — that is this module's 'empty' signal, and it means the delete worked.">
+  <img src="/images/sdk/inference/delete-and-verify.png" alt="Deleting a running inference with stop_first=True and confirming it is gone" />
+</Frame>
+
 
 <Frame caption="After deleting, the id disappears from the spawned list — the check that proves the workload is really gone.">
   <img src="/images/sdk/microservices/reconfigure-share-delete.png" alt="Reconfiguring a microservice to another plan, sharing it, then deleting it" />

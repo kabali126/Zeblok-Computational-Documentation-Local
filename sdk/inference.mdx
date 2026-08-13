@@ -20,6 +20,11 @@ instance, and **chat** with it.
 
 ## Pick a model and a GPU plan
 
+<Frame caption="Each model carries modelTags — the image/tag pair spawn() needs. Pick the tag, not the friendly name.">
+  <img src="/images/sdk/inference/browse-catalog.png" alt="Listing the Inference Hub catalog and reading a model's tags" />
+</Frame>
+
+
 ```python
 models = client.inferences.get_all(print_stdout=False)
 
@@ -39,6 +44,11 @@ INFERENCE_PLAN_ID = gpu_plans[0]["id"]
 </Warning>
 
 ## Serve it
+
+<Frame caption="spawn() inherits --model, --tensor-parallel-size and the rest from the tag's parameters. A 70B model on a 0-GPU plan is accepted, then never becomes ready — check the GPU plans first.">
+  <img src="/images/sdk/inference/launch-args-and-gpu-plan.png" alt="The launch arguments inherited from the model tag, and the GPU plans available" />
+</Frame>
+
 
 ```python
 pod_name, url = client.inferences.spawn(
@@ -66,6 +76,11 @@ handle.wait_until_ready(timeout=1800)      # large models load slowly
   starts with nothing to serve.
 </Note>
 
+
+<Frame caption="spawn() returns the pod name; resolve it with get_spawned_inference_id_by_pod_name() before managing. Large models take minutes to pull and load.">
+  <img src="/images/sdk/inference/spawn-model.png" alt="Spawning a model and the pod name it returns" />
+</Frame>
+
 ## Chat with it
 
 ```python
@@ -88,6 +103,11 @@ chat.get_all()                                                # history with tok
 </Warning>
 
 ## Resize
+
+<Frame caption="Inference takes min_replicas / max_replicas / threshold — not the plan_id that services and workstations use. Wrong-type fields fail fast with the allowed list.">
+  <img src="/images/sdk/inference/reconfigure-and-share.png" alt="Reconfiguring an inference with min/max replicas and a threshold, then sharing it" />
+</Frame>
+
 
 ```python
 handle.reconfigure(min_replicas=1, max_replicas=2, threshold=80)

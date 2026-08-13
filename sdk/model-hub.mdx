@@ -38,6 +38,11 @@ mine = client.models.private_models(HF_TOKEN, limit=10)
 
 ## Import
 
+<Frame caption="metadata() previews an HF model — size, gating, config — before you import anything. import_model() registers it and starts the serving-image build.">
+  <img src="/images/sdk/model-hub/full-import-flow.png" alt="The full import flow: curated models, pre-import metadata, private repos, import, read back, update and delete" />
+</Frame>
+
+
 ```python
 result = client.models.import_model(
     model_id="Qwen/Qwen2.5-0.5B-Instruct",

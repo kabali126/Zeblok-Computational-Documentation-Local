@@ -30,6 +30,11 @@ so older files stay where they were.
 
 ## Create and upload
 
+<Frame caption="filepaths are paths on the machine running the code — in a Zeblok workstation that is the workstation's filesystem, not your laptop. Missing files are reported and skipped.">
+  <img src="/images/sdk/datasets/create-and-upload.png" alt="Creating a dataset with an auto-uniqued name and uploading a file to it" />
+</Frame>
+
+
 ```python
 ds_id = client.datasets.create_dataset(
     dataset_name="customer-churn",
@@ -47,6 +52,11 @@ client.datasets.upload_dataset(ds_id, filepaths=["/home/me/churn.csv"])
 
 ## Look inside, and download
 
+<Frame caption="files() takes the dataset name, not its id, and version_files() needs dataSetName as a query parameter.">
+  <img src="/images/sdk/datasets/files-download-delete.png" alt="Checking the object store, listing files by version, and getting a presigned download URL" />
+</Frame>
+
+
 ```python
 name = client.datasets.get_by_id(ds_id)["name"]
 
@@ -58,6 +68,11 @@ print("saved to", path)
 ```
 
 ## Delete
+
+<Frame caption="These older SDK modules raise NoResourcesError when the list is empty instead of returning [] — worth catching, as here.">
+  <img src="/images/sdk/datasets/list-datasets.png" alt="Listing datasets, with the empty-list signal handled" />
+</Frame>
+
 
 ```python
 client.datasets.delete_dataset(ds_id)

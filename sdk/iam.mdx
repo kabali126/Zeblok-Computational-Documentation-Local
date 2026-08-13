@@ -35,6 +35,11 @@ print(client.iam.my_permissions().raw.get("role"))
 
 ## Users
 
+<Frame caption="effective_permissions() resolves what a person can do once roles and group memberships are combined. invite() is the normal way to add someone — they set their own password.">
+  <img src="/images/sdk/users/read-filter-and-invite.png" alt="Reading users and organisations, filtering, and inviting a colleague" />
+</Frame>
+
+
 ```python
 users = client.users.list()
 USER_ID = users[0]["_id"]
@@ -62,6 +67,15 @@ client.users.delete(person["_id"])
 
   Deleting a **primary admin** is refused unless you name a replacement with `reassign_to=`.
 </Note>
+
+
+<Frame caption="create() sets the password yourself — use it for seeding and automation. deactivate() switches an account off without deleting it, which is usually what 'this person left' means.">
+  <img src="/images/sdk/users/create-update-deactivate.png" alt="Creating a user directly, then updating quotas, deactivating and reactivating" />
+</Frame>
+
+<Frame caption="Usernames are derived from each email's local part and made unique with dots — the platform rejects dashes. Anyone already registered is skipped, not failed, so a re-run tops up the list.">
+  <img src="/images/sdk/users/bulk-create-users.png" alt="Creating several users from a list of addresses in one batch" />
+</Frame>
 
 ## Roles and permissions
 
