@@ -85,14 +85,15 @@ for e in handle.endpoints():
 
 ## Control it
 
+<Frame caption="restart() recreates the pod in one call and keeps the id, plan and URL — unlike stop+start, which is two calls.">
+  <img src="/images/sdk/microservices/stop-start-restart-edit.png" alt="Stopping and starting a microservice, restarting it in place, then editing its replicas" />
+</Frame>
+
+
 <Frame caption="The same pod-name-to-id resolution as every other workload type, and the same stop/start/restart controls.">
   <img src="/images/sdk/orchestration-addons/list-status-stop-start-restart.png" alt="Listing running add-ons, resolving the id, reading status, then stop, start and restart" />
 </Frame>
 
-
-<Frame caption="restart() recreates the pod in one call, keeping the id, plan and URL. Note the states each action allows — only a running workload can be restarted.">
-  <img src="/images/sdk/workstations/stop-restart-edit-reconfigure.png" alt="Stopping, restarting, editing and reconfiguring a running workstation" />
-</Frame>
 
 
 ```python
@@ -110,14 +111,15 @@ handle.wait_until_ready(timeout=600)   # block until it reports 'running'
 
 ## Change it
 
+<Frame caption="restart() recreates the pod in one call, keeping the id, plan and URL. Note the states each action allows — only a running workload can be restarted.">
+  <img src="/images/sdk/workstations/stop-restart-edit-reconfigure.png" alt="Stopping, restarting, editing and reconfiguring a running workstation" />
+</Frame>
+
+
 <Frame caption="Add-ons have no edit route — resize with reconfigure(min_workers=…, max_workers=…), and note they take head/worker plans rather than a single plan_id.">
   <img src="/images/sdk/orchestration-addons/reconfigure-share-delete.png" alt="Reconfiguring an add-on's worker range, sharing it, then deleting it" />
 </Frame>
 
-
-<Frame caption="edit() changes the live deployment; reconfigure() moves it to another plan. Which fields are accepted depends on the workload type.">
-  <img src="/images/sdk/microservices/stop-start-restart-edit.png" alt="Stop and start, restart in place, then edit replicas on a running microservice" />
-</Frame>
 
 
 **Edit** changes what is inside a workload. **Reconfigure** changes what it runs on.
@@ -148,6 +150,11 @@ with the allowed list:
 
 ## Share it
 
+<Frame caption="Sharing takes emails, usernames or ids — the SDK resolves anything that is not an id, and a wrong name lists every visible address so you can spot the typo.">
+  <img src="/images/sdk/microservices/reconfigure-share-delete.png" alt="Reconfiguring a microservice to another plan, sharing it with a colleague, then deleting it" />
+</Frame>
+
+
 <Frame caption="Pass emails, usernames or ids — the SDK resolves anything that is not an id. Delete with stop_first=True to stop and remove in one call.">
   <img src="/images/sdk/workstations/share-and-delete.png" alt="Sharing a workstation with another user by email, then deleting it and verifying it is gone" />
 </Frame>
@@ -165,10 +172,6 @@ handle.share(["colleague@yourcompany.com"])     # emails, usernames or ids
   <img src="/images/sdk/inference/delete-and-verify.png" alt="Deleting a running inference with stop_first=True and confirming it is gone" />
 </Frame>
 
-
-<Frame caption="After deleting, the id disappears from the spawned list — the check that proves the workload is really gone.">
-  <img src="/images/sdk/microservices/reconfigure-share-delete.png" alt="Reconfiguring a microservice to another plan, sharing it, then deleting it" />
-</Frame>
 
 
 ```python

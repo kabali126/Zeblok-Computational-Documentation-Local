@@ -8,6 +8,11 @@ so older files stay where they were.
 
 ## Capabilities
 
+<Frame caption="get_all() lists every dataset; get_by_name() finds one. Note the empty-list signal — these older SDK modules raise NoResourcesError instead of returning [], so catch it in any script that must run on a fresh environment.">
+  <img src="/images/sdk/datasets/list-datasets.png" alt="Listing datasets, with the empty-list NoResourcesError handled" />
+</Frame>
+
+
 | What you want to do | SDK call | API |
 |---|---|---|
 | List datasets | `client.datasets.get_all()` | `GET /api/v1/datasets` |
@@ -68,10 +73,6 @@ print("saved to", path)
 ```
 
 ## Delete
-
-<Frame caption="These older SDK modules raise NoResourcesError when the list is empty instead of returning [] — worth catching, as here.">
-  <img src="/images/sdk/datasets/list-datasets.png" alt="Listing datasets, with the empty-list signal handled" />
-</Frame>
 
 
 ```python
