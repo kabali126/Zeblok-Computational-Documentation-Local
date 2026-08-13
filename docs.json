@@ -101,7 +101,8 @@
                   "sdk/workstations",
                   "sdk/microservices",
                   "sdk/orchestration-addons",
-                  "sdk/lifecycle"
+                  "sdk/lifecycle",
+                  "sdk/monitoring"
                 ]
               },
               {

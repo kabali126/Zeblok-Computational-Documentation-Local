@@ -109,6 +109,32 @@ handle.wait_until_ready(timeout=600)   # block until it reports 'running'
   instead.
 </Warning>
 
+## Wait for it
+
+Most actions are asynchronous — `spawn()`, `start()` and `restart()` return before the workload
+is ready. `wait_until_ready()` blocks until it reports `running`.
+
+```python
+handle.wait_until_ready(timeout=600)
+print("ready at:", handle.open_url())
+```
+
+It polls the status endpoint by default. Install the `realtime` extra and the platform pushes
+status changes instead of being asked, which is quicker and lighter on the API:
+
+```bash
+pip install "zeblok-sdk[realtime]"
+```
+
+For full control over the push connection, `StatusStream(...).wait_for(...)` is the layer
+underneath — `wait_until_ready()` is the convenience wrapper most code should use.
+
+<Tip>
+  Give large workloads room. A big model can take several minutes to pull and load, so a timeout
+  that is fine for a workstation will fail for an inference. If it stays `starting`, check the
+  workload's logs — `handle.logs()` — rather than raising the timeout blindly.
+</Tip>
+
 ## Change it
 
 <Frame caption="restart() recreates the pod in one call, keeping the id, plan and URL. Note the states each action allows — only a running workload can be restarted.">

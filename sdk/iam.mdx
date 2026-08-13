@@ -77,6 +77,28 @@ client.users.delete(person["_id"])
   <img src="/images/sdk/users/bulk-create-users.png" alt="Creating several users from a list of addresses in one batch" />
 </Frame>
 
+### Your own account
+
+These act on the key's own user, so they need no admin rights.
+
+```python
+client.users.update_profile(name="Priya Sharma", phone="+91…")
+client.users.change_password(OLD_PASSWORD, NEW_PASSWORD)
+```
+
+`email` and `username` are fixed platform-wide — the backend strips them from a profile update,
+and the SDK rejects them up front rather than letting you think they changed. A new password
+must satisfy the same rules as `create()`: at least eight characters with an uppercase, a
+lowercase, a digit and a symbol.
+
+### Agent service accounts
+
+Agents authenticate as their own users rather than as you.
+
+```python
+client.users.agent_users()
+```
+
 ## Roles and permissions
 
 ```python

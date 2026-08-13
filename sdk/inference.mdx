@@ -81,6 +81,12 @@ handle.wait_until_ready(timeout=1800)      # large models load slowly
   <img src="/images/sdk/inference/spawn-model.png" alt="Spawning a model and the pod name it returns" />
 </Frame>
 
+<Tip>
+  `client.inferences.get_spawned_inference_by_id(id)` reads one running model, and
+  `client.inferences.validate_spawned_inference_id(id)` answers True/False instead of raising —
+  useful straight after a delete.
+</Tip>
+
 ## Chat with it
 
 <Frame caption="served_models() returns the exact name the deployment accepts — the filesystem path it was launched with, not the friendly catalog name. Omit model_name and the SDK asks the deployment for it, so a wrong name cannot reach the server.">

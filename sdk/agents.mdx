@@ -152,6 +152,40 @@ parent = client.agents.spawn(
   Agents also have **no restart route**. Stop and start instead.
 </Warning>
 
+<Tip>
+  Two helpers worth knowing: `client.agents.type_by_slug("researcher")` fetches one agent type
+  without listing them all; `client.agents.server_parameters([server_id])` shows the
+  ports, environment variables and arguments a set of MCP servers contributes — the block the SDK
+  builds for you at spawn time.
+</Tip>
+
+An MCP server can also expose resources and prompt templates: `sa.mcp().resources()` and
+`sa.mcp().prompts()`.
+
+## Conversation history and safety
+
+```python
+sa = client.spawned_agent(AGENT_ID)
+
+sa.chat_history(user_id=USER_ID)   # past conversations for one person
+sa.archived_chat()                 # what has been archived
+sa.guardrail_events()              # anything the safety rules blocked
+```
+
+Guardrails are opt-in per agent — set them at spawn time and this is where you see what they
+caught. `client.iam.audit` does not cover these; it records IAM changes only.
+
+## Stop a running delegation
+
+A sub-agent call that is taking too long can be cancelled without ending the parent's turn.
+
+```python
+sa.cancel_subagent(callId=CALL_ID)     # callId comes from a subagent_start event
+```
+
+Because the parent keeps streaming while the child is cancelled, this is normally fired from
+another thread or a second script — not from inside the loop reading the stream.
+
 ## Next
 
 <CardGroup cols={2}>
