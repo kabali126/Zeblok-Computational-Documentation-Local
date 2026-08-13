@@ -31,9 +31,10 @@ machine from one. Both live under `client.workstations`.
 
 ## Browse the catalog
 
-<Frame caption="get_all() lists the catalog; display_names are the exact image tags spawn() will accept.">
-  <img src="/images/sdk/workstations/catalog-browse-and-crud.png" alt="Listing the workstation catalog, fetching one image and reading its display names" />
+<Frame caption="display_names holds the exact image tags spawn() accepts — pass one of these, not the catalog entry's name.">
+  <img src="/images/sdk/workstations/catalog-browse.png" alt="Listing the workstation catalog, fetching one image, and reading its display names" />
 </Frame>
+
 
 
 ```python
@@ -82,9 +83,14 @@ print("open at:", handle.open_url())
 
 ## Add your own image to the catalog
 
-<Frame caption="The catalog is a registry, not a running workload — deleting an entry does not touch workstations already started from it.">
+<Frame caption="create() takes image_tags as a list of {displayName, dockerImage} dicts. update() is partial — send only what changes.">
+  <img src="/images/sdk/workstations/catalog-create-update.png" alt="Registering a workstation image in the catalog, then updating its description" />
+</Frame>
+
+<Frame caption="Removing a catalog entry does not touch workstations already spawned from it.">
   <img src="/images/sdk/workstations/catalog-delete-and-bulk.png" alt="Deleting a catalog entry, verifying it is gone, and registering several images at once" />
 </Frame>
+
 
 
 ```python

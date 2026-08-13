@@ -83,6 +83,11 @@ handle.wait_until_ready(timeout=1800)      # large models load slowly
 
 ## Chat with it
 
+<Frame caption="served_models() returns the exact name the deployment accepts — the filesystem path it was launched with, not the friendly catalog name. Omit model_name and the SDK asks the deployment for it, so a wrong name cannot reach the server.">
+  <img src="/images/sdk/inference/chat.png" alt="Reading the served model name, sending a prompt, and printing the chat history with token counts" />
+</Frame>
+
+
 ```python
 from zeblok.llm import InferenceChat
 
