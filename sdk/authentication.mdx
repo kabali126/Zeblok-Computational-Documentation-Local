@@ -14,6 +14,11 @@ the wrong one is the most common reason a call fails.
 
 ## The platform key pair
 
+<Frame caption="Three separate credential pairs, all from Platform → API Keys & Secrets. Most work needs only the first.">
+  <img src="/images/sdk/authentication/credentials-and-flags.png" alt="The three credential pairs and where each is used" />
+</Frame>
+
+
 You hand the key and secret to `ZeblokClient` once. From then on the SDK signs every
 request for you — there is no login step and nothing expires on a timer.
 
@@ -36,6 +41,11 @@ client.plans.get_all()      # already authenticated
 </Warning>
 
 ### Verify you are connected
+
+<Frame caption="The client resolves the API host for you, then health() and config() confirm the platform is reachable and your key is valid.">
+  <img src="/images/sdk/authentication/client-health-config.png" alt="Creating the client, then health() and config() both returning successfully" />
+</Frame>
+
 
 Three small calls that tell you exactly how far you got.
 

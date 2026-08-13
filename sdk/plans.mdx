@@ -24,6 +24,11 @@ it is. In the web interface these live under **Platform → Configurations → P
 
 ## List plans
 
+<Frame caption="get_all() returns every plan; get_by_id() and validate_id() work on a single one.">
+  <img src="/images/sdk/plans/list-plans.png" alt="Listing plans, fetching one by id, and checking an id exists" />
+</Frame>
+
+
 ```python
 plans = client.plans.get_all(print_stdout=False)
 
@@ -35,6 +40,11 @@ PLAN_ID = plans[0]["id"]
 ```
 
 ## Check capacity before you create
+
+<Frame caption="capacity() reports free CPU/GPU/memory per node and the largest single-node plan that would still fit.">
+  <img src="/images/sdk/plans/public-plans-and-capacity.png" alt="Public plans listing and the per-datacenter capacity check" />
+</Frame>
+
 
 ```python
 capacity = client.plans.capacity(DATACENTER_ID)
@@ -50,6 +60,11 @@ for node in capacity["nodes"]:
 </Warning>
 
 ## Create a plan
+
+<Frame caption="create() names the plan yourself; create_dynamic() lets the platform name it from the resources you ask for.">
+  <img src="/images/sdk/plans/create-plan.png" alt="Creating a plan, creating an auto-named custom plan, and reading both back" />
+</Frame>
+
 
 ```python
 plan = client.plans.create(
@@ -92,6 +107,11 @@ print(dyn["planName"])       # auto-generated
 ```
 
 ## Create many plans, each a different size
+
+<Frame caption="batch() passes each item to create(), so every plan can differ. One failure never stops the rest.">
+  <img src="/images/sdk/plans/bulk-create-plans.png" alt="Bulk-creating three plans, each with its own resources" />
+</Frame>
+
 
 `batch()` hands **each item** to your function untouched. Pass a list of dictionaries rather
 than a list of names, and every plan keeps its own resources.
@@ -140,6 +160,11 @@ delete_many(result, lambda i: client.plans.delete(i))
 
 ## Update and delete
 
+<Frame caption="Send only the fields you are changing. validate_id() returning False confirms the delete.">
+  <img src="/images/sdk/plans/update-and-delete-plan.png" alt="Updating a plan's name and price, resizing its storage, deleting it and verifying it is gone" />
+</Frame>
+
+
 ```python
 client.plans.update(PLAN_ID, plan_name="my-renamed-plan", price=1)
 client.plans.update_storage(PLAN_ID, 25)          # dedicated storage route
@@ -152,6 +177,10 @@ print("gone?", not client.plans.validate_id(PLAN_ID))
   Send only the fields you are changing — everything else stays as it was. Passing nothing is
   refused with `pass at least one field to update`.
 </Note>
+
+<Frame caption="Anything you create from the SDK appears in the web interface straight away — here the custom and renamed test plans sit alongside the standard ones.">
+  <img src="/images/sdk/plans/web-ui-plans-after-create.png" alt="The Plans page in the web interface showing the plans created from the SDK" />
+</Frame>
 
 ## Next
 
