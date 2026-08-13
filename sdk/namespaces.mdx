@@ -25,6 +25,11 @@ Every spawn needs one.
 
 ## Pick one that resolves
 
+<Frame caption="The list can include namespaces from other organisations that will not resolve by id — probe with validate_id() before relying on one.">
+  <img src="/images/sdk/namespaces/list-and-create-namespace.png" alt="Listing namespaces, probing for one that resolves by id, then creating and renaming one" />
+</Frame>
+
+
 The list can include namespaces from other organisations that the by-id lookup cannot
 return, so pick one that does both:
 
@@ -53,6 +58,11 @@ client.namespaces.update(NS_ID, name="my-team-space-v2")
 
 ## Add and remove members
 
+<Frame caption="add_users() merges into the existing membership; plain update(users=[…]) replaces it, which is how you remove people.">
+  <img src="/images/sdk/namespaces/attach-and-remove-members.png" alt="Attaching a member with add_users() and removing one with remove_users()" />
+</Frame>
+
+
 ```python
 print("members now:", client.namespaces.members(NS_ID))
 
@@ -79,6 +89,11 @@ client.namespaces.remove_users(NS_ID, users[0]["_id"])      # keeps the rest
 </Note>
 
 ## Delete
+
+<Frame caption="validate_id() returning False confirms the delete. The bulk cell below creates several namespaces in one pass.">
+  <img src="/images/sdk/namespaces/delete-and-bulk-namespaces.png" alt="Deleting a namespace, verifying it is gone, and creating several at once" />
+</Frame>
+
 
 ```python
 client.namespaces.delete(NS_ID)

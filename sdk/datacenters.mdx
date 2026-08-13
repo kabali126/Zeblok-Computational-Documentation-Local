@@ -22,6 +22,11 @@ do is look at them, and check how much capacity is free.
 
 ## Inspect a data center
 
+<Frame caption="Data centers are read-only in the SDK by design — every call here is a GET. nodes() gives per-node specs; metrics() reports the largest plan that would still fit.">
+  <img src="/images/sdk/datacenters/datacenter-reads-nodes-metrics.png" alt="Every read on a data center: list, get by id, public list, registry URL, resources, environment, nodes and metrics" />
+</Frame>
+
+
 ```python
 datacenters = client.datacenters.get_all(print_stdout=False)
 DATACENTER_ID = datacenters[0]["id"]

@@ -22,6 +22,11 @@ workers.
 
 ## Deploy a cluster
 
+<Frame caption="Add-ons take min_workers / max_workers instead of a display name — the one place their spawn differs from micro-services and workstations.">
+  <img src="/images/sdk/orchestration-addons/spawn-addon.png" alt="Deploying a Ray cluster add-on with a worker range" />
+</Frame>
+
+
 ```python
 catalog  = client.orchestrations.get_all(print_stdout=False)
 ADDON_ID = catalog[0]["id"]
@@ -51,6 +56,11 @@ handle.reconfigure(min_workers=2, max_workers=5)      # grow the cluster
 
 ## Register a template
 
+<Frame caption="Add-ons take image_tag as a single string, not a list of tag dicts — the one contract difference from the other registries.">
+  <img src="/images/sdk/orchestration-addons/catalog-browse-and-create.png" alt="Listing add-on templates, reading one, and registering a new catalog entry" />
+</Frame>
+
+
 ```python
 entry = client.orchestrations.create(
     "my-ray",                      # name, 1-100 characters
@@ -73,6 +83,10 @@ entry = client.orchestrations.create(
   `is_active=False` takes an add-on out of circulation without deleting it — better than
   deleting when you are retiring something people may still be using.
 </Tip>
+
+<Frame caption="Templates can also be disabled rather than deleted with is_active=False. Note accept_license() raises NotImplementedError — add-ons have no licence route.">
+  <img src="/images/sdk/orchestration-addons/catalog-update-delete-bulk.png" alt="Updating an add-on template, deleting it, verifying it is gone, and registering several at once" />
+</Frame>
 
 ## Next
 

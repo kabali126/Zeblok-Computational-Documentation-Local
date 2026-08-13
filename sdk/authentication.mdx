@@ -78,6 +78,11 @@ client = ZeblokClient(APP_URL, new_pair["apiKey"], new_pair["apiSecret"])
 
 ## The Gen-AI key
 
+<Frame caption="list() shows each key's zbl_… preview; usage() reports tokens and request counts per key, which is how you attribute spend.">
+  <img src="/images/sdk/gen-ai/list-keys-and-usage.png" alt="Listing Gen-AI keys and their token usage" />
+</Frame>
+
+
 Chat does not use your platform key pair. It uses a separate bearer token.
 
 ```python

@@ -31,6 +31,11 @@ services deployed from them.
 
 ## Read the template's defaults
 
+<Frame caption="Each template ships its own parameters — ports, envs, args, volumePath — which spawn() inherits unless you override them.">
+  <img src="/images/sdk/microservices/catalog-browse.png" alt="Listing the microservice catalog and reading one template's ports, envs and volume path" />
+</Frame>
+
+
 ```python
 catalog = client.microservices.get_all(print_stdout=False)
 
@@ -47,6 +52,11 @@ print("defaults  :", ms.get("parameters"))     # ports / envs / args / volumePat
 </Tip>
 
 ## Deploy
+
+<Frame caption="Omit ports/envs and the template's defaults are used, exactly as the web interface pre-fills them.">
+  <img src="/images/sdk/microservices/deploy-with-template-defaults.png" alt="Deploying a microservice that inherits the template's ports and envs" />
+</Frame>
+
 
 ```python
 pod_name, url = client.microservices.spawn(
@@ -74,6 +84,11 @@ print("replicas:", handle.replica_status())
 </Note>
 
 ## Add your own application to the catalog
+
+<Frame caption="This is the template registry. Running instances are separate — deleting a template leaves them alone.">
+  <img src="/images/sdk/microservices/catalog-crud.png" alt="Registering a catalog entry, updating its description, deleting it and verifying it is gone" />
+</Frame>
+
 
 ```python
 entry = client.microservices.create(

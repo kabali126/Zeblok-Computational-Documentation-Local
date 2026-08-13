@@ -32,6 +32,11 @@ sa = client.spawned_agent("<agent-id>")     # agents have their own handle
 
 ## Look at it
 
+<Frame caption="spawn() hands back a pod name; every management call needs the database id. get_spawned_id_by_name() converts it — a pod name gives 400 Validation failed.">
+  <img src="/images/sdk/microservices/list-resolve-status-open.png" alt="Listing running microservices, resolving the pod name to an id, then reading status, replicas and logs" />
+</Frame>
+
+
 ```python
 handle = client.spawned("service", SVC_ID)
 
@@ -54,6 +59,11 @@ print(handle.replica_status())        # microservices only
 
 ## Get its links
 
+<Frame caption="open_url() is what the web interface's Open button does. For workstations it appends the Jupyter token, so the link opens an already-authenticated session.">
+  <img src="/images/sdk/workstations/list-status-and-open-link.png" alt="open_url(), internal_url() and endpoints() for a running workstation" />
+</Frame>
+
+
 ```python
 print("open in a browser:", handle.open_url())
 print("in-cluster address:", handle.internal_url())
@@ -70,6 +80,16 @@ for e in handle.endpoints():
 
 ## Control it
 
+<Frame caption="The same pod-name-to-id resolution as every other workload type, and the same stop/start/restart controls.">
+  <img src="/images/sdk/orchestration-addons/list-status-stop-start-restart.png" alt="Listing running add-ons, resolving the id, reading status, then stop, start and restart" />
+</Frame>
+
+
+<Frame caption="restart() recreates the pod in one call, keeping the id, plan and URL. Note the states each action allows — only a running workload can be restarted.">
+  <img src="/images/sdk/workstations/stop-restart-edit-reconfigure.png" alt="Stopping, restarting, editing and reconfiguring a running workstation" />
+</Frame>
+
+
 ```python
 handle.stop()                          # frees resources, keeps everything
 handle.start()
@@ -84,6 +104,16 @@ handle.wait_until_ready(timeout=600)   # block until it reports 'running'
 </Warning>
 
 ## Change it
+
+<Frame caption="Add-ons have no edit route — resize with reconfigure(min_workers=…, max_workers=…), and note they take head/worker plans rather than a single plan_id.">
+  <img src="/images/sdk/orchestration-addons/reconfigure-share-delete.png" alt="Reconfiguring an add-on's worker range, sharing it, then deleting it" />
+</Frame>
+
+
+<Frame caption="edit() changes the live deployment; reconfigure() moves it to another plan. Which fields are accepted depends on the workload type.">
+  <img src="/images/sdk/microservices/stop-start-restart-edit.png" alt="Stop and start, restart in place, then edit replicas on a running microservice" />
+</Frame>
+
 
 **Edit** changes what is inside a workload. **Reconfigure** changes what it runs on.
 
@@ -113,6 +143,11 @@ with the allowed list:
 
 ## Share it
 
+<Frame caption="Pass emails, usernames or ids — the SDK resolves anything that is not an id. Delete with stop_first=True to stop and remove in one call.">
+  <img src="/images/sdk/workstations/share-and-delete.png" alt="Sharing a workstation with another user by email, then deleting it and verifying it is gone" />
+</Frame>
+
+
 ```python
 print([u["email"] for u in (client.users.list() or [])])
 
@@ -120,6 +155,11 @@ handle.share(["colleague@yourcompany.com"])     # emails, usernames or ids
 ```
 
 ## Delete it
+
+<Frame caption="After deleting, the id disappears from the spawned list — the check that proves the workload is really gone.">
+  <img src="/images/sdk/microservices/reconfigure-share-delete.png" alt="Reconfiguring a microservice to another plan, sharing it, then deleting it" />
+</Frame>
+
 
 ```python
 handle.delete(stop_first=True)     # stop, wait, then delete

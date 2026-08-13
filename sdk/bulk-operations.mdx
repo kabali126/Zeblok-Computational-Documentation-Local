@@ -75,6 +75,11 @@ batch(PLAN_SPECS, lambda s: client.plans.create(
 
 ## The same pattern everywhere
 
+<Frame caption="The same batch() call works for every component — here two catalog templates, commented out by default so a full run creates nothing.">
+  <img src="/images/sdk/microservices/catalog-bulk.png" alt="Registering two microservice templates in one batch call" />
+</Frame>
+
+
 ```python
 # workstations
 batch(unique_names("my-ws", 3, existing=client.workstations.spawned),

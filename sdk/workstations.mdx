@@ -31,6 +31,11 @@ machine from one. Both live under `client.workstations`.
 
 ## Browse the catalog
 
+<Frame caption="get_all() lists the catalog; display_names are the exact image tags spawn() will accept.">
+  <img src="/images/sdk/workstations/catalog-browse-and-crud.png" alt="Listing the workstation catalog, fetching one image and reading its display names" />
+</Frame>
+
+
 ```python
 catalog = client.workstations.get_all(print_stdout=False)
 
@@ -45,6 +50,11 @@ print("image tags:", image["display_names"])
 </Note>
 
 ## Start a workstation
+
+<Frame caption="spawn() returns the Kubernetes pod name — convert it with get_spawned_id_by_name() before managing the workstation.">
+  <img src="/images/sdk/workstations/spawn-workstation.png" alt="Spawning a workstation and the pod name, URL and id it returns" />
+</Frame>
+
 
 ```python
 pod_name, url = client.workstations.spawn(
@@ -71,6 +81,11 @@ print("open at:", handle.open_url())
 </Tip>
 
 ## Add your own image to the catalog
+
+<Frame caption="The catalog is a registry, not a running workload — deleting an entry does not touch workstations already started from it.">
+  <img src="/images/sdk/workstations/catalog-delete-and-bulk.png" alt="Deleting a catalog entry, verifying it is gone, and registering several images at once" />
+</Frame>
+
 
 ```python
 entry = client.workstations.create(
