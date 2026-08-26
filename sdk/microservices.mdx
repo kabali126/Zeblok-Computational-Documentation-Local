@@ -1,25 +1,14 @@
 ---
-title: "Microservices"
-description: "Deploy an application and keep it running."
+title: "Workspace › Microservices"
+description: "Deploy an application from a catalog template and keep it running."
 ---
 
-Same two halves as workstations — a **catalog** of application images, and the **running**
-services deployed from them.
+A microservice is a running deployment started from a catalog template. Registering the
+templates themselves is [Imports › Microservices](/sdk/ms-import).
+
+In the web interface: **Workspace → Microservices**.
 
 ## Capabilities
-
-### Catalog
-
-| What you want to do | SDK call | API |
-|---|---|---|
-| Browse the catalog | `client.microservices.get_all()` | `GET /api/v1/microservices` |
-| Get one template | `client.microservices.get_by_id(id)` | `GET /api/v1/microservices/:id` |
-| Public marketplace | `client.microservices.get_all_public()` | `GET /api/v1/microservices/public` |
-| Add a template | `client.microservices.create(...)` | `POST /api/v1/microservices` |
-| Update a template | `client.microservices.update(id, ...)` | `PUT /api/v1/microservices/:id` |
-| Remove a template | `client.microservices.delete(id)` | `DELETE /api/v1/microservices/:id` |
-
-### Running services
 
 | What you want to do | SDK call | API |
 |---|---|---|
@@ -27,29 +16,8 @@ services deployed from them.
 | List running | `client.microservices.spawned()` | `GET /api/v1/spawned-services` |
 | Pod name → id | `client.microservices.get_spawned_id_by_name(pod)` | `GET /api/v1/spawned-services` |
 | Replica counts | `handle.replica_status()` | `GET /api/v1/spawned-services/replica-status/:id` |
-| Everything after that | See [Workload lifecycle](/sdk/lifecycle) | — |
-
-## Read the template's defaults
-
-<Frame caption="Each template ships its own parameters — ports, envs, args, volumePath — which spawn() inherits unless you override them.">
-  <img src="/images/sdk/microservices/catalog-browse.png" alt="Listing the microservice catalog and reading one template's ports, envs and volume path" />
-</Frame>
-
-
-```python
-catalog = client.microservices.get_all(print_stdout=False)
-
-MICROSERVICE_ID = catalog[0]["id"]
-ms = client.microservices.get_by_id(MICROSERVICE_ID, print_stdout=False)
-
-print("image tags:", ms["display_names"])
-print("defaults  :", ms.get("parameters"))     # ports / envs / args / volumePath
-```
-
-<Tip>
-  Those `parameters` are what the web interface pre-fills into its deploy form. The SDK
-  inherits them when you omit `ports` and `envs` — pass your own, or `[]`, to override.
-</Tip>
+| Stop, resize, share, delete | See [Workload lifecycle](/sdk/lifecycle) | — |
+| CPU, memory, disk | See [Monitoring](/sdk/monitoring) | — |
 
 ## Deploy
 
@@ -57,8 +25,9 @@ print("defaults  :", ms.get("parameters"))     # ports / envs / args / volumePat
   <img src="/images/sdk/microservices/deploy-with-template-defaults.png" alt="Deploying a microservice that inherits the template's ports and envs" />
 </Frame>
 
-
 ```python
+ms = client.microservices.get_by_id(MICROSERVICE_ID, print_stdout=False)
+
 pod_name, url = client.microservices.spawn(
     display_name=ms["display_names"][0],
     microservice_id=MICROSERVICE_ID,
@@ -69,7 +38,16 @@ pod_name, url = client.microservices.spawn(
     # ports=[{"protocol": "HTTP", "portIdentifier": "http", "number": 8080}],
     # envs=[{"key": "LOG_LEVEL", "value": "debug"}],
 )
+```
 
+<Warning>
+  `spawn()` hands back the Kubernetes **pod name**, not the database id. Convert it before
+  managing the service — a pod name produces `400 Validation failed`.
+</Warning>
+
+## Find it, and get its URLs
+
+```python
 svc_id = client.microservices.get_spawned_id_by_name(pod_name)
 handle = client.spawned("service", svc_id)
 
@@ -83,40 +61,31 @@ print("replicas:", handle.replica_status())
   which is faster and does not depend on the public route.
 </Note>
 
-## Add your own application to the catalog
-
-<Frame caption="This is the template registry. Running instances are separate — deleting a template leaves them alone.">
-  <img src="/images/sdk/microservices/catalog-crud.png" alt="Registering a catalog entry, updating its description, deleting it and verifying it is gone" />
-</Frame>
-
+## Start several at once
 
 ```python
-entry = client.microservices.create(
-    "my-api",
-    "Our internal orders API",
-    [{"displayName": "my-api:1.0", "dockerImage": "myorg/my-api:1.0"}],
-    "open source",
+from zeblok.batch import unique_names, batch
 
-    visibility="private",
-    parameters={
-        "ports": [{"protocol": "HTTP", "portIdentifier": "http", "number": 8080}],
-        "envs":  [{"key": "LOG_LEVEL", "value": "info"}],
-    },
-)
+names = unique_names("orders-api", 2, existing=client.microservices.spawned)
+
+result = batch(names, lambda n: client.microservices.spawn(
+    display_name=ms["display_names"][0],
+    microservice_id=MICROSERVICE_ID,
+    plan_id=PLAN_ID,
+    microservice_name=n,
+    namespace_id=NAMESPACE_ID,
+))
+
+print(result.summary())
 ```
-
-<Tip>
-  Setting `parameters` here saves everyone time later — whoever deploys the template gets
-  your ports and environment variables without having to know them.
-</Tip>
 
 ## Next
 
 <CardGroup cols={2}>
   <Card title="Workload lifecycle" icon="rotate" href="/sdk/lifecycle">
-    Stop, start, resize, delete.
+    Stop, start, resize, share, delete.
   </Card>
-  <Card title="Containerization" icon="box" href="/sdk/containerization">
-    Watch the image build.
+  <Card title="Monitoring" icon="gauge-high" href="/sdk/monitoring">
+    CPU, memory, replicas and logs.
   </Card>
 </CardGroup>

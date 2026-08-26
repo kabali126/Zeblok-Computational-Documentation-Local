@@ -88,42 +88,41 @@
               "sdk/authentication",
               "sdk/quickstart",
               {
-                "group": "Configuration",
-                "pages": [
-                  "sdk/plans",
-                  "sdk/namespaces",
-                  "sdk/datacenters"
-                ]
-              },
-              {
-                "group": "Workloads",
+                "group": "Workspace",
                 "pages": [
                   "sdk/workstations",
                   "sdk/microservices",
                   "sdk/orchestration-addons",
-                  "sdk/lifecycle",
-                  "sdk/monitoring"
-                ]
-              },
-              {
-                "group": "AI",
-                "pages": [
                   "sdk/inference",
                   "sdk/agents",
-                  "sdk/model-hub"
+                  "sdk/ai-api-pipelines"
                 ]
               },
               {
-                "group": "Data & builds",
+                "group": "Imports",
                 "pages": [
-                  "sdk/datasets",
-                  "sdk/ai-api-pipelines",
-                  "sdk/containerization"
+                  "sdk/ws-import",
+                  "sdk/ms-import",
+                  "sdk/oa-import",
+                  "sdk/model-hub",
+                  "sdk/agent-hub",
+                  "sdk/datasets"
                 ]
               },
               {
-                "group": "Administration",
+                "group": "Configurations",
                 "pages": [
+                  "sdk/datacenters",
+                  "sdk/plans",
+                  "sdk/namespaces"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "sdk/lifecycle",
+                  "sdk/monitoring",
+                  "sdk/containerization",
                   "sdk/iam"
                 ]
               },

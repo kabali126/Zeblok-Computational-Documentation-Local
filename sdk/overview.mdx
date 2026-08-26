@@ -91,79 +91,89 @@ Each component page follows the same shape, so once you learn one you know them 
   </Card>
 </CardGroup>
 
-## Configuration
+## Imports — register what can be run
+
+A catalog entry is a **template**. It does not run anything; it is what people start from.
+
+<CardGroup cols={3}>
+  <Card title="Workstations" icon="laptop-code" href="/sdk/ws-import">
+    Register JupyterLab images.
+  </Card>
+  <Card title="Microservices" icon="cubes" href="/sdk/ms-import">
+    Register application images.
+  </Card>
+  <Card title="Orchestration add-ons" icon="diagram-project" href="/sdk/oa-import">
+    Register cluster tools such as Ray.
+  </Card>
+  <Card title="AI Model Hub" icon="download" href="/sdk/model-hub">
+    Import models from HuggingFace.
+  </Card>
+  <Card title="Agent Hub" icon="robot" href="/sdk/agent-hub">
+    Register agent templates.
+  </Card>
+  <Card title="Datasets" icon="database" href="/sdk/datasets">
+    Store files the platform can reach.
+  </Card>
+</CardGroup>
+
+## Workspace — start and run things
+
+<CardGroup cols={3}>
+  <Card title="Workstations" icon="laptop-code" href="/sdk/workstations">
+    Start a development machine and open it.
+  </Card>
+  <Card title="Microservices" icon="cubes" href="/sdk/microservices">
+    Deploy an application and keep it running.
+  </Card>
+  <Card title="Orchestration add-ons" icon="diagram-project" href="/sdk/orchestration-addons">
+    Run a cluster with a head node and workers.
+  </Card>
+  <Card title="Inference" icon="brain" href="/sdk/inference">
+    Serve a model as an endpoint and chat with it.
+  </Card>
+  <Card title="Agents" icon="robot" href="/sdk/agents">
+    Run assistants with tools, and delegate between them.
+  </Card>
+  <Card title="Ai-API & Pipelines" icon="arrows-turn-right" href="/sdk/ai-api-pipelines">
+    Turn your own code into something running.
+  </Card>
+</CardGroup>
+
+## Configurations
 
 Set these up first — every workload needs a plan and a namespace.
 
 <CardGroup cols={3}>
+  <Card title="Data centers" icon="building" href="/sdk/datacenters">
+    Inspect machines and check free capacity.
+  </Card>
   <Card title="Plans" icon="server" href="/sdk/plans">
     How much CPU, GPU, memory and storage a workload gets.
   </Card>
   <Card title="Namespaces" icon="folder" href="/sdk/namespaces">
     Isolate workloads and control who can reach them.
   </Card>
-  <Card title="Data centers" icon="building" href="/sdk/datacenters">
-    Inspect machines and check free capacity before you deploy.
-  </Card>
 </CardGroup>
 
-## Workloads
+## Platform & reference
 
-Things you start and keep running.
-
-<CardGroup cols={2}>
-  <Card title="Workstations" icon="laptop-code" href="/sdk/workstations">
-    Start a JupyterLab development machine in the cloud.
-  </Card>
-  <Card title="Microservices" icon="cubes" href="/sdk/microservices">
-    Deploy an application and keep it running.
-  </Card>
-  <Card title="Orchestration add-ons" icon="diagram-project" href="/sdk/orchestration-addons">
-    Run cluster tools such as Ray for distributed compute.
-  </Card>
+<CardGroup cols={3}>
   <Card title="Workload lifecycle" icon="rotate" href="/sdk/lifecycle">
-    One handle to stop, start, resize, share and delete anything you started.
+    One handle to stop, start, resize, share and delete.
   </Card>
-</CardGroup>
-
-## AI
-
-<CardGroup cols={3}>
-  <Card title="Inference" icon="brain" href="/sdk/inference">
-    Serve an AI model as a live endpoint and chat with it.
-  </Card>
-  <Card title="Agents" icon="robot" href="/sdk/agents">
-    Run AI assistants with tools, and delegate between them.
-  </Card>
-  <Card title="AI Model Hub" icon="download" href="/sdk/model-hub">
-    Import models from HuggingFace and manage them.
-  </Card>
-</CardGroup>
-
-## Data & builds
-
-<CardGroup cols={3}>
-  <Card title="Datasets" icon="database" href="/sdk/datasets">
-    Store files on the platform and get them back.
-  </Card>
-  <Card title="Ai-API & Pipelines" icon="arrows-turn-right" href="/sdk/ai-api-pipelines">
-    Turn a folder of your own code into something running on the platform.
+  <Card title="Monitoring" icon="gauge-high" href="/sdk/monitoring">
+    Live metrics, sessions, activity and metering.
   </Card>
   <Card title="Containerization" icon="box" href="/sdk/containerization">
-    Watch the image builds the platform runs for you.
+    Watch the image builds the platform runs.
   </Card>
-</CardGroup>
-
-## Administration & reference
-
-<CardGroup cols={3}>
   <Card title="IAM" icon="user-shield" href="/sdk/iam">
     Users, roles, groups, policies and organisations.
   </Card>
-  <Card title="Bulk operations" icon="layer-group" href="/sdk/bulk-operations">
-    Create many things at once without half-finished runs.
+  <Card title="Creating many at once" icon="layer-group" href="/sdk/bulk-operations">
+    Bulk creation without half-finished runs.
   </Card>
   <Card title="Errors" icon="triangle-exclamation" href="/sdk/errors">
-    What each message means and what to do about it.
+    What each message means and what to do.
   </Card>
 </CardGroup>

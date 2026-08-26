@@ -1,63 +1,23 @@
 ---
-title: "Agents"
-description: "Run AI assistants with tools, and delegate between them."
+title: "Workspace › Agents"
+description: "Run an AI assistant with tools, chat with it, and delegate between agents."
 ---
 
-Agents come in two parts. The **Agent Hub** holds templates describing what an agent is;
-**spawning** creates a running agent you can talk to.
+A running agent is spawned from a Hub template. Registering the templates themselves is
+[Imports › Agent Hub](/sdk/agent-hub).
+
+In the web interface: **Workspace → Agents**.
 
 ## Capabilities
 
 | What you want to do | SDK call | API |
 |---|---|---|
-| Browse the Hub | `client.agents.get_all()` | `GET /api/v1/agents` |
-| Public templates | `client.agents.public()` | `GET /api/v1/agents/public` |
-| Agent types | `client.agents.types()` | `GET /api/v1/agent-types` |
-| Add a template | `client.agents.create(...)` | `POST /api/v1/agents` |
-| Update a template | `client.agents.update(id, ...)` | `PUT /api/v1/agents/:id` |
-| Remove a template | `client.agents.delete(id)` | `DELETE /api/v1/agents/:id` |
-| Spawn an agent | `client.agents.spawn(...)` | `POST /api/v1/spawned-agents` |
-| List running agents | `client.agents.spawned()` | `GET /api/v1/spawned-agents` |
-| Callable sub-agents | `client.agents.callable_sub_agents()` | `GET /api/v1/spawned-agents/callable-sub-agents` |
-| Status, usage, sessions | `sa.status()` · `sa.usage()` · `sa.sessions()` | `GET /api/v1/spawned-agents/:id[...]` |
-| Its tools | `sa.mcp().tools()` | `GET /api/v1/mcp-discovery/:id/tools` |
-| Call a tool directly | `sa.mcp().call_tool(name, args)` | `POST /api/v1/mcp-discovery/:id/tools/call` |
-| Chat | `sa.chat(message, ai_key=...)` | `POST /api/v1/spawned-agents/:id/chat` |
-| Stop / start | `sa.stop()` · `sa.start()` | `PUT /api/v1/spawned-agents/:id/stop\|start` |
-| Delete | `sa.delete(stop_first=True)` | `DELETE /api/v1/spawned-agents/:id` |
-
-## Register a template
-
-```python
-entry = client.agents.create(
-    "my-agent",                              # name, 1-50 characters
-    "Answers questions about our docs",      # description
-    "server",                                # "client" or "server"
-    "open source",                           # "open source" or "third party"
-
-    image_tags=[{"displayName": "my-agent:1.0", "dockerImage": "myorg/my-agent:1.0"}],
-    protocol="mcp",
-    plans=[PLAN_ID], default_plan=PLAN_ID,
-    ports=[{"protocol": "HTTP", "number": 8080, "portIdentifier": "mcp"}],
-    visibility="private",
-)
-```
-
-An agent that already runs elsewhere needs no image or ports — just a URL:
-
-```python
-client.agents.create(
-    "deepwiki", "External MCP server", "server", "open source",
-    external_url="https://mcp.example.com/mcp",
-    external_transport="streamable-http",     # prefer this over "sse"
-    protocol="mcp",
-)
-```
-
-<Note>
-  Ports are declared **at import time**, on the template. Passing `ports=` or `plans=` in an
-  update **replaces** the whole list, so include everything you want to keep.
-</Note>
+| Spawn one | `client.agents.spawn(...)` | `POST /api/v1/spawned-agents` |
+| List running | `client.agents.spawned()` | `GET /api/v1/spawned-agents` |
+| Callable sub-agents | `client.agents.callable_sub_agents()` | `GET /spawned-agents/callable-sub-agents` |
+| Chat with it | `sa.chat(message, ai_key)` | `POST /spawned-agents/:id/chat` |
+| Its MCP tools | `sa.mcp().tools()` | `GET /mcp-discovery/:id/tools` |
+| Stop, share, delete | See [Workload lifecycle](/sdk/lifecycle) | — |
 
 ## Give it a brain, then spawn
 

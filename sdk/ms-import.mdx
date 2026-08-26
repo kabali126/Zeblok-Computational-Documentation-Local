@@ -1,0 +1,109 @@
+---
+title: "Imports › Microservices"
+description: "Register application images in the catalog so people can deploy them."
+---
+
+The catalog holds the **application templates**; it does not run anything. Deploying a running
+service from one is [Workspace › Microservices](/sdk/microservices).
+
+In the web interface: **Imports → Microservices**.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Browse the catalog | `client.microservices.get_all()` | `GET /api/v1/microservices` |
+| Get one template | `client.microservices.get_by_id(id)` | `GET /api/v1/microservices/:id` |
+| Public marketplace | `client.microservices.get_all_public()` | `GET /api/v1/microservices/public` |
+| Check an id exists | `client.microservices.validate_id(id)` | `GET /api/v1/microservices/:id` |
+| Add a template | `client.microservices.create(...)` | `POST /api/v1/microservices` |
+| Update a template | `client.microservices.update(id, ...)` | `PUT /api/v1/microservices/:id` |
+| Remove a template | `client.microservices.delete(id)` | `DELETE /api/v1/microservices/:id` |
+| Accept a licence | `client.microservices.accept_license(...)` | `PUT /api/v1/microservices/:id/accept-license` |
+
+## Browse the catalog and read its defaults
+
+<Frame caption="Each template ships its own parameters — ports, envs, args, volumePath — which spawn() inherits unless you override them.">
+  <img src="/images/sdk/microservices/catalog-browse.png" alt="Listing the microservice catalog and reading one template's ports, envs and volume path" />
+</Frame>
+
+```python
+catalog = client.microservices.get_all(print_stdout=False)
+
+MICROSERVICE_ID = catalog[0]["id"]
+ms = client.microservices.get_by_id(MICROSERVICE_ID, print_stdout=False)
+
+print("image tags:", ms["display_names"])
+print("defaults  :", ms.get("parameters"))     # ports / envs / args / volumePath
+```
+
+<Tip>
+  Those `parameters` are what the web interface pre-fills into its deploy form. The SDK
+  inherits them when you omit `ports` and `envs` — pass your own, or `[]`, to override.
+</Tip>
+
+## Add your own application to the catalog
+
+<Frame caption="This is the template registry. Running instances are separate — deleting a template leaves them alone.">
+  <img src="/images/sdk/microservices/catalog-crud.png" alt="Registering a catalog entry, updating its description, deleting it and verifying it is gone" />
+</Frame>
+
+```python
+entry = client.microservices.create(
+    "my-api",
+    "Our internal orders API",
+    [{"displayName": "my-api:1.0", "dockerImage": "myorg/my-api:1.0"}],
+    "open source",
+
+    visibility="private",
+    parameters={
+        "ports": [{"protocol": "HTTP", "portIdentifier": "http", "number": 8080}],
+        "envs":  [{"key": "LOG_LEVEL", "value": "info"}],
+    },
+)
+```
+
+<Tip>
+  Setting `parameters` here saves everyone time later — whoever deploys the template gets
+  your ports and environment variables without having to know them.
+</Tip>
+
+## Change or remove a template
+
+```python
+client.microservices.update(entry["_id"], description="now with health checks")
+
+client.microservices.delete(entry["_id"])
+print("gone?", not client.microservices.validate_id(entry["_id"]))
+```
+
+<Warning>
+  Removing a template does not stop services already deployed from it.
+</Warning>
+
+## Register several templates at once
+
+```python
+from zeblok.batch import unique_names, batch
+
+names = unique_names("team-api", 2,
+                     existing=lambda: client.microservices.get_all(print_stdout=False))
+
+result = batch(names, lambda n: client.microservices.create(
+    n, "bulk-registered",
+    [{"displayName": "busybox:latest", "dockerImage": "busybox:latest"}],
+    "open source", visibility="private"))
+
+print(result.summary())
+```
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workspace › Microservices" icon="cubes" href="/sdk/microservices">
+    Deploy a service from a template.
+  </Card>
+  <Card title="Containerization" icon="box" href="/sdk/containerization">
+    Watch the image build that produces one.
+  </Card>
+</CardGroup>
