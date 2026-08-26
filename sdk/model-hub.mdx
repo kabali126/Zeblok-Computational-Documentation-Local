@@ -1,0 +1,88 @@
+---
+title: "AI Model Hub"
+description: "Import models from HuggingFace and manage them."
+---
+
+Bring a model into the platform so it can be served. Importing registers the model **and**
+builds its serving image — watch progress under [Containerization](/sdk/containerization).
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Recommended models | `client.models.popular_models()` | `GET /api/v1/inferences/popular-models` |
+| Preview before importing | `client.models.metadata(model_id)` | `POST /api/v1/inferences/model-metadata` |
+| Browse your private repos | `client.models.private_models(hf_token)` | `POST /api/v1/inferences/private-models` |
+| Import a model | `client.models.import_model(...)` | `POST /api/v1/inferences` |
+| Retry a failed import | `client.models.retry(id)` | `POST /api/v1/inferences/:id/retry-import` |
+| Update the record | `client.models.update(id, ...)` | `PUT /api/v1/inferences/:id` |
+| Delete from the Hub | `client.models.delete(id)` | `DELETE /api/v1/inferences/:id` |
+| Strip every share | `client.models.force_unshare(id)` | `POST /api/v1/inferences/:id/force-unshare` |
+| Report download status | `client.models.vault_status(id, status)` | `PUT /api/v1/inferences/:id/vault-status` |
+
+## Look before you import
+
+```python
+for m in client.models.popular_models()[:5]:
+    print(m["id"], "-", m["name"])
+
+info = client.models.metadata("Qwen/Qwen2.5-0.5B-Instruct")
+print(info)      # size, files, licence — check it fits your plan. Imports nothing.
+```
+
+Private or gated repositories need a token:
+
+```python
+mine = client.models.private_models(HF_TOKEN, limit=10)
+```
+
+## Import
+
+<Frame caption="metadata() previews an HF model — size, gating, config — before you import anything. import_model() registers it and starts the serving-image build.">
+  <img src="/images/sdk/model-hub/full-import-flow.png" alt="The full import flow: curated models, pre-import metadata, private repos, import, read back, update and delete" />
+</Frame>
+
+
+```python
+result = client.models.import_model(
+    model_id="Qwen/Qwen2.5-0.5B-Instruct",
+    hf_token=HF_TOKEN,
+    name="my-qwen",
+    model_type="VLLM",
+)
+MODEL_ID = result["_id"]
+```
+
+<Note>
+  If it fails, read the build log first — retrying an import that failed for a real reason
+  (a gated licence, a model larger than the available disk) just fails again.
+
+  ```python
+  client.models.retry(MODEL_ID)
+  ```
+</Note>
+
+## Update and remove
+
+```python
+client.models.update(MODEL_ID, description="My tuned model", visibility="private")
+
+client.models.delete(MODEL_ID)
+print("gone?", not client.inferences.validate_id(MODEL_ID))
+```
+
+<Warning>
+  `vault_status()` writes the platform's own bookkeeping — normal imports call it themselves.
+  Setting it by hand is for unsticking an import that never finished.
+</Warning>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Inference" icon="brain" href="/sdk/inference">
+    Serve an imported model.
+  </Card>
+  <Card title="Datasets" icon="database" href="/sdk/datasets">
+    Data to go with it.
+  </Card>
+</CardGroup>

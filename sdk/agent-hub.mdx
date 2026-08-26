@@ -1,0 +1,67 @@
+---
+title: "Imports › Agent Hub"
+description: "Register agent templates so people can spawn running agents from them."
+---
+
+The Agent Hub holds the **templates** — the definition of what an agent is. Spawning a running
+agent from one is [Workspace › Agents](/sdk/agents).
+
+In the web interface: **Imports → Agent Hub**. The Hub imports **MCP servers**, so templates
+are `type="server"`; the platform's chat runtime is the MCP client.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Browse templates | `client.agents.get_all()` | `GET /api/v1/agents` |
+| Public templates | `client.agents.public()` | `GET /api/v1/agents/public` |
+| One template | `client.agents.get_by_id(id)` | `GET /api/v1/agents/:id` |
+| Agent types | `client.agents.types()` | `GET /api/v1/agent-types` |
+| Add a template | `client.agents.create(...)` | `POST /api/v1/agents` |
+| Update a template | `client.agents.update(id, ...)` | `PUT /api/v1/agents/:id` |
+| Remove a template | `client.agents.delete(id)` | `DELETE /api/v1/agents/:id` |
+| Accept a licence | `client.agents.accept_license(id, ...)` | `PUT /api/v1/agents/:id/accept-license` |
+
+## Register an agent template
+
+```python
+entry = client.agents.create(
+    "my-agent",                              # name, 1-50 characters
+    "Answers questions about our docs",      # description
+    "server",                                # "client" or "server"
+    "open source",                           # "open source" or "third party"
+
+    image_tags=[{"displayName": "my-agent:1.0", "dockerImage": "myorg/my-agent:1.0"}],
+    protocol="mcp",
+    plans=[PLAN_ID], default_plan=PLAN_ID,
+    ports=[{"protocol": "HTTP", "number": 8080, "portIdentifier": "mcp"}],
+    visibility="private",
+)
+```
+
+An agent that already runs elsewhere needs no image or ports — just a URL:
+
+```python
+client.agents.create(
+    "deepwiki", "External MCP server", "server", "open source",
+    external_url="https://mcp.example.com/mcp",
+    external_transport="streamable-http",     # prefer this over "sse"
+    protocol="mcp",
+)
+```
+
+<Note>
+  Ports are declared **at import time**, on the template. Passing `ports=` or `plans=` in an
+  update **replaces** the whole list, so include everything you want to keep.
+</Note>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workspace › Agents" icon="robot" href="/sdk/agents">
+    Spawn a running agent from a template.
+  </Card>
+  <Card title="Inference" icon="brain" href="/sdk/inference">
+    The model an agent thinks with.
+  </Card>
+</CardGroup>

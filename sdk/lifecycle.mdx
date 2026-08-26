@@ -1,0 +1,221 @@
+---
+title: "Workload lifecycle"
+description: "One handle to check, control, resize, share and delete anything you started."
+---
+
+Whatever you start — a workstation, a microservice, a served model or an add-on — you manage
+it the same way: get a **handle**, then call methods on it.
+
+```python
+handle = client.spawned("<type>", "<id>")
+
+sa = client.spawned_agent("<agent-id>")     # agents have their own handle
+```
+
+| You started a… | Type to pass | Find its id with |
+|---|---|---|
+| Workstation | `"image"` | `client.workstations.spawned()` |
+| Microservice | `"service"` | `client.microservices.spawned()` |
+| Served model | `"inference"` | `client.inferences.get_all_spawned_inferences()` |
+| Orchestration add-on | `"addon"` | `client.orchestrations.spawned()` |
+| Agent | `client.spawned_agent(id)` | `client.agents.spawned()` |
+
+<Warning>
+  **The value `spawn()` returns is not the id you manage with.** Starting something gives you
+  the Kubernetes pod name; management endpoints expect the 24-character database id and
+  reject a pod name with `400 Validation failed`.
+
+  ```python
+  svc_id = client.microservices.get_spawned_id_by_name(pod_name)
+  ```
+</Warning>
+
+## Look at it
+
+<Frame caption="One handle manages every type. replica_status is service-only, so it reports N/A on an inference — and logs 404 on a stopped workload.">
+  <img src="/images/sdk/inference/manage-status-stop-start.png" alt="Getting a handle for a running inference, reading status and monitoring probes, then stop, start and restart" />
+</Frame>
+
+
+<Frame caption="spawn() hands back a pod name; every management call needs the database id. get_spawned_id_by_name() converts it — a pod name gives 400 Validation failed.">
+  <img src="/images/sdk/microservices/list-resolve-status-open.png" alt="Listing running microservices, resolving the pod name to an id, then reading status, replicas and logs" />
+</Frame>
+
+
+```python
+handle = client.spawned("service", SVC_ID)
+
+st = handle.status()
+print(st.get("status"), st.get("name"))
+
+print(handle.logs())                  # what the container printed
+print(handle.replica_status())        # microservices only
+
+# usage figures — served models only
+# client.spawned("inference", INF_ID).utilization("5m")
+```
+
+<Note>
+  On a **stopped** workload, logs may report not found — start it first.
+
+  Two calls are type-specific: `utilization()` works on **served models** only, and
+  `replica_status()` on **microservices** only. On any other type the SDK raises a clear error.
+</Note>
+
+## Get its links
+
+<Frame caption="open_url() is what the web interface's Open button does. For workstations it appends the Jupyter token, so the link opens an already-authenticated session.">
+  <img src="/images/sdk/workstations/list-status-and-open-link.png" alt="open_url(), internal_url() and endpoints() for a running workstation" />
+</Frame>
+
+
+```python
+print("open in a browser:", handle.open_url())
+print("in-cluster address:", handle.internal_url())
+
+for e in handle.endpoints():
+    print(e.get("label"), e.get("url"), e.get("scope"))
+```
+
+<Tip>
+  For workstations, `open_url()` appends the notebook token, so the link opens JupyterLab
+  already signed in. It returns `None` while a workload is still starting or is stopped —
+  that is an answer, not an error.
+</Tip>
+
+## Control it
+
+<Frame caption="restart() recreates the pod in one call and keeps the id, plan and URL — unlike stop+start, which is two calls.">
+  <img src="/images/sdk/microservices/stop-start-restart-edit.png" alt="Stopping and starting a microservice, restarting it in place, then editing its replicas" />
+</Frame>
+
+
+<Frame caption="The same pod-name-to-id resolution as every other workload type, and the same stop/start/restart controls.">
+  <img src="/images/sdk/orchestration-addons/list-status-stop-start-restart.png" alt="Listing running add-ons, resolving the id, reading status, then stop, start and restart" />
+</Frame>
+
+
+
+```python
+handle.stop()                          # frees resources, keeps everything
+handle.start()
+handle.restart()                       # recreate in place, same id and URL
+
+handle.wait_until_ready(timeout=600)   # block until it reports 'running'
+```
+
+<Warning>
+  **Agents cannot be restarted** — the platform has no restart route for them. Stop and start
+  instead.
+</Warning>
+
+## Wait for it
+
+Most actions are asynchronous — `spawn()`, `start()` and `restart()` return before the workload
+is ready. `wait_until_ready()` blocks until it reports `running`.
+
+```python
+handle.wait_until_ready(timeout=600)
+print("ready at:", handle.open_url())
+```
+
+It polls the status endpoint by default. Install the `realtime` extra and the platform pushes
+status changes instead of being asked, which is quicker and lighter on the API:
+
+```bash
+pip install "zeblok-sdk[realtime]"
+```
+
+For full control over the push connection, `StatusStream(...).wait_for(...)` is the layer
+underneath — `wait_until_ready()` is the convenience wrapper most code should use.
+
+<Tip>
+  Give large workloads room. A big model can take several minutes to pull and load, so a timeout
+  that is fine for a workstation will fail for an inference. If it stays `starting`, check the
+  workload's logs — `handle.logs()` — rather than raising the timeout blindly.
+</Tip>
+
+## Change it
+
+<Frame caption="restart() recreates the pod in one call, keeping the id, plan and URL. Note the states each action allows — only a running workload can be restarted.">
+  <img src="/images/sdk/workstations/stop-restart-edit-reconfigure.png" alt="Stopping, restarting, editing and reconfiguring a running workstation" />
+</Frame>
+
+
+<Frame caption="Add-ons have no edit route — resize with reconfigure(min_workers=…, max_workers=…), and note they take head/worker plans rather than a single plan_id.">
+  <img src="/images/sdk/orchestration-addons/reconfigure-share-delete.png" alt="Reconfiguring an add-on's worker range, sharing it, then deleting it" />
+</Frame>
+
+
+
+**Edit** changes what is inside a workload. **Reconfigure** changes what it runs on.
+
+```python
+handle.edit(updated_replicas=2)                                  # microservice
+handle.edit(resource_details={"CPU": 2, "memory": 4, "GPU": 0})
+handle.edit(docker_image="myorg/app:2.0")
+
+handle.reconfigure(plan_id=BIGGER_PLAN_ID)
+handle.restart()                                                 # apply it
+```
+
+Reconfigure takes a different field set per type. Passing the wrong one fails immediately
+with the allowed list:
+
+| Type | Fields it accepts |
+|---|---|
+| Microservice | `plan_id`, `resource_details`, `parameters`, `updated_replicas`, `name` |
+| Workstation | `plan_id`, `resource_details`, `parameters`, `name` |
+| Served model | `min_replicas`, `max_replicas`, `threshold`, `args`, `ports`, `envs` |
+| Add-on | `min_workers`, `max_workers`, `head_plan_id`, `worker_plan_id` — **no** `plan_id` |
+| Agent | `system_prompt`, `servers`, `context_length`, `available_sub_agents` |
+
+<Note>
+  Add-ons have no `edit()` route at all — resize them with `reconfigure()`.
+</Note>
+
+## Share it
+
+<Frame caption="Sharing takes emails, usernames or ids — the SDK resolves anything that is not an id, and a wrong name lists every visible address so you can spot the typo.">
+  <img src="/images/sdk/microservices/reconfigure-share-delete.png" alt="Reconfiguring a microservice to another plan, sharing it with a colleague, then deleting it" />
+</Frame>
+
+
+<Frame caption="Pass emails, usernames or ids — the SDK resolves anything that is not an id. Delete with stop_first=True to stop and remove in one call.">
+  <img src="/images/sdk/workstations/share-and-delete.png" alt="Sharing a workstation with another user by email, then deleting it and verifying it is gone" />
+</Frame>
+
+
+```python
+print([u["email"] for u in (client.users.list() or [])])
+
+handle.share(["colleague@yourcompany.com"])     # emails, usernames or ids
+```
+
+## Delete it
+
+<Frame caption="Deleting the LAST spawned inference makes the list endpoint raise NoResourcesError rather than return [] — that is this module's 'empty' signal, and it means the delete worked.">
+  <img src="/images/sdk/inference/delete-and-verify.png" alt="Deleting a running inference with stop_first=True and confirming it is gone" />
+</Frame>
+
+
+
+```python
+handle.delete(stop_first=True)     # stop, wait, then delete
+```
+
+<Warning>
+  The platform refuses to delete a **running** workload. `stop_first=True` handles the
+  stop-wait-delete sequence in one call.
+</Warning>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workstations" icon="laptop-code" href="/sdk/workstations">
+    Start one to manage.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/sdk/errors">
+    What a failed action means.
+  </Card>
+</CardGroup>

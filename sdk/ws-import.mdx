@@ -1,0 +1,112 @@
+---
+title: "Imports › Workstations"
+description: "Register workstation images in the catalog so people can start machines from them."
+---
+
+The catalog holds the **images**; it does not run anything. Starting a real machine from one is
+[Workspace › Workstations](/sdk/workstations).
+
+In the web interface: **Imports → Workstations**. Everything here lives under
+`client.workstations`.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Browse the catalog | `client.workstations.get_all()` | `GET /api/v1/docker-images` |
+| Get one image | `client.workstations.get_by_id(id)` | `GET /api/v1/docker-images/:id` |
+| Public marketplace | `client.workstations.get_all_public()` | `GET /api/v1/docker-images/public` |
+| Check an id exists | `client.workstations.validate_id(id)` | `GET /api/v1/docker-images/:id` |
+| Add an image | `client.workstations.create(...)` | `POST /api/v1/docker-images` |
+| Update an image | `client.workstations.update(id, ...)` | `PUT /api/v1/docker-images/:id` |
+| Remove an image | `client.workstations.delete(id)` | `DELETE /api/v1/docker-images/:id` |
+| Accept a licence | `client.workstations.accept_license(...)` | `PUT /api/v1/docker-images/:id/accept-license` |
+
+## Browse the catalog
+
+<Frame caption="display_names holds the exact image tags spawn() accepts — pass one of these, not the catalog entry's name.">
+  <img src="/images/sdk/workstations/catalog-browse.png" alt="Listing the workstation catalog, fetching one image, and reading its display names" />
+</Frame>
+
+```python
+catalog = client.workstations.get_all(print_stdout=False)
+
+WORKSTATION_ID = catalog[0]["id"]
+image = client.workstations.get_by_id(WORKSTATION_ID, print_stdout=False)
+
+print("image tags:", image["display_names"])
+```
+
+<Note>
+  `display_names` is the field that matters — `spawn()` rejects a name that is not in it.
+</Note>
+
+## Add your own image to the catalog
+
+<Frame caption="create() takes image_tags as a list of {displayName, dockerImage} dicts.">
+  <img src="/images/sdk/workstations/catalog-create-update.png" alt="Registering a workstation image in the catalog, then updating its description" />
+</Frame>
+
+```python
+entry = client.workstations.create(
+    "my-lab",                                    # name, 1-50 characters
+    "JupyterLab with my team's tools",           # description, required
+    [{"displayName": "my-lab:1.0",
+      "dockerImage": "myorg/my-lab:1.0"}],       # one or more image tags
+    "open source",                               # "open source" or "third party"
+
+    visibility="private",
+    # is_algorithm=False, is_slurm=False, command="start-notebook.sh",
+    # plans=[PLAN_ID], default_plan=PLAN_ID,
+)
+```
+
+<Note>
+  Using a private registry? Pass `private_repo=True` with `docker_username`,
+  `docker_password`, `docker_email` and `docker_url`.
+</Note>
+
+## Change or remove a template
+
+<Frame caption="Removing a catalog entry does not touch workstations already spawned from it.">
+  <img src="/images/sdk/workstations/catalog-delete-and-bulk.png" alt="Deleting a catalog entry, verifying it is gone, and registering several images at once" />
+</Frame>
+
+```python
+client.workstations.update(entry["_id"], description="now with CUDA 12")
+
+client.workstations.delete(entry["_id"])
+print("gone?", not client.workstations.validate_id(entry["_id"]))
+```
+
+<Warning>
+  Deleting a catalog image does **not** stop workstations already running from it. It only
+  removes the entry people start new machines from.
+</Warning>
+
+## Register several images at once
+
+```python
+from zeblok.batch import unique_names, batch
+
+names = unique_names("team-lab", 2,
+                     existing=lambda: client.workstations.get_all(print_stdout=False))
+
+result = batch(names, lambda n: client.workstations.create(
+    n, "bulk-registered", [{"displayName": "busybox:latest",
+                            "dockerImage": "busybox:latest"}],
+    "open source", visibility="private"))
+
+print(result.summary())
+```
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workspace › Workstations" icon="laptop-code" href="/sdk/workstations">
+    Start a machine from a catalog image.
+  </Card>
+  <Card title="Creating many at once" icon="layer-group" href="/sdk/bulk-operations">
+    The pattern behind the bulk example above.
+  </Card>
+</CardGroup>

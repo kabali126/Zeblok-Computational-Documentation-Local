@@ -1,0 +1,89 @@
+---
+title: "Errors"
+description: "What each message means, and what to do about it."
+---
+
+The SDK tries to fail with a message that tells you what to do next. These are the ones you
+are most likely to meet.
+
+| Message | What it means | What to do |
+|---|---|---|
+| `401 · User not authenticated` | Your key or secret is wrong, expired, or was replaced | Get fresh keys from **API Keys & Secrets → Microcloud** |
+| `403 · User not authorized` | Your credentials are fine — your role may not do this | Ask an administrator to grant the permission |
+| `NoResourcesError` | Nothing of that type exists yet. Not a bug | Create one, or check you are on the right environment |
+| `404 / not found` | The id does not exist, or was deleted | List the items first and copy a real id |
+| `400 · Validation failed` | The platform rejected the data you sent | Check the required fields for that call |
+| `400 · Validation failed` on a management call | You passed a **pod name** where a database id was expected | `get_spawned_id_by_name(pod_name)` |
+| `Please stop the running … first` | You tried to delete something that is running | `handle.delete(stop_first=True)` |
+| `Insufficient role privileges` | The route needs **superadmin**, not just admin | Use a superadmin key, or ask one to run it |
+| `System roles are protected` | Built-in roles cannot be edited by anyone | Create your own role and grant on that |
+| `CROSS_ORG_USERS` | A member belongs to a different organisation | All members must share the namespace's organisation |
+| `InvalidAccessKeyId` | Platform API key used as the object-store user | Use `client.users.object_store_credentials()` |
+| `ImportError: cannot import name 'ZeblokClient'` | An old version of the SDK is installed | Reinstall, then **restart your Python kernel** |
+
+## Errors that mislead
+
+<AccordionGroup>
+  <Accordion title="A 401 when deleting a running agent">
+    Deleting a running workload is refused by a business rule — but the platform sends that
+    refusal with an **authentication** status code, so it reads as if your credentials broke.
+    They did not.
+
+    ```python
+    sa.delete(stop_first=True)
+    ```
+  </Accordion>
+  <Accordion title="A 503 saying the model is offline, when it is running">
+    The model server registers itself under the path it was launched with, not the friendly
+    catalog name. Sending the wrong name makes the model answer 404, which the platform
+    reports as *503 model is offline or unreachable*.
+
+    Leave `model_name` out and the SDK asks the deployment which name it answers to.
+  </Accordion>
+  <Accordion title="An empty list that raises instead of returning []">
+    Some modules signal "none exist" by raising `NoResourcesError` rather than returning an
+    empty list. Catch it in any script that must run on a fresh environment.
+
+    ```python
+    from zeblok.utils.errors import NoResourcesError
+
+    try:
+        datasets = client.datasets.get_all(print_stdout=False)
+    except NoResourcesError:
+        datasets = []
+    ```
+  </Accordion>
+  <Accordion title="A workload that is accepted, then never starts">
+    The platform accepts a large language model on a CPU-only plan; the pod then fails
+    minutes later. The SDK checks first and refuses, with `allow_cpu_only=True` to override.
+  </Accordion>
+</AccordionGroup>
+
+## Catching outcomes instead of crashing
+
+```python
+from zeblok.utils.errors import NoResourcesError, AuthorizationError
+
+try:
+    out = client.plans.get_all(print_stdout=False)
+except NoResourcesError:
+    out = []                    # endpoint is fine, nothing exists yet
+except AuthorizationError:
+    out = []                    # your role may not read this
+```
+
+<Tip>
+  `validate_id()` answers `True` / `False` instead of raising, which makes it the safe choice
+  inside scripts — especially for confirming something is gone after a delete.
+</Tip>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/sdk/authentication">
+    Most failures start here.
+  </Card>
+  <Card title="Overview" icon="grid-2" href="/sdk/overview">
+    Back to the component list.
+  </Card>
+</CardGroup>

@@ -1,0 +1,95 @@
+---
+title: "Workspace › Workstations"
+description: "Start a JupyterLab development machine in the cloud and open it."
+---
+
+A workstation is a running machine started from a catalog image. Registering the images
+themselves is [Imports › Workstations](/sdk/ws-import).
+
+In the web interface: **Workspace → Workstations**.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Start one | `client.workstations.spawn(...)` | `POST /api/v1/spawned-images` |
+| List running | `client.workstations.spawned()` | `GET /api/v1/spawned-images` |
+| Pod name → id | `client.workstations.get_spawned_id_by_name(pod)` | `GET /api/v1/spawned-images` |
+| Stop, resize, share, delete | See [Workload lifecycle](/sdk/lifecycle) | — |
+| CPU, memory, disk | See [Monitoring](/sdk/monitoring) | — |
+
+## Start a workstation
+
+<Frame caption="spawn() returns the Kubernetes pod name — convert it with get_spawned_id_by_name() before managing the workstation.">
+  <img src="/images/sdk/workstations/spawn-workstation.png" alt="Spawning a workstation and the pod name, URL and id it returns" />
+</Frame>
+
+```python
+image = client.workstations.get_by_id(WORKSTATION_ID, print_stdout=False)
+
+pod_name, url = client.workstations.spawn(
+    display_name=image["display_names"][0],   # which image tag to run
+    workstation_id=WORKSTATION_ID,            # the catalog entry
+    plan_id=PLAN_ID,                          # how big
+    workstation_name="analysis-box",          # unique, lowercase, dashes only
+    namespace_id=NAMESPACE_ID,                # where it runs
+
+    # optional — mount storage into it
+    # bucket_name="<bucket>", bucketmount_path="/data", isbucket_attached=True,
+)
+```
+
+<Warning>
+  `spawn()` hands back the Kubernetes **pod name**, not the database id. Every management call
+  needs the id, so convert it before doing anything else — a pod name produces
+  `400 Validation failed`.
+</Warning>
+
+## Find it, and open it
+
+```python
+ws_id  = client.workstations.get_spawned_id_by_name(pod_name)
+handle = client.spawned("image", ws_id)
+
+handle.wait_until_ready(timeout=600)
+print("open at:", handle.open_url())
+```
+
+<Tip>
+  `open_url()` appends the notebook token, so the printed link opens JupyterLab already
+  signed in — the same thing the **Open** button does in the web interface.
+</Tip>
+
+## Start several at once
+
+```python
+from zeblok.batch import unique_names, batch
+
+names = unique_names("analysis-box", 2, existing=client.workstations.spawned)
+
+result = batch(names, lambda n: client.workstations.spawn(
+    display_name=image["display_names"][0],
+    workstation_id=WORKSTATION_ID,
+    plan_id=PLAN_ID,
+    workstation_name=n,
+    namespace_id=NAMESPACE_ID,
+))
+
+print(result.summary())
+```
+
+<Warning>
+  A running workstation keeps nothing you saved only to its local disk once it is deleted. Put
+  work you want to keep in a [dataset](/sdk/datasets) or a mounted bucket.
+</Warning>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workload lifecycle" icon="rotate" href="/sdk/lifecycle">
+    Stop, start, resize, share, delete.
+  </Card>
+  <Card title="Monitoring" icon="gauge-high" href="/sdk/monitoring">
+    CPU, memory and disk while it runs.
+  </Card>
+</CardGroup>

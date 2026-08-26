@@ -1,0 +1,90 @@
+---
+title: "Imports › Orchestration Add-ons"
+description: "Register cluster tools in the catalog so people can deploy them."
+---
+
+The catalog holds the **add-on templates**; it does not run anything. Deploying a cluster from
+one is [Workspace › Orchestration Add-on](/sdk/orchestration-addons).
+
+In the web interface: **Imports → Orchestration Add-ons**.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| Browse the catalog | `client.orchestrations.get_all()` | `GET /api/v1/k8s-addons` |
+| Get one template | `client.orchestrations.get_by_id(id)` | `GET /api/v1/k8s-addons/:id` |
+| Public add-ons | `client.orchestrations.get_all_public()` | `GET /api/v1/k8s-addons/public` |
+| Check an id exists | `client.orchestrations.validate_id(id)` | `GET /api/v1/k8s-addons/:id` |
+| Add a template | `client.orchestrations.create(...)` | `POST /api/v1/k8s-addons` |
+| Update a template | `client.orchestrations.update(id, ...)` | `PUT /api/v1/k8s-addons/:id` |
+| Remove a template | `client.orchestrations.delete(id)` | `DELETE /api/v1/k8s-addons/:id` |
+
+## Browse the add-on catalog
+
+<Frame caption="Add-ons take image_tag as a single string, not a list of tag dicts — the one contract difference from the other registries.">
+  <img src="/images/sdk/orchestration-addons/catalog-browse-and-create.png" alt="Listing add-on templates, reading one, and registering a new catalog entry" />
+</Frame>
+
+```python
+catalog  = client.orchestrations.get_all(print_stdout=False)
+ADDON_ID = catalog[0]["id"]
+
+print(client.orchestrations.get_by_id(ADDON_ID, print_stdout=False))
+print(len(client.orchestrations.get_all_public()), "public add-ons")
+```
+
+## Add an add-on to the catalog
+
+```python
+entry = client.orchestrations.create(
+    "my-ray",                       # name
+    "busybox:latest",               # image_tag — a single string here
+    description="Ray cluster for our team",
+    visibility="private",
+)
+```
+
+<Note>
+  Add-ons have no licence route — `accept_license()` raises `NotImplementedError` for them by
+  design. They also carry `head_plans` and `worker_plans` rather than one plan list.
+</Note>
+
+## Change or remove a template
+
+<Frame caption="Templates can be disabled rather than deleted with is_active=False.">
+  <img src="/images/sdk/orchestration-addons/catalog-update-delete-bulk.png" alt="Updating an add-on template, deleting it, verifying it is gone, and registering several at once" />
+</Frame>
+
+```python
+client.orchestrations.update(entry["_id"], description="now with autoscaling")
+client.orchestrations.update(entry["_id"], is_active=False)     # disable, keep the entry
+
+client.orchestrations.delete(entry["_id"])
+print("gone?", not client.orchestrations.validate_id(entry["_id"]))
+```
+
+## Register several add-on templates at once
+
+```python
+from zeblok.batch import unique_names, batch
+
+names = unique_names("team-addon", 2,
+                     existing=lambda: client.orchestrations.get_all(print_stdout=False))
+
+result = batch(names, lambda n: client.orchestrations.create(
+    n, "busybox:latest", description="bulk-registered", visibility="private"))
+
+print(result.summary())
+```
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workspace › Orchestration Add-on" icon="diagram-project" href="/sdk/orchestration-addons">
+    Deploy a cluster from a template.
+  </Card>
+  <Card title="Plans" icon="server" href="/sdk/plans">
+    Sizing the head and worker nodes.
+  </Card>
+</CardGroup>

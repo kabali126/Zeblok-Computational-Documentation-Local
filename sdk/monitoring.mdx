@@ -1,0 +1,162 @@
+---
+title: "Monitoring"
+description: "Live metrics, sessions, activity and metering for anything you have running."
+---
+
+Four questions the other pages do not answer: **how is it performing**, **who used it**,
+**what has been happening**, and **what did each person consume**.
+
+<Note>
+  Live metrics come from **Prometheus**, not the platform's REST API. That is why they work for
+  every workload type — workstation, microservice, add-on, served model — and why a **stopped**
+  workload reports nothing at all. Start it before you measure it.
+</Note>
+
+## Capabilities
+
+| What you want to do | SDK call | Source |
+|---|---|---|
+| Everything about one workload | `handle.monitoring()` | several, in one call |
+| Live metrics + disk I/O | `handle.metrics()` | Prometheus |
+| Who used it, and when | `handle.sessions()` | `GET /api/v1/sessions/:root/:id` |
+| Activity for one workload | `handle.activity()` | `GET /api/v1/activity-logs/:id` |
+| Activity across the platform | `client.monitoring.activity_logs()` | `GET /api/v1/activity-logs` |
+| The same, paged for you | `client.monitoring.all_activity_logs()` | `GET /api/v1/activity-logs` |
+| Consumption per person | `client.monitoring.user_report(start, end)` | `GET /api/v1/activities/users` |
+| Which node is it on? | `client.metrics.node_for(ns, k8s_name)` | Prometheus |
+| Disk panel for a node | `client.metrics.disk("node1")` | Prometheus |
+| The series behind a number | `client.metrics.history(promql, minutes)` | Prometheus |
+
+## One report for one workload
+
+`monitoring()` gathers everything the platform records about a single workload in one call.
+
+```python
+handle = client.spawned("image", WORKSTATION_ID)   # image | service | inference | addon
+report = handle.monitoring()
+
+print(report)                    # a readable summary
+print(report["status"])
+print(report["sessions"])
+print(report["activity"])
+```
+
+It adds `utilization` for served models and `replica_status` for microservices, where the
+platform has a route for them. Anything that does not apply to this workload type is listed
+under `unsupported`, and anything that failed under `errors` — so one missing route never
+costs you the rest of the report.
+
+## Live metrics
+
+```python
+print(handle.metrics(time_range="5m"))
+```
+
+```
+metrics · testing-sdk (5m)
+  CPU usage        551 µcores       (0.1% of 1.00 cores)
+  Memory usage     275.2 MB         (26.9% of 1.0 GB)
+  GPU utilization  N/A              no GPU attached
+  CPU throttling   none
+
+  Disk I/O   node: zeblok1 | device: sda
+  I/O utilization  0.5%
+  Read speed       0.00 MB/s
+  Write speed      0.64 MB/s
+  Read IOPS        0.0
+  Write IOPS       20.8
+```
+
+It prints as a panel and behaves as a plain dictionary, so you can compute with it:
+`m["cpu_usage"]`, `m["memory_quota"]`, `m["write_iops"]`. On a multi-GPU workload,
+`m["gpus"]` lists each card separately.
+
+Windows: `5m`, `10m`, `30m`, `1h`, `2h`, `12h`, `24h`. For a disk other than `sda`, pass
+`device="nvme0n1"`.
+
+<Tip>
+  **Where the node comes from.** Disk counters belong to the machine, not the workload, and the
+  machine is not named on the workload's record. The SDK asks Prometheus which node the pod
+  landed on — the same step the web interface takes — so the Disk I/O panel appears without you
+  supplying anything. If the workload is not running there is no node to find, and that panel is
+  skipped.
+</Tip>
+
+## Sessions
+
+Who opened a running workload, and when.
+
+```python
+out = handle.sessions(limit=10)
+
+print(out["instance"]["name"])
+print(out["pagination"]["total"])
+for s in out["sessions"]:
+    print(s)
+```
+
+The platform names workload types differently here — `ai-workstation` rather than `image`,
+`k8sAddon` rather than `addon`. The SDK translates, so you keep using the same type names as
+everywhere else.
+
+## Activity
+
+The operational trail: who created, started, stopped or deleted what.
+
+```python
+# for one workload
+handle.activity(limit=25)
+
+# across the platform
+client.monitoring.activity_logs(limit=10)
+
+# with the pagination envelope, when you need the total
+page = client.monitoring.activity_logs_page(limit=5)
+print(page["pagination"]["total"])
+
+# paged for you, as an iterator
+for row in client.monitoring.all_activity_logs(limit=100):
+    print(row.get("action"), row.get("createdAt"))
+```
+
+This is broader than `client.iam.audit`, which records IAM changes only.
+
+## Metering
+
+What each person actually consumed over a date range — the number you bill or budget against.
+
+```python
+client.monitoring.user_report(start="2026-08-01", end="2026-08-31")
+
+# scope it to one organisation
+client.monitoring.user_report(
+    start="2026-08-01", end="2026-08-31",
+    organisation_id=ORGANISATION_ID,
+)
+```
+
+## Plot a metric over time
+
+`metrics()` gives the current number; `history()` gives the line behind it.
+
+```python
+from zeblok.metrics import pod_queries
+
+q = pod_queries(NAMESPACE_NAME, K8S_NAME)["cpu_usage"]
+points = client.metrics.history(q, minutes=60)
+
+print(len(points), "points", points[:3])
+```
+
+You get `(timestamp, value)` pairs, ready for a chart.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workload lifecycle" icon="rotate" href="/sdk/lifecycle">
+    Stop, start, resize and delete what you are monitoring.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/sdk/errors">
+    What a failed reading means.
+  </Card>
+</CardGroup>

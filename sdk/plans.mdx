@@ -1,0 +1,194 @@
+---
+title: "Plans"
+description: "Define how much CPU, GPU, memory and storage a workload gets."
+---
+
+A plan is a size. Every workload you start must be given one, and the plan decides how big
+it is. In the web interface these live under **Platform → Configurations → Plans**.
+
+## Capabilities
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| List every plan | `client.plans.get_all()` | `GET /api/v1/plans` |
+| Get one plan | `client.plans.get_by_id(id)` | `GET /api/v1/plans/:id` |
+| Check it exists | `client.plans.validate_id(id)` | `GET /api/v1/plans/:id` |
+| Get only some fields | `client.plans.get_filtered_details(id, fields_req)` | `GET /api/v1/plans/:id` |
+| List public plans | `client.plans.get_all_public()` | `GET /api/v1/plans/public` |
+| Check free capacity | `client.plans.capacity(dc_id)` | `GET /api/v1/plans/datacenter/:id/capacity` |
+| Create a plan | `client.plans.create(...)` | `POST /api/v1/plans` |
+| Create a custom-size plan | `client.plans.create_dynamic(...)` | `POST /api/v1/plans/dynamic` |
+| Update a plan | `client.plans.update(id, ...)` | `PUT /api/v1/plans/:id` |
+| Change only storage | `client.plans.update_storage(id, gb)` | `PUT /api/v1/plans/storage/:id` |
+| Delete a plan | `client.plans.delete(id)` | `DELETE /api/v1/plans/:id` |
+
+## List plans
+
+<Frame caption="get_all() returns every plan; get_by_id() and validate_id() work on a single one.">
+  <img src="/images/sdk/plans/list-plans.png" alt="Listing plans, fetching one by id, and checking an id exists" />
+</Frame>
+
+
+```python
+plans = client.plans.get_all(print_stdout=False)
+
+for p in plans:
+    r = p["resources"]
+    print(p["id"], p["name"], r.get("CPU"), "CPU,", r.get("GPU"), "GPU,", r.get("memory"), "GB")
+
+PLAN_ID = plans[0]["id"]
+```
+
+## Check capacity before you create
+
+<Frame caption="capacity() reports free CPU/GPU/memory per node and the largest single-node plan that would still fit.">
+  <img src="/images/sdk/plans/public-plans-and-capacity.png" alt="Public plans listing and the per-datacenter capacity check" />
+</Frame>
+
+
+```python
+capacity = client.plans.capacity(DATACENTER_ID)
+
+print("largest plan that fits on one machine:", capacity["max"])
+for node in capacity["nodes"]:
+    print(node["name"], node["CPU"], "CPU free,", node["memory"], "GB free")
+```
+
+<Warning>
+  You can create a plan bigger than any single machine. The platform accepts it, and no
+  workload will ever schedule onto it. If `max` says 4 CPU, a plan asking for 8 will never run.
+</Warning>
+
+## Create a plan
+
+<Frame caption="create() names the plan yourself; create_dynamic() lets the platform name it from the resources you ask for.">
+  <img src="/images/sdk/plans/create-plan.png" alt="Creating a plan, creating an auto-named custom plan, and reading both back" />
+</Frame>
+
+
+```python
+plan = client.plans.create(
+    plan_name="my-small-plan",       # required
+    datacenter_id=DATACENTER_ID,     # required
+    resources={                      # required
+        "GPU": 0,
+        "CPU": 1,
+        "memory": 2,                 # GB
+        "storage": 10,               # GB, optional
+    },
+    price=0,
+    currency="USD",                  # "USD" or "INR"
+    visibility="private",            # "private", "organization" or "public"
+)
+
+PLAN_ID = plan["_id"]
+```
+
+The SDK checks these before sending, so you get a readable message rather than a 400:
+
+| Rule | Why |
+|---|---|
+| `resources` must contain `GPU`, `CPU` and `memory` | The platform needs all three; use `0` where you want none |
+| `CPU` **or** `memory` must be above 0 | A plan with nothing in it cannot run anything |
+| `currency` is `USD` or `INR` | Only these two are accepted |
+| `visibility` is `private`, `organization` or `public` | Anything else is rejected |
+| `is_auto_scaling=True` requires `node_group_name` | Autoscaling needs to know which machine group to grow |
+
+### Custom-size plans
+
+When you care about the size but not the name, let the platform name it:
+
+```python
+dyn = client.plans.create_dynamic(
+    datacenter_id=DATACENTER_ID,
+    resources={"GPU": 0, "CPU": 1, "memory": 2, "storage": 5},
+)
+print(dyn["planName"])       # auto-generated
+```
+
+## Create many plans, each a different size
+
+<Frame caption="batch() passes each item to create(), so every plan can differ. One failure never stops the rest.">
+  <img src="/images/sdk/plans/bulk-create-plans.png" alt="Bulk-creating three plans, each with its own resources" />
+</Frame>
+
+
+`batch()` hands **each item** to your function untouched. Pass a list of dictionaries rather
+than a list of names, and every plan keeps its own resources.
+
+```python
+from zeblok.batch import batch, delete_many, unique_names
+
+PLAN_SPECS = [
+    {"name": "cpu-small",
+     "resources": {"GPU": 0, "CPU": 1, "memory": 2, "storage": 5}},
+
+    {"name": "cpu-large",
+     "resources": {"GPU": 0, "CPU": 8, "memory": 32, "storage": 50}},
+
+    {"name": "gpu-1",
+     "resources": {"GPU": 1, "CPU": 8, "memory": 64, "storage": 100},
+     "price": 5, "visibility": "organization"},
+]
+
+# give every plan a name that is not already taken
+taken = {p["name"] for p in client.plans.get_all(print_stdout=False)}
+for spec in PLAN_SPECS:
+    if spec["name"] in taken:
+        spec["name"] = unique_names(spec["name"], 1, existing=list(taken))[0]
+    taken.add(spec["name"])
+
+result = batch(PLAN_SPECS, lambda s: client.plans.create(
+    s["name"], DATACENTER_ID, s["resources"],
+    price=s.get("price", 0),
+    currency=s.get("currency", "USD"),
+    visibility=s.get("visibility", "private"),
+))
+
+print(result.summary())
+for _spec, made in result.ok:
+    print(made["planName"], made["resources"])
+
+delete_many(result, lambda i: client.plans.delete(i))
+```
+
+<Warning>
+  **The common mistake.** Passing a list of *names* and hard-coding one `resources` dict inside
+  the lambda gives every plan the same size — only the names differ. Put the resources in the
+  item, not in the function.
+</Warning>
+
+## Update and delete
+
+<Frame caption="Send only the fields you are changing. validate_id() returning False confirms the delete.">
+  <img src="/images/sdk/plans/update-and-delete-plan.png" alt="Updating a plan's name and price, resizing its storage, deleting it and verifying it is gone" />
+</Frame>
+
+
+```python
+client.plans.update(PLAN_ID, plan_name="my-renamed-plan", price=1)
+client.plans.update_storage(PLAN_ID, 25)          # dedicated storage route
+
+client.plans.delete(PLAN_ID)
+print("gone?", not client.plans.validate_id(PLAN_ID))
+```
+
+<Note>
+  Send only the fields you are changing — everything else stays as it was. Passing nothing is
+  refused with `pass at least one field to update`.
+</Note>
+
+<Frame caption="Anything you create from the SDK appears in the web interface straight away — here the custom and renamed test plans sit alongside the standard ones.">
+  <img src="/images/sdk/plans/web-ui-plans-after-create.png" alt="The Plans page in the web interface showing the plans created from the SDK" />
+</Frame>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Namespaces" icon="folder" href="/sdk/namespaces">
+    Where workloads run.
+  </Card>
+  <Card title="Workstations" icon="laptop-code" href="/sdk/workstations">
+    Use a plan to start one.
+  </Card>
+</CardGroup>

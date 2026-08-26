@@ -1,57 +1,179 @@
 ---
 title: "Python SDK"
-description: "Integrate Zeblok programmatically using the Python SDK."
+description: "Control the Ai-MicroCloud platform from Python — every component, one client."
 ---
 
-The Zeblok Python SDK (version 1.1.1) lets you integrate external systems with the Zeblok AI-MicroCloud platform via code. You can automate resource management, deploy Ai-Pipelines across multiple datacenters, and manage object storage — all from your own scripts or applications.
+The Zeblok Python SDK (version 2.0.0) lets you drive the Ai-MicroCloud platform from code.
+Anything you can do in the web interface — create plans, start workstations, deploy
+microservices, serve AI models, run agents — you can do from a script.
 
-## Installation
+<CardGroup cols={3}>
+  <Card title="Every component" icon="grid-2" horizontal />
+  <Card title="One client object" icon="plug" horizontal />
+  <Card title="Python 3.9+" icon="python" horizontal />
+</CardGroup>
 
-Install the SDK using pip:
-
-```bash
-pip install zeblok-sdk
-```
-
-The SDK is also available under the alternate package name `zeblok-py`:
-
-```bash
-pip install zeblok-py
-```
-
-## What the SDK supports
-
-- **Plans** — create and manage resource plans defining CPU and memory allocations
-- **Orchestration add-on (Ray clusters)** — spawn and manage Ray clusters for HPC workloads, model training, and large-scale computation
-- **Namespaces** — create and manage namespaces to isolate and organize resources within your organization
-- **Microservices** — deploy, query, and manage microservices running on AI-MicroCloud
-- **Ai-Pipelines** — deploy Ai-Pipelines in auto-deploy and non-auto-deploy modes, list all pipelines, and validate pipeline configurations
-- **Datasets and object storage** — manage datasets and interact with S3 (AWS), Blob (Azure), and MinIO object storage environments
-
-### File transfers
-
-You can upload and download files of any size directly to and from object storage via the SDK, whether you are working from your local machine or from within an Ai-MicroCloud environment.
-
-### Multi-datacenter Ai-Pipelines
-
-The SDK lets you deploy simultaneous Ai-Pipelines across multiple enterprise datacenters and collate results (Ai-Runs) at a single endpoint of your choice.
-
-## Usage documentation
-
-<Note>
-  The full SDK usage guide is available as a PDF and Markdown file from the Zeblok team. Contact [support@zeblok.com](mailto:support@zeblok.com) to request the documentation.
-</Note>
-
-Once you have installed the SDK, refer to the usage guide for detailed instructions on authentication, available methods, and examples for each supported component.
+## Set up
 
 <Steps>
-  <Step title="Install the SDK">
-    Run `pip install zeblok-sdk` in your local environment or inside your Ai-MicroCloud workstation.
+  <Step title="Install" icon="download">
+    ```bash
+    pip install "zeblok-sdk"
+    ```
+
+    That covers everything on these pages. Two features need an extra:
+
+    | If you want | Install |
+    |---|---|
+    | Live status updates (`wait_until_ready`) | `pip install "zeblok-sdk[realtime]"` |
+    | AWS S3 or Azure storage instead of MinIO | `pip install "zeblok-sdk[s3]"` or `[azure]` |
+
+    Or `pip install "zeblok-sdk[all]"` for every extra at once.
   </Step>
-  <Step title="Obtain the usage guide">
-    Contact the Zeblok support team at [support@zeblok.com](mailto:support@zeblok.com) to receive the SDK Usage PDF and Markdown file.
+
+  <Step title="Connect" icon="link">
+    Everything hangs off a single client. Create it once, then reach each component from it.
+
+    ```python
+    import os
+
+    from zeblok import ZeblokClient
+
+    client = ZeblokClient(
+        os.environ["ZBL_APP_URL"],        # e.g. "https://app.your-env.zeblok.com"
+        os.environ["ZBL_ACCESS_KEY"],
+        os.environ["ZBL_ACCESS_SECRET"],
+    )
+    ```
+
+    <Tip>
+      Paste whatever URL you use in the browser. The web app and the REST API are served from
+      different hosts, and which prefix is correct differs per environment — the client checks
+      and switches for you.
+    </Tip>
   </Step>
-  <Step title="Authenticate and start integrating">
-    Follow the authentication steps in the usage guide to connect the SDK to your AI-MicroCloud instance and begin automating your workflows.
+
+  <Step title="Check it works" icon="circle-check">
+    ```python
+    print(client.health())    # {'status': 'ok', ...}  -> platform reachable
+    print(client.config())    # {'tier': 'pro', ...}   -> your key works
+    ```
+
+    Both printing means you are connected and authenticated. If not, see
+    [Authentication](/sdk/authentication).
   </Step>
 </Steps>
+
+## How every page here is organised
+
+Each component page follows the same shape, so once you learn one you know them all:
+
+| Part | What it gives you |
+|---|---|
+| **Capabilities** | A table of every operation, the SDK call, and the REST endpoint behind it |
+| **Examples** | Ready-to-copy code for the common paths |
+| **Notes** | The behaviour worth knowing before you hit it |
+
+<Warning>
+  **Two kinds of call.** Reads (`get_all`, `get_by_id`, `list`, `validate_id`) only look —
+  run them freely. Writes (`create`, `update`, `delete`, `spawn`, `stop`) change real things
+  and consume real resources.
+</Warning>
+
+## Where to start
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/sdk/authentication">
+    The three credentials, what each is for, and how to verify you are connected.
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/sdk/quickstart">
+    A read-only first script that proves your setup and prints the ids you need.
+  </Card>
+</CardGroup>
+
+## Imports — register what can be run
+
+A catalog entry is a **template**. It does not run anything; it is what people start from.
+
+<CardGroup cols={3}>
+  <Card title="Workstations" icon="laptop-code" href="/sdk/ws-import">
+    Register JupyterLab images.
+  </Card>
+  <Card title="Microservices" icon="cubes" href="/sdk/ms-import">
+    Register application images.
+  </Card>
+  <Card title="Orchestration add-ons" icon="diagram-project" href="/sdk/oa-import">
+    Register cluster tools such as Ray.
+  </Card>
+  <Card title="AI Model Hub" icon="download" href="/sdk/model-hub">
+    Import models from HuggingFace.
+  </Card>
+  <Card title="Agent Hub" icon="robot" href="/sdk/agent-hub">
+    Register agent templates.
+  </Card>
+  <Card title="Datasets" icon="database" href="/sdk/datasets">
+    Store files the platform can reach.
+  </Card>
+</CardGroup>
+
+## Workspace — start and run things
+
+<CardGroup cols={3}>
+  <Card title="Workstations" icon="laptop-code" href="/sdk/workstations">
+    Start a development machine and open it.
+  </Card>
+  <Card title="Microservices" icon="cubes" href="/sdk/microservices">
+    Deploy an application and keep it running.
+  </Card>
+  <Card title="Orchestration add-ons" icon="diagram-project" href="/sdk/orchestration-addons">
+    Run a cluster with a head node and workers.
+  </Card>
+  <Card title="Inference" icon="brain" href="/sdk/inference">
+    Serve a model as an endpoint and chat with it.
+  </Card>
+  <Card title="Agents" icon="robot" href="/sdk/agents">
+    Run assistants with tools, and delegate between them.
+  </Card>
+  <Card title="Ai-API & Pipelines" icon="arrows-turn-right" href="/sdk/ai-api-pipelines">
+    Turn your own code into something running.
+  </Card>
+</CardGroup>
+
+## Configurations
+
+Set these up first — every workload needs a plan and a namespace.
+
+<CardGroup cols={3}>
+  <Card title="Data centers" icon="building" href="/sdk/datacenters">
+    Inspect machines and check free capacity.
+  </Card>
+  <Card title="Plans" icon="server" href="/sdk/plans">
+    How much CPU, GPU, memory and storage a workload gets.
+  </Card>
+  <Card title="Namespaces" icon="folder" href="/sdk/namespaces">
+    Isolate workloads and control who can reach them.
+  </Card>
+</CardGroup>
+
+## Platform & reference
+
+<CardGroup cols={3}>
+  <Card title="Workload lifecycle" icon="rotate" href="/sdk/lifecycle">
+    One handle to stop, start, resize, share and delete.
+  </Card>
+  <Card title="Monitoring" icon="gauge-high" href="/sdk/monitoring">
+    Live metrics, sessions, activity and metering.
+  </Card>
+  <Card title="Containerization" icon="box" href="/sdk/containerization">
+    Watch the image builds the platform runs.
+  </Card>
+  <Card title="IAM" icon="user-shield" href="/sdk/iam">
+    Users, roles, groups, policies and organisations.
+  </Card>
+  <Card title="Creating many at once" icon="layer-group" href="/sdk/bulk-operations">
+    Bulk creation without half-finished runs.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/sdk/errors">
+    What each message means and what to do.
+  </Card>
+</CardGroup>

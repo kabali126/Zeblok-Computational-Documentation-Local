@@ -1,0 +1,97 @@
+---
+title: "Datasets"
+description: "Store files on the platform and get them back."
+---
+
+A dataset is a named folder. Files go in as **versions**: every upload creates a new version,
+so older files stay where they were.
+
+## Capabilities
+
+<Frame caption="get_all() lists every dataset; get_by_name() finds one. Note the empty-list signal — these older SDK modules raise NoResourcesError instead of returning [], so catch it in any script that must run on a fresh environment.">
+  <img src="/images/sdk/datasets/list-datasets.png" alt="Listing datasets, with the empty-list NoResourcesError handled" />
+</Frame>
+
+
+| What you want to do | SDK call | API |
+|---|---|---|
+| List datasets | `client.datasets.get_all()` | `GET /api/v1/datasets` |
+| Find one by name | `client.datasets.get_by_name(name)` | `GET /api/v1/datasets` |
+| Get one by id | `client.datasets.get_by_id(id)` | `GET /api/v1/datasets/:id` |
+| Check it exists | `client.datasets.validate_id(id)` | `GET /api/v1/datasets/:id` |
+| Create | `client.datasets.create_dataset(...)` | `POST /api/v1/datasets` |
+| Upload files | `client.datasets.upload_dataset(id, paths)` | `POST /api/v1/dataset-versions` |
+| List versions | `client.datasets.versions(id)` | `GET /api/v1/dataset-versions/:datasetId` |
+| List files | `client.datasets.files(name)` | `GET /api/v1/datasets/files/:name` |
+| Files in one version | `client.datasets.version_files(v, name)` | `GET /api/v1/dataset-versions/files/:v` |
+| Download a file | `client.datasets.download_file(name, dest)` | `GET /api/v1/dataset-versions/download` |
+| Which object store | `client.datasets.object_storage_type()` | `GET /api/v1/datasets/objectStorage/type` |
+| Delete | `client.datasets.delete_dataset(id)` | `DELETE /api/v1/datasets/:id` |
+
+<Note>
+  **There is no rename.** The platform supports create, read and delete only — name and
+  description are fixed once created.
+</Note>
+
+## Create and upload
+
+<Frame caption="filepaths are paths on the machine running the code — in a Zeblok workstation that is the workstation's filesystem, not your laptop. Missing files are reported and skipped.">
+  <img src="/images/sdk/datasets/create-and-upload.png" alt="Creating a dataset with an auto-uniqued name and uploading a file to it" />
+</Frame>
+
+
+```python
+ds_id = client.datasets.create_dataset(
+    dataset_name="customer-churn",
+    dataset_description="training data for the churn model",
+    datacenter_id=DATACENTER_ID,
+)
+
+client.datasets.upload_dataset(ds_id, filepaths=["/home/me/churn.csv"])
+```
+
+<Warning>
+  Paths are on the **machine running your code** — the workstation if you are in a Zeblok
+  notebook, your laptop if you are local. A `file:///…` path works; a web address does not.
+</Warning>
+
+## Look inside, and download
+
+<Frame caption="files() takes the dataset name, not its id, and version_files() needs dataSetName as a query parameter.">
+  <img src="/images/sdk/datasets/files-download-delete.png" alt="Checking the object store, listing files by version, and getting a presigned download URL" />
+</Frame>
+
+
+```python
+name = client.datasets.get_by_id(ds_id)["name"]
+
+print(client.datasets.versions(ds_id))
+print(client.datasets.files(name))
+
+path = client.datasets.download_file("churn.csv", "/home/me/downloads")
+print("saved to", path)
+```
+
+## Delete
+
+
+```python
+client.datasets.delete_dataset(ds_id)
+print("gone?", not client.datasets.validate_id(ds_id))
+```
+
+<Note>
+  When no datasets exist, `get_all()` raises `NoResourcesError` rather than returning an empty
+  list. Catch it in any script that must run on a fresh environment.
+</Note>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Ai-API & Pipelines" icon="arrows-turn-right" href="/sdk/ai-api-pipelines">
+    Feed data into a pipeline.
+  </Card>
+  <Card title="AI Model Hub" icon="download" href="/sdk/model-hub">
+    Models to pair with your data.
+  </Card>
+</CardGroup>
