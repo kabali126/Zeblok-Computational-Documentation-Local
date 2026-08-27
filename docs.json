@@ -84,53 +84,58 @@
           {
             "group": "SDK & Integrations",
             "pages": [
-              "sdk/overview",
-              "sdk/authentication",
-              "sdk/quickstart",
               {
-                "group": "Workspace",
+                "group": "Python SDK",
                 "pages": [
-                  "sdk/workstations",
-                  "sdk/microservices",
-                  "sdk/orchestration-addons",
-                  "sdk/inference",
-                  "sdk/agents",
-                  "sdk/ai-api-pipelines"
-                ]
-              },
-              {
-                "group": "Imports",
-                "pages": [
-                  "sdk/ws-import",
-                  "sdk/ms-import",
-                  "sdk/oa-import",
-                  "sdk/model-hub",
-                  "sdk/agent-hub",
-                  "sdk/datasets"
-                ]
-              },
-              {
-                "group": "Configurations",
-                "pages": [
-                  "sdk/datacenters",
-                  "sdk/plans",
-                  "sdk/namespaces"
-                ]
-              },
-              {
-                "group": "Platform",
-                "pages": [
-                  "sdk/lifecycle",
-                  "sdk/monitoring",
-                  "sdk/containerization",
-                  "sdk/iam"
-                ]
-              },
-              {
-                "group": "Reference",
-                "pages": [
-                  "sdk/bulk-operations",
-                  "sdk/errors"
+                  "sdk/overview",
+                  "sdk/authentication",
+                  "sdk/quickstart",
+                  {
+                    "group": "Workspace",
+                    "pages": [
+                      "sdk/workstations",
+                      "sdk/microservices",
+                      "sdk/orchestration-addons",
+                      "sdk/inference",
+                      "sdk/agents",
+                      "sdk/ai-api-pipelines"
+                    ]
+                  },
+                  {
+                    "group": "Imports",
+                    "pages": [
+                      "sdk/ws-import",
+                      "sdk/ms-import",
+                      "sdk/oa-import",
+                      "sdk/model-hub",
+                      "sdk/agent-hub",
+                      "sdk/datasets"
+                    ]
+                  },
+                  {
+                    "group": "Configurations",
+                    "pages": [
+                      "sdk/datacenters",
+                      "sdk/plans",
+                      "sdk/namespaces"
+                    ]
+                  },
+                  {
+                    "group": "Platform",
+                    "pages": [
+                      "sdk/lifecycle",
+                      "sdk/monitoring",
+                      "sdk/containerization",
+                      "sdk/iam"
+                    ]
+                  },
+                  {
+                    "group": "Reference",
+                    "pages": [
+                      "sdk/bulk-operations",
+                      "sdk/errors"
+                    ]
+                  }
                 ]
               }
             ]
