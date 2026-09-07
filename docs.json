@@ -24,26 +24,31 @@
     "socials": {}
   },
   "navigation": {
-    "tabs": [
+    "products": [
       {
-        "tab": "Documentation",
+        "product": "Lite",
+        "name": "Ai-MicroCloud Lite",
+        "icon": "cloud",
+        "color": {
+          "light": "#378ADD",
+          "dark": "#378ADD"
+        },
+        "description": "Zeblok cloud · core workspace",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
-              "getstarted/introduction",
-              "getstarted/core-concepts",
-              "getstarted/signup-and-login"
+              "lite/getstarted/introduction",
+              "lite/getstarted/core-concepts",
+              "lite/getstarted/signup-and-login"
             ]
           },
           {
             "group": "Workspace",
             "pages": [
-              "workstation-and-services/spawn-workstation",
-              "workstation-and-services/spawn-microservice",
-              "workstation-and-services/spawn-orchestration-addon",
-              "workstation-and-services/spawn-inference",
-              "workstation-and-services/spawn-agent"
+              "lite/workspace/spawn-workstation",
+              "lite/workspace/spawn-microservice",
+              "lite/workspace/spawn-inference"
             ]
           },
           {
@@ -52,90 +57,272 @@
               {
                 "group": "Imports",
                 "pages": [
-                  "platform/imports/workstations",
-                  "platform/imports/microservices",
-                  "platform/imports/orchestration-addons",
-                  "platform/imports/ai-model-hub",
-                  "platform/imports/agent-hub",
-                  "platform/imports/datasets"
+                  "lite/platform/imports/workstations",
+                  "lite/platform/imports/microservices",
+                  "lite/platform/imports/ai-model-hub"
                 ]
               },
               {
                 "group": "Configurations",
                 "pages": [
-                  "platform/configurations/datacenter",
-                  "platform/configurations/plans",
-                  "platform/configurations/namespaces"
+                  "lite/platform/configurations/plans",
+                  "lite/platform/configurations/namespaces"
                 ]
               },
               {
                 "group": "IAM",
                 "pages": [
-                  "platform/iam/users",
-                  "platform/iam/roles",
-                  "platform/iam/policies",
-                  "platform/iam/organisations",
-                  "platform/iam/user-groups"
+                  "lite/platform/iam/users",
+                  "lite/platform/iam/roles"
                 ]
               },
-              "platform/api-keys-and-secrets"
+              "lite/platform/api-keys-and-secrets"
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Pro",
+        "name": "Ai-MicroCloud Pro",
+        "icon": "cloud-bolt",
+        "color": {
+          "light": "#1A6EFF",
+          "dark": "#1A6EFF"
+        },
+        "description": "Zeblok cloud · full edition",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "pro/getstarted/introduction",
+              "pro/getstarted/core-concepts",
+              "pro/getstarted/signup-and-login"
             ]
           },
           {
-            "group": "SDK & Integrations",
+            "group": "Workspace",
+            "pages": [
+              "pro/workspace/spawn-workstation",
+              "pro/workspace/spawn-microservice",
+              "pro/workspace/spawn-orchestration-addon",
+              "pro/workspace/spawn-inference",
+              "pro/workspace/spawn-agent"
+            ]
+          },
+          {
+            "group": "Platform",
             "pages": [
               {
-                "group": "Python SDK",
+                "group": "Imports",
                 "pages": [
-                  "sdk/overview",
-                  "sdk/authentication",
-                  "sdk/quickstart",
-                  {
-                    "group": "Workspace",
-                    "pages": [
-                      "sdk/workstations",
-                      "sdk/microservices",
-                      "sdk/orchestration-addons",
-                      "sdk/inference",
-                      "sdk/agents",
-                      "sdk/ai-api-pipelines"
-                    ]
-                  },
-                  {
-                    "group": "Imports",
-                    "pages": [
-                      "sdk/ws-import",
-                      "sdk/ms-import",
-                      "sdk/oa-import",
-                      "sdk/model-hub",
-                      "sdk/agent-hub",
-                      "sdk/datasets"
-                    ]
-                  },
-                  {
-                    "group": "Configurations",
-                    "pages": [
-                      "sdk/datacenters",
-                      "sdk/plans",
-                      "sdk/namespaces"
-                    ]
-                  },
-                  {
-                    "group": "Platform",
-                    "pages": [
-                      "sdk/lifecycle",
-                      "sdk/monitoring",
-                      "sdk/containerization",
-                      "sdk/iam"
-                    ]
-                  },
-                  {
-                    "group": "Reference",
-                    "pages": [
-                      "sdk/bulk-operations",
-                      "sdk/errors"
-                    ]
-                  }
+                  "pro/platform/imports/workstations",
+                  "pro/platform/imports/microservices",
+                  "pro/platform/imports/orchestration-addons",
+                  "pro/platform/imports/ai-model-hub",
+                  "pro/platform/imports/agent-hub",
+                  "pro/platform/imports/datasets"
+                ]
+              },
+              {
+                "group": "Configurations",
+                "pages": [
+                  "pro/platform/configurations/datacenter",
+                  "pro/platform/configurations/plans",
+                  "pro/platform/configurations/namespaces"
+                ]
+              },
+              {
+                "group": "IAM",
+                "pages": [
+                  "pro/platform/iam/users",
+                  "pro/platform/iam/roles",
+                  "pro/platform/iam/policies",
+                  "pro/platform/iam/organisations",
+                  "pro/platform/iam/user-groups"
+                ]
+              },
+              "pro/platform/api-keys-and-secrets"
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Lite-Edge",
+        "name": "Ai-MicroCloud Lite-Edge",
+        "icon": "microchip",
+        "color": {
+          "light": "#1D9E75",
+          "dark": "#1D9E75"
+        },
+        "description": "Your hardware · core workspace",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "lite-edge/getstarted/introduction",
+              "lite-edge/getstarted/core-concepts",
+              "lite-edge/getstarted/signup-and-login"
+            ]
+          },
+          {
+            "group": "Workspace",
+            "pages": [
+              "lite-edge/workspace/spawn-workstation",
+              "lite-edge/workspace/spawn-microservice",
+              "lite-edge/workspace/spawn-inference"
+            ]
+          },
+          {
+            "group": "Platform",
+            "pages": [
+              {
+                "group": "Imports",
+                "pages": [
+                  "lite-edge/platform/imports/workstations",
+                  "lite-edge/platform/imports/microservices",
+                  "lite-edge/platform/imports/ai-model-hub"
+                ]
+              },
+              {
+                "group": "Configurations",
+                "pages": [
+                  "lite-edge/platform/configurations/plans",
+                  "lite-edge/platform/configurations/namespaces"
+                ]
+              },
+              {
+                "group": "IAM",
+                "pages": [
+                  "lite-edge/platform/iam/users",
+                  "lite-edge/platform/iam/roles"
+                ]
+              },
+              "lite-edge/platform/api-keys-and-secrets"
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Pro-Edge",
+        "name": "Ai-MicroCloud Pro-Edge",
+        "icon": "server",
+        "color": {
+          "light": "#7F77DD",
+          "dark": "#7F77DD"
+        },
+        "description": "Your hardware · full edition",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "pro-edge/getstarted/introduction",
+              "pro-edge/getstarted/core-concepts",
+              "pro-edge/getstarted/signup-and-login"
+            ]
+          },
+          {
+            "group": "Workspace",
+            "pages": [
+              "pro-edge/workspace/spawn-workstation",
+              "pro-edge/workspace/spawn-microservice",
+              "pro-edge/workspace/spawn-orchestration-addon",
+              "pro-edge/workspace/spawn-inference",
+              "pro-edge/workspace/spawn-agent"
+            ]
+          },
+          {
+            "group": "Platform",
+            "pages": [
+              {
+                "group": "Imports",
+                "pages": [
+                  "pro-edge/platform/imports/workstations",
+                  "pro-edge/platform/imports/microservices",
+                  "pro-edge/platform/imports/orchestration-addons",
+                  "pro-edge/platform/imports/ai-model-hub",
+                  "pro-edge/platform/imports/agent-hub",
+                  "pro-edge/platform/imports/datasets"
+                ]
+              },
+              {
+                "group": "Configurations",
+                "pages": [
+                  "pro-edge/platform/configurations/datacenter",
+                  "pro-edge/platform/configurations/plans",
+                  "pro-edge/platform/configurations/namespaces"
+                ]
+              },
+              {
+                "group": "IAM",
+                "pages": [
+                  "pro-edge/platform/iam/users",
+                  "pro-edge/platform/iam/roles",
+                  "pro-edge/platform/iam/policies",
+                  "pro-edge/platform/iam/organisations",
+                  "pro-edge/platform/iam/user-groups"
+                ]
+              },
+              "pro-edge/platform/api-keys-and-secrets"
+            ]
+          }
+        ]
+      },
+      {
+        "product": "SDK & Reference",
+        "name": "SDK & Reference",
+        "icon": "code",
+        "description": "Shared across every edition",
+        "groups": [
+          {
+            "group": "Python SDK",
+            "pages": [
+              "sdk/overview",
+              "sdk/authentication",
+              "sdk/quickstart",
+              {
+                "group": "Workspace",
+                "pages": [
+                  "sdk/workstations",
+                  "sdk/microservices",
+                  "sdk/orchestration-addons",
+                  "sdk/inference",
+                  "sdk/agents",
+                  "sdk/ai-api-pipelines"
+                ]
+              },
+              {
+                "group": "Imports",
+                "pages": [
+                  "sdk/ws-import",
+                  "sdk/ms-import",
+                  "sdk/oa-import",
+                  "sdk/model-hub",
+                  "sdk/agent-hub",
+                  "sdk/datasets"
+                ]
+              },
+              {
+                "group": "Configurations",
+                "pages": [
+                  "sdk/datacenters",
+                  "sdk/plans",
+                  "sdk/namespaces"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "sdk/lifecycle",
+                  "sdk/monitoring",
+                  "sdk/containerization",
+                  "sdk/iam"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "sdk/bulk-operations",
+                  "sdk/errors"
                 ]
               }
             ]
@@ -143,6 +330,7 @@
           {
             "group": "Reference",
             "pages": [
+              "editions/compare",
               "releases/release-notes",
               "support"
             ]
@@ -155,6 +343,39 @@
           }
         ]
       }
-    ]
-  }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Compare editions",
+          "icon": "table-columns",
+          "href": "/editions/compare"
+        },
+        {
+          "anchor": "Release notes",
+          "icon": "tag",
+          "href": "/releases/release-notes"
+        },
+        {
+          "anchor": "Support",
+          "icon": "life-ring",
+          "href": "/support"
+        }
+      ]
+    }
+  },
+  "redirects": [
+    {
+      "source": "/getstarted/:slug*",
+      "destination": "/pro/getstarted/:slug*"
+    },
+    {
+      "source": "/workstation-and-services/:slug*",
+      "destination": "/pro/workspace/:slug*"
+    },
+    {
+      "source": "/platform/:slug*",
+      "destination": "/pro/platform/:slug*"
+    }
+  ]
 }

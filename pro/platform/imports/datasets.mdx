@@ -1,0 +1,95 @@
+---
+title: "Datasets"
+description: "Create and manage versioned datasets on the Ai-MicroCloud platform using your default object storage bucket."
+---
+
+## Overview
+
+The **Datasets** page is accessible via **Platform → Imports → Datasets** in the left sidebar. Datasets allow you to store, version, and manage collections of files that can be used across workstations, microservices, and inference services on the platform.
+
+Every user on the platform has a **Default Bucket** — an object storage bucket automatically provisioned for them. All datasets created by a user are stored inside this default bucket. The default bucket name is displayed in the top-right corner of the Datasets page for reference.
+
+<Frame>
+  <img src="/images/datasets/dataset-page.png" alt="Datasets page showing existing dataset cards with their name, visibility, storage type, bucket, and datacenter, along with the default bucket name in the top-right corner" />
+</Frame>
+
+Each dataset card on the page displays:
+
+- **Name** — the unique identifier of the dataset
+- **Visibility** — whether the dataset is Private or Public
+- **Created** — how long ago the dataset was created
+- **Storage** — the storage backend (for example, MINIO)
+- **Bucket** — the object storage bucket the dataset is stored in
+- **Datacenter** — the data center where the dataset resides
+- **View Details** — a link to open the full dataset details panel
+
+---
+
+## Creating a Dataset
+
+To create a new dataset, click the **New Dataset** button in the top-right corner. You will be taken to the **Create Dataset** page.
+
+<Frame>
+  <img src="/images/datasets/create-dataset-page.png" alt="Create Dataset page showing the Name field, Description text area, Datacenter dropdown, and Create Dataset button" />
+</Frame>
+
+Fill in the following fields:
+
+- **Name** *(required)* — a unique name for the dataset, for example `developer-ds` or `training-data-v1`.
+- **Description** *(optional)* — a brief description of the dataset's contents or purpose.
+- **Datacenter** *(required)* — the data center where the dataset will be stored. Select from the available data centers in your organisation.
+
+Once all required fields are filled in, click **Create Dataset**. The dataset will be created and will appear on the Datasets page immediately.
+
+<Frame>
+  <img src="/images/datasets/dataset-created.png" alt="Datasets page showing the newly created dataset card appearing in the list with its name, visibility, bucket, and datacenter" />
+</Frame>
+
+---
+
+## Viewing Dataset Details
+
+Clicking **View Details** on a dataset card opens the details panel on the right side of the screen. The panel shows:
+
+- **Name** — the dataset name
+- **Visibility** — Private or Public
+- **Datacenter** — the data center hosting the dataset
+- **Bucket** — the object storage bucket the dataset is stored in
+- **Description** — the description entered at creation
+- **Storage** — the storage backend
+- **Created** — the creation date
+- **Versions** — a list of all versions of this dataset, each with a version ID and the files it contains
+
+When a dataset has no versions yet, the panel shows a message: *No versions yet. Upload files to create the first version.*
+
+<Frame>
+  <img src="/images/datasets/dataset-view-details.png" alt="Dataset details panel showing the dataset name, description, storage info, creation date, bucket, and a No versions yet message prompting the user to upload files" />
+</Frame>
+
+---
+
+## Adding Files to a Dataset
+
+Once a dataset is created, you can upload files to it by creating a new version. From the dataset details panel, click **Start Empty** to create a brand new version without inheriting any files from previous versions.
+
+<Frame>
+  <img src="/images/datasets/dataset-add-or-drop-file.png" alt="Start Empty modal showing a file drop zone, Browse Files button, a queued file ubuntu_desktop.jpg at 4.0 KB, and a Create Empty Version button" />
+</Frame>
+
+The **Start Empty** modal allows you to:
+
+- **Drop files** directly onto the drop zone, or click **Browse Files** to select files from your computer
+- Review the list of **queued files** before uploading — each file shows its name and size
+- Click **Create Empty Version** to upload the queued files and create a new version of the dataset
+
+Once the version is created, it appears in the **Versions** section of the dataset details panel. Each version is labeled with a version number (for example, `v1` with a `latest` badge) and a unique version ID. All files in the version are listed with their names and sizes, and can be downloaded individually.
+
+<Frame>
+  <img src="/images/datasets/dataset-file-added.png" alt="Dataset details panel showing the latest version with version ID, the uploaded file ubuntu_desktop.jpg at 4.0 KB, and options to Start Empty or Edit Latest" />
+</Frame>
+
+You can also click **Edit Latest** to add more files to the current latest version without starting a fresh version from scratch.
+
+<Note>
+  Each new version created with **Start Empty** does not inherit any files from previous versions. Use **Edit Latest** if you want to add files to the existing latest version instead of starting fresh.
+</Note>
