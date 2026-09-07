@@ -3,30 +3,32 @@ title: "Zeblok Computational"
 description: "GPU-powered AI/ML platform for developing, training, and deploying machine learning models at scale."
 ---
 
-Welcome to Zeblok Computational — your turnkey AI/ML cloud environment. Spin up GPU-powered workstations, build and serve ML models as APIs, store and query large datasets, and deploy microservices from a single unified platform.
+Welcome to Zeblok Computational. Ai-MicroCloud® ships in four editions — pick the one your organisation runs and the documentation will follow it throughout.
 
 <CardGroup cols={2}>
-  <Card title="Quick Start" icon="rocket" href="/create-an-account">
-    Create your account and launch your first Ai-WorkStation in minutes.
+  <Card title="Ai-MicroCloud Lite" icon="cloud" href="/lite/getstarted/introduction">
+    **Zeblok cloud · core workspace.** Ai-WorkStations, Ai-MicroServices and Ai-Inference.
   </Card>
-  <Card title="Core Concepts" icon="book-open" href="/core-concepts">
-    Learn about Ai-WorkStations, the Ai-API Engine, Data Lake, and more.
+  <Card title="Ai-MicroCloud Pro" icon="cloud-bolt" href="/pro/getstarted/introduction">
+    **Zeblok cloud · full edition.** Adds orchestration add-ons, agents, datasets and full IAM.
   </Card>
-  <Card title="Ai-API Engine" icon="microchip" href="/ai-api-engine/introduction">
-    Package and deploy trained ML models as production-ready REST APIs.
+  <Card title="Ai-MicroCloud Lite-Edge" icon="microchip" href="/lite-edge/getstarted/introduction">
+    **Your hardware · core workspace.** The Lite feature set, deployed on-premises or at the edge.
   </Card>
-  <Card title="ZBL CLI" icon="terminal" href="/ai-api-engine/cli">
-    Use the Zeblok command-line interface to serve and deploy models.
-  </Card>
-  <Card title="Data Lake" icon="database" href="/data/datalake">
-    Store, manage, and query structured and unstructured data at scale.
-  </Card>
-  <Card title="Python SDK" icon="python" href="/sdk/overview">
-    Integrate Zeblok into your workflows programmatically with the SDK.
+  <Card title="Ai-MicroCloud Pro-Edge" icon="server" href="/pro-edge/getstarted/introduction">
+    **Your hardware · full edition.** The complete Pro feature set, including air-gapped clusters.
   </Card>
 </CardGroup>
 
+<Note>
+  Not sure which one you are on? [Compare the four editions side by side](/editions/compare).
+</Note>
+
+---
+
 ## How it works
+
+Every edition follows the same shape: get started, work in your workspace, administer the platform.
 
 <Steps>
   <Step title="Create an account">
@@ -38,11 +40,23 @@ Welcome to Zeblok Computational — your turnkey AI/ML cloud environment. Spin u
   <Step title="Build and train your model">
     Use your preferred ML framework (PyTorch, TensorFlow, scikit-learn, and more) inside the notebook.
   </Step>
-  <Step title="Deploy as an AI API">
-    Use the ZBL CLI to containerize your model and deploy it as a scalable REST API with one command.
+  <Step title="Deploy it">
+    Serve the model as a scalable REST endpoint, or deploy an LLM through Ai-Inference.
   </Step>
 </Steps>
 
-<Note>
-  Everyone currently has **Beta Access**, which unlocks all available plans. You can explore the full platform at no additional cost during the beta period.
-</Note>
+---
+
+## Shared across editions
+
+<CardGroup cols={3}>
+  <Card title="Python SDK" icon="code" href="/sdk/overview">
+    Integrate Zeblok into your workflows programmatically.
+  </Card>
+  <Card title="Release notes" icon="tag" href="/releases/release-notes">
+    What changed in each version of Ai-MicroCloud.
+  </Card>
+  <Card title="Support" icon="headset" href="/support">
+    Get help from the Zeblok team or browse known issues.
+  </Card>
+</CardGroup>
