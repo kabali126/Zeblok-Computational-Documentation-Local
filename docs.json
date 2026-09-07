@@ -78,6 +78,69 @@
               },
               "lite/platform/api-keys-and-secrets"
             ]
+          },
+          {
+            "group": "SDK & Integrations",
+            "pages": [
+              "sdk/overview",
+              "sdk/authentication",
+              "sdk/quickstart",
+              {
+                "group": "Workspace",
+                "pages": [
+                  "sdk/workstations",
+                  "sdk/microservices",
+                  "sdk/orchestration-addons",
+                  "sdk/inference",
+                  "sdk/agents",
+                  "sdk/ai-api-pipelines"
+                ]
+              },
+              {
+                "group": "Imports",
+                "pages": [
+                  "sdk/ws-import",
+                  "sdk/ms-import",
+                  "sdk/oa-import",
+                  "sdk/model-hub",
+                  "sdk/agent-hub",
+                  "sdk/datasets"
+                ]
+              },
+              {
+                "group": "Configurations",
+                "pages": [
+                  "sdk/datacenters",
+                  "sdk/plans",
+                  "sdk/namespaces"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "sdk/lifecycle",
+                  "sdk/monitoring",
+                  "sdk/containerization",
+                  "sdk/iam"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "sdk/bulk-operations",
+                  "sdk/errors"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "editions/compare",
+              "releases/release-notes",
+              "support",
+              "use-cases/openclaw-memory-offloading"
+            ]
           }
         ]
       },
@@ -143,6 +206,69 @@
               },
               "pro/platform/api-keys-and-secrets"
             ]
+          },
+          {
+            "group": "SDK & Integrations",
+            "pages": [
+              "sdk/overview",
+              "sdk/authentication",
+              "sdk/quickstart",
+              {
+                "group": "Workspace",
+                "pages": [
+                  "sdk/workstations",
+                  "sdk/microservices",
+                  "sdk/orchestration-addons",
+                  "sdk/inference",
+                  "sdk/agents",
+                  "sdk/ai-api-pipelines"
+                ]
+              },
+              {
+                "group": "Imports",
+                "pages": [
+                  "sdk/ws-import",
+                  "sdk/ms-import",
+                  "sdk/oa-import",
+                  "sdk/model-hub",
+                  "sdk/agent-hub",
+                  "sdk/datasets"
+                ]
+              },
+              {
+                "group": "Configurations",
+                "pages": [
+                  "sdk/datacenters",
+                  "sdk/plans",
+                  "sdk/namespaces"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "sdk/lifecycle",
+                  "sdk/monitoring",
+                  "sdk/containerization",
+                  "sdk/iam"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "sdk/bulk-operations",
+                  "sdk/errors"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "editions/compare",
+              "releases/release-notes",
+              "support",
+              "use-cases/openclaw-memory-offloading"
+            ]
           }
         ]
       },
@@ -198,6 +324,69 @@
                 ]
               },
               "lite-edge/platform/api-keys-and-secrets"
+            ]
+          },
+          {
+            "group": "SDK & Integrations",
+            "pages": [
+              "sdk/overview",
+              "sdk/authentication",
+              "sdk/quickstart",
+              {
+                "group": "Workspace",
+                "pages": [
+                  "sdk/workstations",
+                  "sdk/microservices",
+                  "sdk/orchestration-addons",
+                  "sdk/inference",
+                  "sdk/agents",
+                  "sdk/ai-api-pipelines"
+                ]
+              },
+              {
+                "group": "Imports",
+                "pages": [
+                  "sdk/ws-import",
+                  "sdk/ms-import",
+                  "sdk/oa-import",
+                  "sdk/model-hub",
+                  "sdk/agent-hub",
+                  "sdk/datasets"
+                ]
+              },
+              {
+                "group": "Configurations",
+                "pages": [
+                  "sdk/datacenters",
+                  "sdk/plans",
+                  "sdk/namespaces"
+                ]
+              },
+              {
+                "group": "Platform",
+                "pages": [
+                  "sdk/lifecycle",
+                  "sdk/monitoring",
+                  "sdk/containerization",
+                  "sdk/iam"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "sdk/bulk-operations",
+                  "sdk/errors"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "editions/compare",
+              "releases/release-notes",
+              "support",
+              "use-cases/openclaw-memory-offloading"
             ]
           }
         ]
@@ -264,17 +453,9 @@
               },
               "pro-edge/platform/api-keys-and-secrets"
             ]
-          }
-        ]
-      },
-      {
-        "product": "SDK & Reference",
-        "name": "SDK & Reference",
-        "icon": "code",
-        "description": "Shared across every edition",
-        "groups": [
+          },
           {
-            "group": "Python SDK",
+            "group": "SDK & Integrations",
             "pages": [
               "sdk/overview",
               "sdk/authentication",
@@ -332,12 +513,7 @@
             "pages": [
               "editions/compare",
               "releases/release-notes",
-              "support"
-            ]
-          },
-          {
-            "group": "Use Cases",
-            "pages": [
+              "support",
               "use-cases/openclaw-memory-offloading"
             ]
           }
