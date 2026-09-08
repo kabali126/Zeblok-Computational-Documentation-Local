@@ -33,7 +33,6 @@
           "light": "#378ADD",
           "dark": "#378ADD"
         },
-        "description": "Zeblok cloud · core workspace",
         "groups": [
           {
             "group": "Get Started",
@@ -152,7 +151,6 @@
           "light": "#1A6EFF",
           "dark": "#1A6EFF"
         },
-        "description": "Zeblok cloud · full edition",
         "groups": [
           {
             "group": "Get Started",
@@ -280,7 +278,6 @@
           "light": "#1D9E75",
           "dark": "#1D9E75"
         },
-        "description": "Your hardware · core workspace",
         "groups": [
           {
             "group": "Get Started",
@@ -399,7 +396,6 @@
           "light": "#7F77DD",
           "dark": "#7F77DD"
         },
-        "description": "Your hardware · full edition",
         "groups": [
           {
             "group": "Get Started",
