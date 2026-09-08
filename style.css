@@ -1,0 +1,31 @@
+.nav-dropdown-products-selector-item[href^="/lite/"] .nav-dropdown-products-selector-item-title,
+.nav-dropdown-products-selector-item[href^="/lite-edge/"] .nav-dropdown-products-selector-item-title,
+.nav-dropdown-products-selector-item[href^="/pro-edge/"] .nav-dropdown-products-selector-item-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-dropdown-products-selector-item[href^="/lite/"] .nav-dropdown-products-selector-item-title::after,
+.nav-dropdown-products-selector-item[href^="/lite-edge/"] .nav-dropdown-products-selector-item-title::after,
+.nav-dropdown-products-selector-item[href^="/pro-edge/"] .nav-dropdown-products-selector-item-title::after {
+  content: "BETA";
+  flex: none;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 5px;
+  border: 1px solid rgb(180 130 20 / 0.45);
+  color: rgb(161 98 7);
+  background: rgb(234 179 8 / 0.12);
+}
+
+.dark .nav-dropdown-products-selector-item[href^="/lite/"] .nav-dropdown-products-selector-item-title::after,
+.dark .nav-dropdown-products-selector-item[href^="/lite-edge/"] .nav-dropdown-products-selector-item-title::after,
+.dark .nav-dropdown-products-selector-item[href^="/pro-edge/"] .nav-dropdown-products-selector-item-title::after {
+  border-color: rgb(250 204 21 / 0.4);
+  color: rgb(250 204 21);
+  background: rgb(250 204 21 / 0.12);
+}
