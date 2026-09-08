@@ -7,6 +7,81 @@ This page documents what changed in each release of Zeblok Ai-MicroCloud®. Upda
 
 <AccordionGroup>
 
+  <Accordion title="v2.3.0 — August 2026 (Minor Release)">
+    A feature release headlined by full multi-architecture support (ARM64 & AMD64) and the arrival of Ai-MicroCloud® Lite for Edge, complemented by a powerful new Knowledge Distillation workflow (Beta), deeper inference observability, comprehensive IAM enhancements, and a broad set of security and reliability improvements.
+
+    **🌟 Highlights**
+
+    - **Full Multi-Architecture Support (ARM64 & AMD64):** Run Ai-MicroCloud® natively on both ARM and AMD hardware, from NVIDIA DGX Spark and Jetson Orin to standard AMD servers, all from a single unified platform image.
+    - **Ai-MicroCloud® Lite for Edge:** A complete, self-contained edition that runs the full platform on a single machine, bringing AI deployment right to the edge.
+    - **Knowledge Distillation on Ai-MicroCloud® Pro (Beta):** Turn documents and web links into a structured, quality-checked knowledge base, then build a Retrieval-Augmented (RAG) agent grounded in your own data.
+    - **Comprehensive IAM Enhancements:** Stronger identity, access, and governance controls across users, roles, policies, and organizations.
+    - **Edge Component Upgrades:** The edge stack is upgraded to its latest supported versions, keeping deployments current with the newest security patches.
+
+    ---
+
+    ## Knowledge Distillation on Ai-MicroCloud® Pro (Beta)
+
+    *Turn your data into knowledge, and put it to work.*
+
+    Knowledge Distillation (KD) transforms data from documents and web links into a structured question-and-answer knowledge base, automatically generating and quality-checking Q&A pairs. Use the resulting knowledge base to build a Retrieval-Augmented Generation (RAG) agent and ask questions grounded in your own data.
+
+    **What's new in KD:**
+
+    - **Automated Q&A Generation:** Transform source material into structured knowledge pairs.
+    - **Built-In Quality Checking:** See how many Q&A pairs are accepted or rejected during the distillation process.
+    - **RAG Agent Creation:** Turn the distilled knowledge into a searchable agent you can query with your own questions.
+    - **Q&A Export:** Export generated knowledge pairs for reuse.
+    - **Progress Visibility:** Follow the distillation pipeline as it reads, generates, checks, and saves knowledge.
+    - **Utilization Insights:** Monitor tokens, latency, average response, time to first token, and error rate when interacting with the RAG agent.
+    - **Model Evaluation:** Measure how accurate and hallucination-free your RAG agent's answers are, right from the dashboard.
+
+    ---
+
+    ## Ai-MicroCloud®
+
+    **IaaS**
+
+    - **Ai-MicroCloud® Lite for Edge:** A lightweight edition designed to run a complete Ai-MicroCloud® environment on a single server or even a laptop. It brings the full platform experience to the edge, making it easy to deploy AI close to where your data is generated, without the need for a full cluster.
+    - **Jetson Orin (ARM) Edge Support:** Ai-MicroCloud® now runs natively on NVIDIA Jetson Orin, extending the platform to compact, power-efficient ARM-based edge hardware. This unlocks AI deployment in space- and power-constrained environments such as on-site, field, and embedded use cases.
+    - **3-Node HA Ai-MicroCloud® for Edge on ARM (DGX Spark):** A high-availability, three-node edge deployment on ARM-based NVIDIA DGX Spark hardware. This keeps your edge workloads running reliably even if a node goes down, delivering production-grade resilience right at the edge.
+    - **Multi-Architecture Support (ARM64 & AMD64):** Ai-MicroCloud® now runs natively across both ARM and AMD/x86 hardware, with a single unified platform image covering every deployment type: Pro, Edge, and Lite. You get complete flexibility to run the platform on the hardware that best fits your environment, with no separate builds to manage.
+    - **Edge Component Upgrades:** The entire edge stack has been upgraded to its latest supported versions, keeping deployments current with the newest security patches, performance improvements, and stability fixes.
+
+    **PaaS**
+
+    - **Newly Added Elastic Context Offloading Option:** The Inference module now offers an additional Elastic Context Offloading option that can be enabled per model.
+    - **Accurate Utilization Averages:** The Utilization tab now shows the true average Time to First Token (TTFT) and Time per Output Token (TPOT), alongside the existing p95/p99 percentiles, giving you a clearer, more representative view of real-world inference performance across all your requests.
+
+    **SaaS**
+
+    - **Simpler Inference Chat:** You can now chat with a deployed inference directly, without having to enter or manage an API key. Starting a conversation is effortless: just open the chat and begin, with no setup steps in between.
+    - **Stop Button During Chat:** You can now stop a response mid-generation with a single click, giving you full control over the conversation and letting you cancel a long or off-track answer instantly instead of waiting for it to finish.
+    - **DDIL Support for Inference on Edge:** Inference workloads on the edge now stay available even when the connection between the central HUB and the edge node breaks. Previously offered only for workstations and microservices, this DDIL (Denied, Degraded, Intermittent, Limited) resilience now extends to inference.
+    - **New Chat & Chat History in Agents:** The chat experience now supports starting a fresh conversation and revisiting past ones. You can pick up where you left off or begin a clean session anytime, giving you better continuity and control over your interactions.
+
+    **Security**
+
+    - **Comprehensive IAM Enhancements:** A wide set of identity and access improvements, including organization-based user filtering, an organization picker when inviting users, a safer default Viewer role, and the ability to invite users into an existing organization.
+    - **Resolved Image Vulnerabilities:** Vulnerabilities in the platform's container images have been identified and fixed, keeping deployments secure and up to date.
+
+    **Bug Fixes**
+
+    - Fixed single-node Edge/Lite deployments where datacenters incorrectly reported no available resources and displayed an empty plan dropdown.
+    - Resolved workstation start-up failures on Edge caused by missing image-pull credentials.
+    - Fixed an issue where notebooks would not open on Edge deployments due to internal DNS resolution.
+    - Corrected the datacenter name display, which previously showed a hardcoded value instead of the name entered during setup.
+    - Fixed monitoring panels that displayed "N/A" for all components, and node-monitoring pages that failed to load on GPU-less clusters.
+    - The weekly usage report is now sent exactly once per platform, resolving the earlier issue that could generate duplicate emails, with agent-users now correctly excluded.
+    - The NVMe path-clash message now appears inline instead of as a top-of-form banner, and an obsolete offload warning has been removed from the New Inference page.
+    - Corrected multiple IAM validation issues, including usernames, role names, and email length.
+
+    **Documentation**
+
+    - **Zeblok SDK Documentation & Guide:** New end-to-end SDK documentation and a User Guide covering authentication, resource management, and core workflows, giving developers everything they need to start automating with the SDK.
+    - **New Video Walkthroughs:** Added guided video walkthroughs covering key SDK workflows (Workstation, Microservice, Orchestration, and Dataset) and the complete Pro-Lite setup, making it easier to learn the platform step by step.
+  </Accordion>
+
   <Accordion title="v2.2.0 — July 2026 (Minor Release)">
     A feature release headlined by the launch of Ai-MicroCloud® Lite — our simplest, most accessible edition yet — and complemented by an upgraded Python SDK, a unified Lifecycle Manager, a far more capable Ai-Assistant, public-cloud Edge deployments, deeper monitoring and alerting, stronger platform security, and a broad set of reliability improvements.
 
