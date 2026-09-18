@@ -392,35 +392,27 @@ From the details panel, open the endpoint for **port 8090**. This launches the *
   <Step title="LLM Provider">
     Step 1 of the wizard is the **LLM Provider**. Open the **Provider** dropdown — it lists both self-hosted (private) providers such as **vLLM**, **SGLang**, and **Ollama**, and public providers such as **OpenAI**, **Anthropic**, and **Google Gemini**.
 
-    <Frame>
-      <img src="/images/use-cases/openclaw-memory-offloading/select-provider.png" alt="OpenClaw Setup LLM Provider dropdown listing private and public providers" />
-    </Frame>
-
     The provider you choose changes which fields you fill in:
 
-    - A **private / self-hosted** provider (such as **vLLM**) asks for a **Base URL**, **Model ID**, **API Compatibility**, and **API Key**.
+    - A **private / self-hosted** provider (such as **vLLM**) asks for a **Base URL**, **API Key**, **Model ID**, **API Compatibility**, and an optional **Agent GenAI Key**.
     - A **public** provider (such as **OpenAI**) asks only for a **Model ID** and **API Key**.
 
     Because you are connecting to the inference you just spawned, select **vLLM**.
 
     <Frame>
-      <img src="/images/use-cases/openclaw-memory-offloading/base-url.png" alt="OpenClaw Setup with vLLM selected, showing Base URL, Model ID, API Compatibility, and API Key fields" />
-    </Frame>
-
-    For reference, this is what the public-provider form looks like instead — only a Model ID and API Key:
-
-    <Frame>
-      <img src="/images/use-cases/openclaw-memory-offloading/if-selected-public.png" alt="OpenClaw Setup with OpenAI selected, showing only Model ID and API Key fields" />
+      <img src="/images/use-cases/openclaw-memory-offloading/base-url.png" alt="OpenClaw Setup with vLLM selected, showing Base URL, API Key, Model ID, API Compatibility, and Agent GenAI Key fields" />
     </Frame>
 
     ***
 
-    #### Base URL and Model ID
+    #### Base URL and API Key
 
-    In **Base URL**, paste your inference's **public HTTPS endpoint** (from the inference details panel) with `/v1` appended — for example, `https://your-inference-public-endpoint/v1`. In **Model ID**, enter the source model identifier, `RedHatAI/Meta-Llama-3.1-70B-Instruct-FP8`, and leave **API Compatibility** on **OpenAI**.
+    In **Base URL**, paste your inference's **public HTTPS endpoint** (from the inference details panel) — just the host, for example `https://your-inference-public-endpoint`. Don't add `/v1`; the wizard appends it automatically.
+
+    In **API Key**, paste the **Gen AI key** you created in Part 2.
 
     <Frame>
-      <img src="/images/use-cases/openclaw-memory-offloading/model-id-inference.png" alt="OpenClaw Setup with the vLLM Base URL and Model ID filled in" />
+      <img src="/images/use-cases/openclaw-memory-offloading/api-key.png" alt="OpenClaw Setup with the vLLM Base URL and API Key filled in" />
     </Frame>
 
     <Warning>
@@ -429,12 +421,14 @@ From the details panel, open the endpoint for **port 8090**. This launches the *
 
     ***
 
-    #### API Key
+    #### Model ID
 
-    In **API Key**, paste the **Gen AI key** you created in Part 2.
+    Click **Fetch models**. The wizard queries your endpoint and selects the model it serves — here, `/home/app/models/RedHatAI/Meta-Llama-3.1-70B-Instruct-FP8` — confirming with **One model found and selected**. You can also type the ID by hand.
+
+    Leave **API Compatibility** on **OpenAI**. **Agent GenAI Key** is optional: set an agent key there if you want benchmarks to attribute agent traffic separately from user traffic in inference utilization.
 
     <Frame>
-      <img src="/images/use-cases/openclaw-memory-offloading/api-key.png" alt="OpenClaw Setup with the API Key field filled in for the vLLM provider" />
+      <img src="/images/use-cases/openclaw-memory-offloading/model-id-inference.png" alt="OpenClaw Setup with the model fetched from the endpoint and selected in the Model ID field" />
     </Frame>
 
     Click **Next**.
@@ -449,32 +443,44 @@ From the details panel, open the endpoint for **port 8090**. This launches the *
   </Step>
 
   <Step title="Web Search">
-    Step 3 lets the agent look things up online. Open the **Search Provider** dropdown and select **DuckDuckGo (experimental) — Recommended (free)**, which needs no API key. Other providers such as Brave, Exa, Perplexity, and Tavily are available if you have keys for them.
+    Step 3 lets the agent look things up online. In **Search Provider**, select **DuckDuckGo (experimental) — Recommended (free)**, which needs no API key. Other providers such as Brave, Exa, Perplexity, and Tavily are available if you have keys for them.
+
+    The same step has an optional **Image Generation** section. Leave **Image Provider** on **Skip for now** unless you want the agent to generate images.
 
     <Frame>
-      <img src="/images/use-cases/openclaw-memory-offloading/web-search-provider.png" alt="OpenClaw Setup Web Search step with the search provider dropdown open, including the recommended free DuckDuckGo option" />
+      <img src="/images/use-cases/openclaw-memory-offloading/web-search-provider.png" alt="OpenClaw Setup Web Search step with DuckDuckGo selected as the search provider and Image Generation set to Skip for now" />
     </Frame>
+
+    Click **Next**.
   </Step>
 
   <Step title="Advanced">
-    Step 4 covers gateway security and behaviour: an optional **Gateway Token** and **Dashboard Password**, the **Setup Flow** (for example, **Quickstart**), the **Package Manager** for skills, and the **Workspace Directory**.
+    Step 4 covers gateway security and behaviour: the **Gateway Token** and **Dashboard Password**, the **Setup Flow** (for example, **Quickstart**), the **Package Manager** for skills, and the **Workspace Directory**. Collapsible sections hold **More gateway options**, **Agent defaults**, and **Cron / scheduler** settings.
 
     <Frame>
-      <img src="/images/use-cases/openclaw-memory-offloading/advanced-settings.png" alt="OpenClaw Setup Advanced step showing gateway security and setup options" />
+      <img src="/images/use-cases/openclaw-memory-offloading/advanced-settings.png" alt="OpenClaw Setup Advanced step showing gateway security, setup flow, package manager, and workspace directory options" />
     </Frame>
 
+    The gateway ships with the default token `zeblok`. Leave **Gateway Token** and **Dashboard Password** blank to keep it, or set your own to replace it — whichever you set is what you log in to the dashboard with.
+
     <Warning>
-      Leaving **Gateway Token** and **Dashboard Password** blank means the dashboard has no authentication — only acceptable if something else (such as an ingress proxy) protects it. If you set them, treat them as sensitive credentials and redact them in screenshots.
+      The default token `zeblok` is the same on every deployment, so anyone who can reach the dashboard URL can log in with it. Set your own **Gateway Token** for any deployment that isn't a short-lived test, and treat it as a sensitive credential — redact it in screenshots.
     </Warning>
 
     Click **Review & Launch**.
   </Step>
 
   <Step title="Review & Launch">
-    Step 5 summarises everything — provider, URL, model, key, channels, search, security, flow, and package manager. Confirm the details, then click **Launch OpenClaw**.
+    Step 5 summarises everything — provider, URL, model, key, channels, search, images, security, flow, and package manager — and reminds you which token the dashboard login uses. Confirm the details, then click **Launch OpenClaw**.
 
     <Frame>
-      <img src="/images/use-cases/openclaw-memory-offloading/review-and-launch.png" alt="OpenClaw Setup Review and Launch summary of the chosen configuration" />
+      <img src="/images/use-cases/openclaw-memory-offloading/review-and-launch.png" alt="OpenClaw Setup Review and Launch summary of the chosen configuration, with a note that the dashboard login token is zeblok" />
+    </Frame>
+
+    A confirmation appears and the wizard redirects you to the dashboard on port **18789** after a few seconds.
+
+    <Frame>
+      <img src="/images/use-cases/openclaw-memory-offloading/openclaw-launched.png" alt="OpenClaw Setup showing OpenClaw launched and redirecting to the dashboard on port 18789" />
     </Frame>
   </Step>
 </Steps>
@@ -489,16 +495,28 @@ Return to the OpenClaw microservice details panel.
   <img src="/images/use-cases/openclaw-memory-offloading/openclaw-microservice-details.png" alt="OpenClaw microservice details panel with the endpoint URLs" />
 </Frame>
 
-Open the endpoint for **port 18789** to reach the OpenClaw control dashboard. It opens ready to chat, with the model you configured selected.
+Open the endpoint for **port 18789** to reach the OpenClaw **Gateway Dashboard** — the wizard's redirect lands you here too. The **WebSocket URL** is filled in for you, and until you enter a credential the page shows **Auth required**.
 
 <Frame>
-  <img src="/images/use-cases/openclaw-memory-offloading/openclaw-control-ui.png" alt="OpenClaw control dashboard showing the chat interface ready to use" />
+  <img src="/images/use-cases/openclaw-memory-offloading/gateway-login.png" alt="OpenClaw Gateway Dashboard login with the WebSocket URL filled in and an Auth required message" />
 </Frame>
 
-Send a message. Requests are served by your offloaded inference, and because web search is configured, the agent can call it as a tool and fold the results into its answer — as in this example, where it looks up a location before responding.
+In **Gateway Token**, enter the token from the Advanced step — `zeblok` if you kept the default — and click **Connect**. If you set a **Dashboard Password** instead, enter it in **Password**.
 
 <Frame>
-  <img src="/images/use-cases/openclaw-memory-offloading/openclaw-chat.png" alt="OpenClaw chat answering a question using a web search tool call and the offloaded model" />
+  <img src="/images/use-cases/openclaw-memory-offloading/gateway-login-token.png" alt="OpenClaw Gateway Dashboard login with the default zeblok gateway token entered" />
+</Frame>
+
+The control dashboard opens ready to chat, with the model you configured selected at the bottom of the message box.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/openclaw-control-ui.png" alt="OpenClaw control dashboard showing the Assistant ready to chat with the Meta-Llama-3.1-70B-Instruct model selected" />
+</Frame>
+
+Send a message. Requests are served by your offloaded inference, and the response appears in the chat with a context-usage meter below it.
+
+<Frame>
+  <img src="/images/use-cases/openclaw-memory-offloading/openclaw-chat.png" alt="OpenClaw chat showing the Assistant answering What can you do using the offloaded model" />
 </Frame>
 
 Now switch back to the inference to confirm the traffic is landing on the offloaded model. Go to **Workspace → Inference**, open your inference, and click **View Details**.
@@ -540,7 +558,7 @@ If you need shell access to the container — for example, to inspect the worksp
 - **Offloading means a single replica.** Enabling NVMe / High Bandwidth Flash Memory disables autoscaling for the inference, because the offloaded cache is tied to one physical device.
 - **NVMe devices are data-centre-specific.** Only available devices in the selected data centre are shown; in-use devices and full nodes are hidden. The device's mount path must match the `--nvme_path` prefix in the arguments.
 - **Treat the offloading arguments with care.** `--model` and `--tensor-parallel-size` are derived and locked. The offload sizes (`--ssd-kv-offload-gb`, `--dram-kv-offload-gb`) and `--max-model-len` are what let the model serve long contexts — change them only if you understand the memory trade-offs.
-- **Always use the public HTTPS endpoint** (suffixed with `/v1`) as the OpenClaw Base URL. The cluster-local URL will not work as an external gateway target.
+- **Always use the public HTTPS endpoint** as the OpenClaw Base URL — just the host, without `/v1`, which the wizard adds for you. The cluster-local URL will not work as an external gateway target.
 - **The setup port (8090) is for one-time configuration.** Once OpenClaw is launched, day-to-day use happens on the control dashboard (port 18789).
 
 ---
