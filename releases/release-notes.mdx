@@ -7,6 +7,164 @@ This page documents what changed in each release of Zeblok Ai-MicroCloud®. Upda
 
 <AccordionGroup>
 
+  <Accordion title="v2.4.0 — September 2026 (Minor Release)">
+    This release brings major advances in AI performance, scalability and control across Ai-MicroCloud®. DARWIN, Zeblok's ECO-intelligence (Elastic Context Offloading) engine, now supports multi-replica autoscaling; Knowledge Bases let agents answer from your PDF datasets with page-level citations; and workstations, microservices and Gen-AI keys gain accurate resource visibility and stronger access controls. The Launcher introduces a built-in Capacity Planner and a complete, invitation-only IAM.
+
+    **🌟 Highlights**
+
+    - **DARWIN, ECO-intelligence (Elastic Context Offloading):** Zeblok's offloading engine extends GPU memory with RAM and NVMe tiers, so larger models and longer, reusable contexts run on smaller GPU footprints, now with multi-replica autoscaling.
+    - **Knowledge Bases on Ai-MicroCloud®:** Agents answer directly from your own PDF datasets, with every answer cited to the source page and checked for accuracy.
+    - **Agreement Acceptance (Ai-MicroCloud®):** Superadmins must now accept the ELA, EULA and Data Privacy Policy before using the platform, while all other users accept the EULA and Data Privacy Policy, and each acceptance is securely recorded.
+    - **Accurate CPU and Memory Visibility:** Workstations and microservices now report the CPU and memory actually allocated to them, so tools and frameworks see their true resource limits rather than the capacity of the underlying node.
+    - **Real-Time Inference Spawn Progress:** Follow inference deployment through downloading, loading, and warm-up with live progress updates, providing an accurate view of readiness instead of prematurely reporting "Running."
+    - **Stronger Gen-AI API Key Access Control:** Gen-AI API keys are now strictly scoped to their owners and to users with whom access has been explicitly shared, providing tighter workload-level access control.
+    - **Capacity Planner and Invitation-Only IAM in the Launcher:** Plan and size deployments directly inside the Launcher, and govern access through a guided, invitation-only IAM.
+
+    ---
+
+    ## DARWIN: ECO-intelligence (Elastic Context Offloading)
+
+    *Longer contexts on smaller GPUs.*
+
+    DARWIN, Zeblok's ECO-intelligence engine, extends GPU memory with RAM and NVMe tiers so larger models and longer, reusable contexts run on smaller GPU footprints. This release adds multi-replica autoscaling, stronger GPU isolation and a more reliable offload setup.
+
+    **What's new in DARWIN:**
+
+    - **Multi-Replica Autoscaling:** Set minimum and maximum replicas and a GPU threshold. Each replica gets an isolated GPU and offload cache for higher throughput under load, with a clear warning when the node lacks enough GPUs.
+    - **KV Cache Offloading to Any SSD:** Enables KV cache offloading to any compatible SSD, expanding available cache capacity beyond GPU and system memory.
+    - **Secure GPU Isolation:** Offloading workloads run without elevated privileges and see only their assigned GPU.
+    - **Reliable Offload Setup:** Each spawn gets a unique offload path, disk availability is tracked per disk, and starting a stopped inference is blocked if its disk has been claimed by another workload.
+    - **Fail-Safe Offload:** An offload failure can no longer take down the engine. Affected tokens are recomputed, and after repeated failures offloading switches off while the model keeps serving.
+    - **Long-Context Stability:** Fixed an engine crash under heavy long-context load. In testing, 75 of 75 requests were served, against 6 of 75 before the fix.
+    - **Self-Sizing RAM Tier:** The RAM cache tier sizes itself to the pod, so one configuration works across 4, 32 and 128 GB pods.
+    - **Longer Request Deadline:** The gateway request deadline is raised from 300 s to 3000 s, so long-queued requests are no longer cut off.
+    - **Streamed API Requests:** Streamed requests from Zeblok API clients now work through the Gen-AI gateway.
+
+    *From one GPU to auto-scaled replicas: DARWIN keeps long-context inference fast, isolated and scalable.*
+
+    ---
+
+    ## Knowledge Bases on Ai-MicroCloud®
+
+    *Ask your documents. Get cited answers.*
+
+    Knowledge Bases let agents answer directly from your own PDF datasets. Every answer is searched, cited to the source page and checked for accuracy, and when the information is not in your files, the agent says so instead of guessing.
+
+    **What's new in Knowledge Bases:**
+
+    - **Dataset Picker:** Attach datasets in the environment and choose exactly which files an agent can read.
+    - **Grounded Answers:** The agent searches the selected files before every answer, using extraction, OCR and reranking.
+    - **Page-Level Citations:** Every answer points back to the source page.
+    - **"Not Found in the Dataset":** When an answer is not in your files, the agent clearly says so.
+    - **Conversation Memory:** Chat history is kept per conversation, with prompt sizing and an automatic smaller retry.
+    - **Accuracy and Confidence:** Each answer is cross-checked against the source document and shown with color-coded scores. Checking runs in the background, so you can keep chatting.
+    - **Faster, Cleaner Answers:** Unnecessary evidence and thinking steps were removed, and file names no longer appear in answers.
+    - **Case Notes:** The model creates case notes for providing instant answers.
+
+    *From your documents to cited, verified answers: Knowledge Bases keep every response grounded in your own data.*
+
+    ---
+
+    ## Ai-MicroCloud®
+
+    **IaaS**
+
+    - **Accurate Resource Visibility:** Workstations and microservices now report their exact allocated CPU and memory, not the capacity of the underlying node, so commands and frameworks consistently operate against the correct resource limits. This platform-wide fix has been verified end to end.
+    - **Secure GPU Isolation for Offloading:** Offloading workloads now run without elevated privileges and see only their assigned GPU, delivering secure, workload-level isolation without compromising accelerated offloading.
+    - **Inference Readiness:** Inference pods receive traffic only after the model is fully loaded and ready to respond, preventing failed requests during the post-spawn initialization window.
+    - **Orchestration Add-on Version Upgrade:** The Orchestration Add-on version has been upgraded to the latest supported version for more reliable cluster startup, autoscaling and deletion.
+    - **Secure Edge Monitoring:** Edge deployments now provide pod-scoped monitoring through time-limited, per-resource links, accessible directly from the Monitoring interface.
+
+    **PaaS**
+
+    - **Agreement Acceptance:** Superadmins must now accept the ELA, EULA and Data Privacy Policy, and all other users the EULA and Data Privacy Policy, through an on-page reader before using Ai-MicroCloud®, and each acceptance is securely recorded.
+    - **Replica Autoscaling for Offloading Inferences:** Offloading inferences can now be configured with minimum and maximum replica counts and a GPU threshold. All fields remain fully editable, with a clear warning when the selected node does not have enough available GPUs to support the configuration.
+    - **Self-Explaining Model Hub Import Failures:** Failed model imports now display the reason directly on the model card, together with a one-click retry action. A confirmation step prevents accidental re-queuing of multi-gigabyte model downloads.
+    - **Multi-Namespace Browser Terminal:** The browser terminal can now access every namespace available to the user's account, rather than being restricted to a single namespace. Available namespaces are listed directly in the terminal banner for immediate visibility.
+    - **IAM Policies (Beta):** IAM policy resources have been streamlined, aligned with naming conventions across the application and grouped to mirror the app menu. Policies now support conditional filters, such as limiting users to resources they created, reliably enforce explicit deny rules, and return clear "Blocked by policy" or "Permission denied" messages when access is restricted.
+    - **Bulk Resource Sharing:** Share multiple resources with multiple users in a single action across workstations, microservices, Orchestration Add-ons, agents, inferences and Knowledge Distillation runs. A unified share dialog provides search, select-all and a clear sharing summary.
+    - **Real-Time Inference Spawn Progress:** Follow every stage of inference startup, from downloading model weights and loading through warm-up and readiness, with live status updates and a progress bar. The inference remains "Starting" until it reaches "Ready to Chat," providing an accurate view of when it is genuinely ready for use.
+    - **Gen-AI Key Visibility in Chat:** Chat now identifies the Gen-AI key currently in use, including its key type and owner, and validates pasted keys before they are used.
+    - **Shared-Resource Visibility:** Users with whom a resource has been shared can now access its Details tab and view the full configuration, providing greater visibility without changing resource ownership.
+    - **Stop Failed Resources:** Failed workstations, microservices and inferences now provide a Stop action, allowing users to shut them down cleanly and release their resources instead of encountering an unusable Start action.
+    - **Sharing Validation:** Sharing a resource with a user who does not exist, or who is outside your organization, is now rejected.
+    - **Detailed Delete Confirmation:** When deleting another user's resource, the confirmation now shows the owner's name and email, along with the resource name, namespace and organization. The Delete button stays disabled until the exact resource name is entered, and the server verifies the name before deleting.
+
+    **Security**
+
+    - **Stronger Gen-AI API Key Access Control:** Gen-AI API keys are now strictly scoped to their owners, explicitly shared users and Superadmins. Organization membership alone no longer allows one user to access another member's inference or agent resources, and direct model endpoints now enforce the same key-level access checks.
+    - **Cross-Organization Terminal Isolation:** Browser terminal sessions are now strictly isolated by organization, preventing organization admins from accessing terminal sessions belonging to other organizations and strengthening tenant boundaries across the platform.
+    - **Dependency Upgrades:** Backend and frontend dependencies (26 backend and 39 frontend packages) were upgraded to address known security vulnerabilities, while keeping existing functionality unchanged.
+    - **Privileged Workloads:** Superadmins can grant Privileged workloads to a user or to a whole organization, and every grant and revocation is recorded in the audit log. Granted users see a Privileged settings section in the microservice form, covering host network, host paths, Linux capabilities and a privileged container. These microservices run only on Privileged nodes and show a Privileged badge, and the Data Center Nodes view marks Privileged nodes too. Users without the grant are refused. Revoking access stops that user's privileged microservices from being started, restarted or reconfigured, while services already running keep running.
+
+    **Bug Fixes**
+
+    - Minimum replicas can no longer be set higher than maximum replicas; the invalid setting is blocked in the interface and in Orchestration Add-ons, and rejected by the server across create, edit, and reconfigure.
+    - Workstation-image and microservice-template lists now load every item instead of only the first 25, and search and filters now cover the full list.
+    - Offloading inference setup is more reliable: each spawn now gets a unique offload path, the device picker can be reopened to change a selection, and disk availability is tracked per disk instead of hiding every disk on a node.
+    - The inference card no longer shows "Compiling" while the status reads "Running," so Open Chat is enabled only once the model is genuinely ready.
+    - Fixed a workstation bucket-mount issue where an old startup script created a stray folder.
+    - Agent keys can now call inference endpoints directly, not just user keys.
+    - Private in-cluster inference endpoint URLs no longer include an internal port.
+    - Admins now see only their own namespaces in the spawn dropdowns, rather than the namespaces of users they invited.
+    - SDK: fetching logs now works for all five resource types (workstations, microservices, models, add-ons, and agents); bulk permission assignment now succeeds; orchestration add-on sizing now applies, with separate sizes for the main and worker machines; dataset search returns "not found" instead of erroring; and the SDK now warns immediately when an insecure `http://` address or an incorrect file path is used.
+    - Deleted items return "not found": catalog images, microservice templates and add-on templates. The records are kept for history.
+    - Admins can now see their own organization's resources in the Lifecycle Manager and start, stop or delete them. Ai-API Delete now also works for Admins and Superadmins.
+
+    **Documentation**
+
+    - **Edition-Specific Documentation:** The documentation portal now provides dedicated guidance for Pro, Lite, Pro-Edge and Lite-Edge, making it easier to find information specific to each edition. Lite, Lite-Edge and Pro-Edge are currently marked as Beta.
+    - **New How-To Videos:** This month, we expanded our library of short, practical walkthroughs covering deployment, edge infrastructure, SDK workflows, Knowledge Distillation, IAM and real-time inference monitoring:
+      - How to Spawn OpenClaw on Ai-MicroCloud® Pro
+      - How to Set Up Ai-MicroCloud® Lite-Edge
+      - How to Set Up Knowledge Distillation on Ai-MicroCloud® Pro
+      - How to Create an Ai-MicroCloud® Pro Bare-Metal Primary Cluster Using the SDK
+      - How to Set Up Ai-MicroCloud® Pro-Edge on ARM-Based NVIDIA DGX Spark
+      - How to Authenticate Universal Launcher with the SDK
+      - How to Manage Users & Roles with IAM on Ai-MicroCloud® Pro
+      - Monitoring Real-Time Inference Spawn Progress with Ai-MicroCloud® Pro
+
+    Subscribe to the Zeblok Computational YouTube channel for these and other concise, instructional walkthroughs designed to help you get up and running quickly with Ai-MicroCloud®. Watch and subscribe on [Zeblok Computational YouTube](https://www.youtube.com/@zeblokcomputational).
+
+    ---
+
+    ## Launcher
+
+    This Launcher release introduces a built-in Capacity Planner and a complete, invitation-only IAM, strengthening how the Launcher plans and governs deployments.
+
+    **Highlights**
+
+    - **Capacity Planner in the Launcher:** Plan and size a deployment's infrastructure and cost, then save, organize, and export your plans, all inside the Launcher.
+    - **Guided IAM and Organization Management:** A streamlined, invitation-only setup that seeds the Superadmin, activates the license, and lets the Superadmin invite and manage Admins across organizations.
+    - **Privileged Node Option:** You can now mark bare-metal worker and edge nodes as Privileged when you add them or later from the node card, which reserves them for workloads that need host-level access.
+    - **Agreement Acceptance (Launcher):** Admins and Superadmins must now accept the EULA and Data Privacy Policy before using the Launcher, and each acceptance is securely recorded.
+
+    **Capacity Planning**
+
+    - **Capacity Planner Built into the Launcher:** The Capacity Planner is now an integrated Launcher page for planning and sizing a deployment's infrastructure and cost. You can save and reopen plans, organize them in a sessions library with search and filters, duplicate or rename them, and export to CSV. Superadmins get organization-wide planning insights, and a Capacity Planning Limit provides a clear upgrade path.
+
+    **IAM**
+
+    - **Guided IAM and First-Boot Setup:** First launch now seeds the Superadmin with an auto-generated password and a credentials email, then walks through license activation and a mandatory one-time password change before granting access.
+    - **Invitation-Only Sign-Up:** Public registration has been removed, so new Admins can join only through a Superadmin invitation, keeping every organization's membership controlled.
+    - **Admin Invitations and Organization Management:** The Superadmin can invite Admins into an organization using a branded, single-use invitation link (valid for 7 days) with a copyable fallback link.
+    - **Add User:** The Superadmin can add an Admin directly from the Users page, without sending an invitation. The Admin gets a new organization of their own, and their credentials are emailed to them. The result is the same as an accepted invitation.
+    - **Unified Users and Invitations Page:** Users and pending invitations are managed from one page, where users can be filtered by how they joined.
+
+    **Privileged Node Option**
+
+    - **Privileged Node Option:** Worker and edge nodes can now be marked as privileged when you add them, using the "Mark as privileged node" checkbox. You can also switch it on or off later from the node card, which shows a "Privileged node" badge. Workloads that need host-level access run only on these nodes, and ordinary workloads prefer other nodes. Control-plane nodes are never marked. This is available for bare-metal and edge clusters; AWS and Azure node pools are not supported yet.
+    - **Safer Edge Components:** The NVIDIA GPU device plugin and the Jetson metrics exporter no longer run in privileged mode. An NRI device injector on every edge node lets NVMe pods be given only their own drive, and LXCFS makes edge workstations report their own CPU and memory limits instead of the whole device's.
+
+    **Agreement Acceptance**
+
+    - **Agreement Acceptance:** Admins and Superadmins must now accept the EULA and Data Privacy Policy before they can use the Launcher.
+    - **On-Page Reader:** The documents open in a reader with a contents list and reading progress, and users must open each one and tick the checkbox before they can accept.
+    - **Secure Records:** Each acceptance is stored securely with the user, date and time, document versions, IP address and browser.
+    - **Login Behavior:** Returning users go straight to the dashboard unless an agreement has been updated, and access stays blocked until acceptance is saved.
+    - **UI Updates:** The design now matches Ai-MicroCloud®, with the logo position fixed and the checkbox easier to see.
+  </Accordion>
+
   <Accordion title="v2.3.0 — August 2026 (Minor Release)">
     A feature release headlined by full multi-architecture support (ARM64 & AMD64) and the arrival of Ai-MicroCloud® Lite for Edge, complemented by a powerful new Knowledge Distillation workflow (Beta), deeper inference observability, comprehensive IAM enhancements, and a broad set of security and reliability improvements.
 
