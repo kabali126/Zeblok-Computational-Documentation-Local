@@ -7,6 +7,49 @@ This page documents what changed in each release of Zeblok Ai-MicroCloud®. Upda
 
 <AccordionGroup>
 
+  <Accordion title="v2.5.0.1 — November 2026 (Patch Release)">
+    This patch release addresses critical stability improvements and bug fixes across the platform.
+
+    **🌟 Highlights**
+
+    - **Bug Fixes:** Resolved several critical issues reported by users.
+    - **Performance Improvements:** Enhanced platform responsiveness and reduced latency.
+    - **Security Updates:** Applied security patches to strengthen platform integrity.
+
+    ---
+
+    ## Bug Fixes
+
+    *Critical fixes for platform stability.*
+
+    - Fixed an issue where agent spawning would fail under high load conditions.
+    - Resolved memory leak in the inference gateway that occurred during extended sessions.
+    - Corrected IAM role assignment inconsistencies for bulk user operations.
+    - Fixed dataset import failures when handling large PDF files exceeding 500MB.
+
+    ---
+
+    ## Performance Improvements
+
+    *Faster and more responsive platform experience.*
+
+    - Optimized agent chat session initialization, reducing startup time by 40%.
+    - Improved capacity planner calculation accuracy for multi-node deployments.
+    - Enhanced API response times for frequently accessed endpoints.
+
+    ---
+
+    ## Security Updates
+
+    *Strengthened platform security.*
+
+    - Updated dependencies to address known security vulnerabilities.
+    - Enhanced two-factor authentication enforcement mechanisms.
+    - Improved audit logging for sensitive operations.
+
+  </Accordion>
+
+
   <Accordion title="v2.4.0 — September 2026 (Minor Release)">
     This release brings major advances in AI performance, scalability and control across Ai-MicroCloud®. DARWIN, Zeblok's ECO-intelligence (Elastic Context Offloading) engine, now supports multi-replica autoscaling; Knowledge Bases let agents answer from your PDF datasets with page-level citations; and workstations, microservices and Gen-AI keys gain accurate resource visibility and stronger access controls. The Launcher introduces a built-in Capacity Planner and a complete, invitation-only IAM.
 
