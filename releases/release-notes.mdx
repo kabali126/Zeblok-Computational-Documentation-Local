@@ -7,6 +7,207 @@ This page documents what changed in each release of Zeblok Ai-MicroCloud®. Upda
 
 <AccordionGroup>
 
+  <Accordion title="v2.5.0 — October 2026 (Minor Release)">
+    This release brings major advances in performance, security and knowledge work across Ai-MicroCloud®. DARWIN, Zeblok's ECO-intelligence (Elastic Context Offloading) engine, gains per-replica NVMe offload and a protected inference image; every organization now gets its own Harbor registry credentials; Knowledge Bases move out of Beta with new answer modes, a Law Library and external access; and two new applications arrive in Beta: Missions and Document Studio. The Launcher introduces licensing through the Zeblok License Key Manager and a guided Purpose Questionnaire with model suggestions sized to your servers.
+
+    **🌟 Highlights**
+
+    - **DARWIN, ECO-intelligence (Elastic Context Offloading):** Every replica of an NVMe-backed inference now gets its own offload space, replica settings hold through reconfiguration, and the inference image ships as protected, compiled code.
+    - **Harbor Credentials on Ai-MicroCloud®:** Each organization now gets its own Harbor registry account and project, set up automatically and managed from API Keys & Secrets.
+    - **Knowledge Bases on Ai-MicroCloud®:** Now out of Beta, with Auto and Focused answer modes, more exact answers from tables and spreadsheets, a Law Library with a law check for cases, and external access (Beta).
+    - **Missions (Beta):** Describe a goal in plain words, and a Mission Lead plans it, hands the work to a crew of specialist agents and reports back with evidence, while you confirm every change.
+    - **Document Studio (Beta):** Turn any example document into a reusable design theme, then write new on-brand documents from your knowledge bases, files and web links.
+    - **License Key Activation (Ai-MicroCloud®):** Admins can now activate and manage the Ai-MicroCloud® license key inside the platform.
+    - **License Key Manager and Purpose Questionnaire in the Launcher:** Clusters are licensed through the Zeblok License Key Manager, and a guided intake sizes each deployment and suggests models that fit the servers.
+
+    ---
+
+    ## DARWIN: ECO-intelligence (Elastic Context Offloading)
+
+    *Long contexts, reloaded instead of recomputed.*
+
+    DARWIN extends GPU memory with RAM and NVMe tiers so long, reusable contexts are reloaded instead of computed again. This release gives every replica of an NVMe-backed inference its own offload space and protects the inference image.
+
+    **What's new in DARWIN:**
+
+    - **Latest Inference Engine:** DARWIN now runs on the latest inference engine, and fast GPU reloads from NVMe and recovery when a KV load fails carry over to the new version.
+    - **Per-Replica Offload Directories:** Each replica of an NVMe-backed inference now gets its own offload directory on the NVMe disk, so replicas no longer overwrite each other's cache. The SSD offload budget is split across replicas, so the total never exceeds the disk.
+    - **Replica Settings That Stick:** Reconfiguring an inference with NVMe attached now keeps its replica count instead of resetting it to one. Minimum and maximum replicas are editable in the Model Hub, and the spawn form picks up those values when a model is selected.
+    - **NVMe Capacity Checks:** The reconfigure dialog now validates the KV-offload budget, rejects unknown disks and keeps the right disk selected, across all five resource types.
+    - **Protected Inference Image:** The DARWIN inference image now ships as compiled code, with no readable source code in it, and behaves exactly as before.
+    - **Fast Reloads from NVMe:** In testing, a 32K-token prompt was reloaded from NVMe in about 2 seconds, against about 23 seconds to compute it again.
+
+    *From per-replica NVMe offload to a protected inference image: DARWIN keeps long-context inference fast, reliable and secure.*
+
+    ---
+
+    ## Harbor Credentials on Ai-MicroCloud®
+
+    *Every organization, its own registry.*
+
+    Each organization now gets its own Harbor registry account and project, set up automatically and managed from API Keys & Secrets, so teams can push and pull their images without sharing credentials.
+
+    **What's new in Harbor Credentials:**
+
+    - **Organization-Level Credentials:** Each organization gets a unique Harbor username and project, with a randomly generated password stored in encrypted form.
+    - **Automatic Setup:** The Harbor account and project are created when a user activates their account or an admin adds a user, with status messages and automatic retries if setup fails. Existing Harbor accounts and projects are never overwritten.
+    - **Harbor Tab:** A new Harbor tab under API Keys & Secrets shows the setup status and offers View Credentials and Download.
+    - **Shared Within the Organization:** Credentials are visible to all users and admins in the same organization, and every password view is recorded in the audit log.
+    - **Cleanup on Delete:** Harbor accounts and projects are removed when an organization is deleted, after a check of the project's images.
+
+    *From account activation to the first image push: Harbor credentials are ready for every organization, with no manual setup.*
+
+    ---
+
+    ## Knowledge Bases on Ai-MicroCloud®
+
+    *Sharper answers, wider reach.*
+
+    Knowledge Bases answer directly from your own documents, with every answer cited to the source page. They are now out of Beta and listed first under Applications. This release adds answer modes that fit each question, more exact answers from tables and spreadsheets, a Law Library with a law check for cases, and external access so people outside Ai-MicroCloud® can use a knowledge base too.
+
+    **What's new in Knowledge Bases:**
+
+    - **Auto and Focused Answer Modes:** Auto is now the default and picks the right depth for each question. Focused reads only the passages that match a specific fact, and reads every page before saying something is not there.
+    - **More Exact Answers:** Counts, totals and figures are now worked out from the documents' own rows, spreadsheets read their numbers as Excel shows them, scanned statements are read as tables, and a figure found on no page is flagged.
+    - **Law Library:** Add laws for your organization in one click, from any US Code title or chapter and the criminal laws of supported states, or upload the official file for any other state, city or county. Every law comes with search, a statute viewer, a link to the official text and weekly update checks.
+    - **Law Check in a Case:** Choose a case's laws and ask which laws were broken. The answer tests each offence element by element, quotes the statute exactly and cites both the case pages and the statutes.
+    - **Organization Terminology:** A Superadmin can set an organization to call knowledge bases "Cases" everywhere, from the menu to the external page, which also brings the Law Library to that organization.
+    - **External Access (Beta):** Share a knowledge base outside Ai-MicroCloud® through its own link. Readers sign in by email or Google with an External Access key that has a spending limit, and see the same answers, citations and documents, read-only. An organization admin turns it on.
+    - **Answer with a Model Elsewhere:** A knowledge base can answer with a model on another cluster when none is free here, and its settings say plainly what is sent to that model.
+    - **Automatic Set-Up and Clean Delete:** Creating or starting a knowledge base prepares everything it needs, with each part's progress shown on the page. Before a delete, you see everything made for it and choose what to keep.
+    - **Ask from Your Own Software:** A Gen-AI key can now query your knowledge bases directly through the API, with no chat agent needed.
+
+    *From the first question to a shared, cited answer: Knowledge Bases keep every response exact and grounded in your own data.*
+
+    ---
+
+    ## Missions on Ai-MicroCloud® (Beta)
+
+    *Describe the goal. The crew does the work.*
+
+    Missions turn a goal described in plain words into finished work. A Mission Lead plans the mission, hands tasks to a crew of specialist agents and reports back with evidence, while you stay in control of every change.
+
+    **What's new in Missions:**
+
+    - **Mission Lead and Crew:** The Lead plans each mission and assigns tasks to specialist agents from a role catalogue. The platform starts a model that fits your GPUs, or you can point the Lead at an external model.
+    - **Playbooks:** Start from a ready recipe that runs the same steps every time, such as building a knowledge base from your documents, or rehearse it first.
+    - **Attach Documents:** Add PDF, Word, PowerPoint, Excel, HTML or text files when you start, and see what each step produced from them.
+    - **Mission Board:** Follow each step's task, progress, result and check, read the mission report, and Continue, Skip a step or Cancel at any time.
+    - **Measurable Quality:** Set a quality target at the start, then see the evaluation's verdict and every improvement with its score before and after.
+    - **You Stay in Control:** One "Confirm changes" card lists every change before it is made, and documents go to an external model only after you choose "Allow and continue". Missions run in your namespace with your permissions.
+    - **Hand-Over and Spend:** Download the hand-over document at the end, and see what the mission has spent against a ceiling you can raise.
+
+    *From a plain-language goal to a verified hand-over: Missions put a capable crew to work, with you in control.*
+
+    ---
+
+    ## Document Studio on Ai-MicroCloud® (Beta)
+
+    *Your design, your sources, new documents.*
+
+    Document Studio turns any example document into a reusable design theme, then writes new on-brand documents from your knowledge bases, files and web links.
+
+    **What's new in Document Studio:**
+
+    - **Themes from Examples:** Upload a PDF, Word, PowerPoint, Excel, HTML or image example, and its design becomes a reusable theme.
+    - **Write from Your Sources:** Draw on your knowledge bases, uploaded files and public web links, with facts tied back to the page they came from.
+    - **Checked Page by Page:** Each document is planned before it is written, and every page is checked for content and look and scored against the template.
+    - **Watch It Being Made:** Follow each step and watch pages appear live, and stop or delete a document at any time.
+    - **Enhance and Edit:** Turn a finished document into an improved new version, or change the brief, pages or model and make it again, with the original kept.
+    - **Output in the Example's Format:** Documents come out as Word, PowerPoint, Excel, PDF or image, with Word, PowerPoint and Excel previews right in the app.
+
+    *From one example to a library of on-brand documents: Document Studio writes in your style, from your own sources.*
+
+    ---
+
+    ## Ai-MicroCloud®
+
+    **IaaS**
+
+    - **Automatic Plans for Imported Models:** Models imported through the Model Hub or seeded by the Launcher now get a run plan chosen and created automatically from their GPU, RAM, CPU and storage needs. Existing plans are never changed, and an import never fails because of plan generation.
+    - **Data Center GPU Chart:** The per-GPU utilization chart now matches each server by hostname regardless of letter case or domain suffix.
+    - **Reliable Downtime Notifications:** Health-check fluctuations no longer send repeated down and up emails. Recovery emails go only to the users who received the downtime email and show the correct restoration time.
+
+    **PaaS**
+
+    - **License Key Activation:** Admins can now activate and manage the Ai-MicroCloud® license key inside the platform, and a key pasted straight from the email is accepted even with extra text or spaces.
+    - **Dataset File Preview:** A Preview button next to Download shows CSV and TSV files as tables, JSON as formatted text, images inline and text files in the app.
+    - **Agreements at Login:** Users with unaccepted agreements are always shown the agreement page at login, and switching to a new license now requires accepting the newly required agreement before the platform can be used again.
+    - **Admin-Created Users:** Users added by an admin can now skip the forced password change.
+    - **Namespaces for Their Owners:** Only the owner, an organization Admin or a Superadmin can edit or delete a namespace, and Standard Users see the namespaces they own or belong to.
+    - **Inference Sharing You Can Undo:** A shared inference can now be unshared, and the owner sees a "Shared" badge on its card.
+    - **Rename Without Restart:** Renaming a spawned service, workstation or inference no longer restarts its pod.
+    - **Clearer Cards and Labels:** The image info icon now behaves the same on Workstations, Microservices, Inference and Add-ons, and spawn dropdowns show consistent Public, Organization and Private labels.
+    - **Ai-Assistant Improvements:** The Ai-Assistant now asks for a workstation name, or suggests one, instead of inventing one; reports the real unread notification count; and accepts the same MLflow plans as the form.
+
+    **SaaS**
+
+    - **Streaming Chat Replies:** Inference chat and agent chat replies now stream as they are generated.
+    - **Model-Family Settings:** Llama, Qwen and Mistral models now get the settings of their own family, and Qwen models now start correctly.
+
+    **Security**
+
+    - **Encrypted Registry Credentials:** Saved Docker registry credentials are encrypted with AES-256-GCM, with the master key kept outside the database. The API never returns them, every save and use is audited, and existing credentials were migrated automatically.
+    - **Jupyter Token Protection:** Only the owner, an organization Admin and a Superadmin can access a workstation's Jupyter token, and the Open button is hidden for shared read-only users.
+    - **Private Models Stay Private:** The inference model list follows the user's permissions, and the server blocks inference requests that use another user's private model.
+    - **Role-Based Visibility:** Standard Users and Viewers no longer see Policies and User Groups, and Standard Users cannot change Superadmin data.
+    - **Permissions and Sharing:** Permission and resource-sharing checks are tightened, admins see exactly the actions they are allowed, and sharing with deleted or invalid users is rejected cleanly.
+
+    **Bug Fixes**
+
+    - Support ticket attachments now upload to the ticket, and a failed upload lists the files that failed with a Retry Upload option.
+    - Inference usage (hits and tokens) is now recorded on every tier.
+    - Removing members from a namespace now saves, and edit dialogs for organizations, roles and user groups always load fresh data.
+    - Duplicate organization names are refused when creating or renaming, ignoring case and surrounding spaces.
+    - Deleted Workstation, Microservice and Add-on templates can no longer be opened or used to start a resource.
+    - The replica count of a microservice is editable at spawn again, with a clear error for volume conflicts.
+    - Edit forms for Workstations, Microservices and Add-ons now require the same fields as import.
+    - Editing a spawned workstation no longer fails with "Denied by policy", and editing microservices, capacity plans, pipelines and AI models no longer fails with "Unknown resource".
+    - The Replicas field now accepts only whole numbers of 1 or more, and shows an error for anything else.
+    - The Third Party license type now saves after editing or importing, and opening Third Party templates no longer crashes the page.
+    - Users added by an admin no longer get stuck in a redirect loop between the change-password and agreements pages.
+
+    ---
+
+    ## Launcher
+
+    This Launcher release introduces licensing through the Zeblok License Key Manager and a guided Purpose Questionnaire with model suggestions sized to your servers, along with stronger security and more reliable installs.
+
+    **Highlights**
+
+    - **License Key Manager Integration:** Clusters are now licensed through the Zeblok License Key Manager, with each cluster's license status and expiry shown in the Launcher.
+    - **Purpose Questionnaire and Model Suggestions:** A guided intake sizes the deployment from the customer's purpose and suggests models that fit the servers, with FP16, FP8 and FP4 alternatives.
+    - **Stronger Security:** Platform components run with only the permissions they need, and every install gets its own security keys and passwords.
+    - **More Reliable Installs:** Lite, Edge, bare-metal and cloud installs gain clearer status, faster image seeding and many reliability improvements.
+
+    **License Key Manager**
+
+    - **License Key Manager Integration:** The Launcher checks the cluster license with the Zeblok License Key Manager, sends keys encrypted, handles revocation and records agreement acceptance.
+    - **License Status on Every Cluster:** The Clusters and Organization pages show each cluster's license status, and each cluster card shows the expiry date and days remaining, turning amber at 30 days or fewer and red when the license expires.
+    - **Expiry Reminders:** Reminder emails go out 7, 3 and 1 day before a license key expires and on the expiry date.
+    - **Simpler Registration:** The registration form no longer asks for a Launcher ID, which is now generated automatically, or for Infrastructure.
+
+    **Purpose Questionnaire and Model Seeding**
+
+    - **Purpose Questionnaire:** A 12-question intake works out resource sizing and suggests models, with FP16, FP8 and FP4 alternatives.
+    - **Full-Page New Deployment:** New Deployment is now a full-page workflow showing the request details and the calculated server requirements.
+    - **Server Checks After Install:** After installation the Launcher checks the servers automatically, with retries, and checks can be reloaded and run again.
+    - **Models Sized to the Servers:** Model selection follows the GPUs actually available, and a redesigned Seed screen shows server details, recommended models, GPU usage and a resource comparison.
+
+    **Security**
+
+    - **Least-Privilege Platform Access:** Platform components run with only the permissions they need, instead of full cluster-admin access.
+    - **Per-Install Secrets:** Each install generates its own security keys and passwords, and stored passwords are encrypted.
+    - **Cluster Access Isolation:** Users can access only their own clusters, server connections and cluster credentials.
+
+    **Cluster Installs**
+
+    - **Data Disk and Path:** The data disk path entered in the wizard is now used for all volumes, and leaving it blank keeps the default.
+    - **Clear Delete Results:** A delete whose cleanup fails now ends as "failed" with the reason shown, with a "Remove the record anyway" option.
+    - **Faster Image Seeding:** Seeding downloads only the images for the node's platform, skips images already present and fetches missing layers before pushing.
+    - **AWS EKS and Azure AKS:** New installs use encrypted disks, volumes are cleaned up before delete, and network access and node pool sizes are configurable. Adding a node pool works again.
+  </Accordion>
+
   <Accordion title="v2.4.0 — September 2026 (Minor Release)">
     This release brings major advances in AI performance, scalability and control across Ai-MicroCloud®. DARWIN, Zeblok's ECO-intelligence (Elastic Context Offloading) engine, now supports multi-replica autoscaling; Knowledge Bases let agents answer from your PDF datasets with page-level citations; and workstations, microservices and Gen-AI keys gain accurate resource visibility and stronger access controls. The Launcher introduces a built-in Capacity Planner and a complete, invitation-only IAM.
 
